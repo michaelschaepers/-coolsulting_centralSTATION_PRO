@@ -5,7 +5,8 @@
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: °central_STATION_PRO - Dashboard für Berechnungsmodule
 # ÄNDERUNGEN v4.8.0:
-#  
+#   - coolMATCH entfernt (wird separat gestartet)
+#   - coolMATH entfernt
 # ============================================================================
 
 import streamlit as st

@@ -160,10 +160,10 @@ class PDF(FPDF):
         self.set_fill_color(54, 169, 225) 
         self.rect(0, 0, 210, 35, 'F') 
         
-        # Logo RECHTS OBEN - 200% größer (100mm statt 50mm)
+        # Logo RECHTS OBEN - normale Größe
         logo = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
         if os.path.exists(logo): 
-            self.image(logo, x=110, y=5, w=95)  # Rechts, größer
+            self.image(logo, x=150, y=8, w=50)  # RECHTS OBEN, normale Größe
         
         self.set_y(10)
         
@@ -173,16 +173,16 @@ class PDF(FPDF):
         else:
             self.set_font('helvetica', 'B', 24)
         
-        # °coolINDUTEC in EINER Zeile - °cool WEIẞ, INDUTEC GRAU
+        # °coolINDUTEC - °cool WEIß, INDUTEC GRAU
         grad_symbol = chr(176)
         
-        # °cool in WEIẞ
+        # °cool in WEIß
         self.set_text_color(255, 255, 255)
         self.text(10, 20, f"{grad_symbol}cool")
         
-        # INDUTEC in GRAU direkt daneben (KEINE Leerzeile)
+        # INDUTEC in GRAU
         self.set_text_color(60, 60, 59)
-        self.text(31, 20, "INDUTEC")  # x=31 statt 34 - näher ran
+        self.text(31, 20, "INDUTEC")
         
         self.set_y(24)
         self.set_text_color(255, 255, 255)
