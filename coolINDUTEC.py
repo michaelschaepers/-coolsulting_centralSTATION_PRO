@@ -102,35 +102,72 @@ def create_pie_chart_mpl_detailed(labels, sizes, units="kWh"):
     return tmp.name
 
 def create_cooling_curve_mpl(t_start, t_target, duration_h):
+    """
+    Erstellt realistische Abkühlkurve
+    - TK-Bereich (t_target < 0): Mit Gefrierplateau bei ca. -2°C
+    - Kühlbereich (t_target >= 0): Exponentielle Abkühlung ohne Plateau
+    """
     fig, ax = plt.subplots(figsize=(10, 5))
     x = np.linspace(0, duration_h, 100)
     y = []
-    freezing_point = -2.0
     
-    if t_start <= freezing_point: 
+    freezing_point = -2.0  # Typischer Gefrierpunkt für Fleisch/Lebensmittel
+    
+    # Prüfe ob TK-Bereich oder Kühlbereich
+    is_freezing = (t_target < 0 and t_start > freezing_point)
+    
+    if is_freezing:
+        # MIT Gefrierplateau (Kühlgut wird eingefroren)
+        # Phase 1: Abkühlung auf Gefrierpunkt (20% der Zeit)
+        # Phase 2: Gefrierplateau (40% der Zeit) 
+        # Phase 3: Weitere Abkühlung auf Zieltemperatur (40% der Zeit)
+        
+        p1_end = int(len(x) * 0.20)  # 20% für Vorkühlung
+        p2_end = int(len(x) * 0.60)  # 60% für Gefrieren
+        
+        for i, t in enumerate(x):
+            if i < p1_end:
+                # Phase 1: Linear auf Gefrierpunkt
+                progress = i / p1_end
+                y.append(t_start - (t_start - freezing_point) * progress)
+            elif i < p2_end:
+                # Phase 2: Plateau beim Gefrieren
+                y.append(freezing_point)
+            else:
+                # Phase 3: Exponentielle Abkühlung auf Zieltemperatur
+                progress = (i - p2_end) / (len(x) - p2_end)
+                k = 3.0
+                temp = t_target + (freezing_point - t_target) * np.exp(-k * progress)
+                y.append(temp)
+        
+        label_add = "(mit Gefrierplateau)"
+    else:
+        # OHNE Gefrierplateau (nur Kühlen oder bereits gefroren)
+        # Einfache exponentielle Abkühlung
+        k = 3.0 / duration_h
         for t in x:
-            k = 3.0 / duration_h
             temp = t_target + (t_start - t_target) * np.exp(-k * t)
             y.append(temp)
-        label_add = "(Tiefkuehlbereich)"
-    else: 
-        p_start, p_end = 20, 60
-        for i, t in enumerate(x):
-            if i < p_start: y.append(t_start - (t_start - freezing_point) * (i/p_start))
-            elif i < p_end: y.append(freezing_point)
-            else:
-                rem = 100 - p_end
-                prog = (i - p_end) / rem
-                y.append(t_target + (freezing_point - t_target) * np.exp(-3 * prog))
-        label_add = "(mit Gefrierplateau)"
-
+        
+        if t_target < 0:
+            label_add = "(Tiefkuehlbereich)"
+        else:
+            label_add = "(Kuehlbereich)"
+    
+    # Zeichne Kurve
     ax.plot(x, y, color='#36A9E1', linewidth=3, label="Kerntemperatur")
-    ax.axhline(y=t_target, color='gray', linestyle='--', label=f"Soll ({t_target} C)")
+    ax.axhline(y=t_target, color='gray', linestyle='--', label=f"Ziel ({t_target} C)")
     ax.set_title(f"Simulierter Temperaturverlauf {label_add}", fontsize=12, fontweight='bold')
     ax.set_xlabel("Zeit (h)")
     ax.set_ylabel("Temperatur (C)")
     ax.grid(True, linestyle=':', alpha=0.6)
     ax.legend()
+    
+    # Y-Achse Grenzen anpassen
+    y_min = min(min(y), t_target) - 5
+    y_max = max(max(y), t_start) + 5
+    ax.set_ylim([y_min, y_max])
+    
     plt.tight_layout()
     
     tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
