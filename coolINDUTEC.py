@@ -247,6 +247,9 @@ with c3:
     t_fl = st.number_input("Tür (m²)", value=5.0, step=0.5)
     h_o = st.number_input("Tür offen (h/Tag)", value=1.5, step=0.1)
     
+    st.markdown("**Luftwechsel:**")
+    n_luft = st.number_input("Luftwechsel (1/h)", value=0.5, step=0.1, help="Natürlicher Luftwechsel pro Stunde")
+    
     st.markdown("**Interne Lasten:**")
     col_i1, col_i2 = st.columns(2)
     with col_i1: 
@@ -309,12 +312,19 @@ else:
 # Für die tägliche Energiebilanz
 q_ware_day = q_ware_total
 
-# Infiltration - KORRIGIERT
+# Infiltration durch Türöffnung - KORRIGIERT
 v_raum = l * b * h
 rho_luft = 1.2
 dh_luft = 55.0
 v_austausch = min(t_fl * 2.0, v_raum * 0.3)
-q_inf = (v_austausch * rho_luft * dh_luft * h_o * f_s) / 3600
+q_inf_tuer = (v_austausch * rho_luft * dh_luft * h_o * f_s) / 3600
+
+# Natürlicher Luftwechsel
+# Q = n × V × ρ × Δh × 24h / 3600
+q_luftwechsel = (n_luft * v_raum * rho_luft * dh_luft * 24) / 3600
+
+# Gesamt Infiltration
+q_inf = q_inf_tuer + q_luftwechsel
 
 # Interne Lasten 
 q_pers_day = (n_pers * 350 * h_pers) / 1000
@@ -328,21 +338,21 @@ q_sys = ((p_fan * t_run) / 1000) + q_def_entry
 # Gesamt - Tägliche Energie
 q_tot = (q_trans + q_ware_day + q_inf + q_intern + q_sys) * 1.1
 
-# Kälteleistung Q0 - PEAK Leistung
-# WICHTIG: Wenn Warenabkühlzeit < Laufzeit ist, muss Peak-Last berücksichtigt werden!
+# Kälteleistung Q0
+# RICHTIGE LOGIK:
+# - Konstante Lasten laufen während t_run
+# - Warenlast läuft während t_c
+# - Q0 muss die PEAK-Last abdecken (wenn Ware UND konstante Lasten gleichzeitig laufen)
+
 if t_run > 0:
-    # Basis-Last (ohne Warenlast Peak)
-    q_basis = ((q_trans + q_inf + q_intern + q_sys) * 1.1) / t_run
+    # Konstante Lasten (Transmission, Infiltration, etc.) - über t_run verteilt
+    q_konstant_kw = (q_trans + q_inf + q_intern + q_sys) / t_run
     
-    # Warenlast Peak hinzufügen
-    # Wenn t_c <= t_run: Peak-Last fällt während Laufzeit an
-    # Wenn t_c > t_run: Warenlast wird über mehrere Zyklen verteilt
-    if t_c > 0 and t_c <= t_run:
-        # Peak-Last der Ware
-        q0 = q_basis + q_ware_peak_kw * 1.1  # Mit Sicherheitsfaktor
-    else:
-        # Warenlast gemittelt über Laufzeit
-        q0 = q_basis + (q_ware_day * 1.1 / t_run)
+    # Warenlast Peak (läuft während t_c)
+    # Q0 muss den PEAK abdecken = wenn Ware UND konstante Lasten gleichzeitig laufen
+    # Das ist: q_konstant_kw + q_ware_peak_kw
+    
+    q0 = (q_konstant_kw + q_ware_peak_kw) * 1.1  # Mit Sicherheitsfaktor
 else:
     q0 = 0.0
 
@@ -356,14 +366,14 @@ with res1:
         <h2 style="color:#36A9E1; font-size:58px; margin:0;">{q0:.2f} kW</h2>
         <p style="margin-top:10px;">
            Arbeit: <b>{q_tot:.1f} kWh/d</b><br>
-           <span style="color:#888; font-size:12px;">Infiltration: {q_inf:.1f} kWh/d | Austauschvol.: {v_austausch:.1f} m³</span>
+           <span style="color:#888; font-size:12px;">Infiltration: {q_inf:.1f} kWh/d (Tür: {q_inf_tuer:.1f} + Luftwechsel: {q_luftwechsel:.1f})</span>
         </p>
     </div>""", unsafe_allow_html=True)
 
 with res2:
-    labels = ['Transmission', 'Ware', 'Tür/Infiltration', 'Intern (Pers/Stap)', 'Technik/Abtau']
-    values = [q_trans, q_ware_day, q_inf, q_intern, q_sys]
-    if sum(values) == 0: values = [1,0,0,0,0]
+    labels = ['Transmission', 'Ware', 'Tür', 'Luftwechsel', 'Intern (Pers/Stap)', 'Technik/Abtau']
+    values = [q_trans, q_ware_day, q_inf_tuer, q_luftwechsel, q_intern, q_sys]
+    if sum(values) == 0: values = [1,0,0,0,0,0]
     
     fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4)])
     fig.update_layout(height=250, margin=dict(t=0,b=0,l=0,r=0), paper_bgcolor='rgba(0,0,0,0)')
@@ -393,7 +403,9 @@ if st.button("📄 PDF Report erstellen"):
         ("Ware (Masse/Temp)", f"{m_w} kg @ {t_ein} C"), 
         ("Enthalpie (Ein/Ziel)", f"{h_in:.1f} / {h_out:.1f} kJ/kg"),
         ("Tuer (Flaeche/Offen)", f"{t_fl} m2 / {h_o} h"),
-        ("Infiltration (korrigiert)", f"{q_inf:.1f} kWh/d ({v_austausch:.1f} m3)"),
+        ("Infiltration Tuer", f"{q_inf_tuer:.1f} kWh/d"),
+        ("Luftwechsel", f"{n_luft} 1/h -> {q_luftwechsel:.1f} kWh/d"),
+        ("Infiltration Gesamt", f"{q_inf:.1f} kWh/d"),
         ("Intern (Pers/Stapler)", f"{n_pers} Pers / {n_stap} Stapler"),
         ("Abtauung", f"{n_def}x taegl. a {t_def} min ({p_def} kW)"),
         ("Gesamt-Arbeit pro Tag", f"{q_tot:.1f} kWh/d")
@@ -420,8 +432,8 @@ if st.button("📄 PDF Report erstellen"):
     pdf.set_body_font('B', 11)
     pdf.cell(0, 8, "Detaillierte Lastverteilung (kWh/Tag)", 0, 1)
     
-    labels_detail = ['Transmission', 'Warenabkuehlung', 'Tuer/Infiltration', 'Interne Lasten', 'Technik/Abtauung']
-    f1 = create_pie_chart_mpl_detailed(labels_detail, values, units="kWh")
+    labels_detail = ['Transmission', 'Warenabkuehlung', 'Tuer', 'Luftwechsel', 'Interne Lasten', 'Technik/Abtauung']
+    f1 = create_pie_chart_mpl_detailed(labels_detail, [q_trans, q_ware_day, q_inf_tuer, q_luftwechsel, q_intern, q_sys], units="kWh")
     pdf.image(f1, x=10, w=180)
     pdf.ln(5)
     
