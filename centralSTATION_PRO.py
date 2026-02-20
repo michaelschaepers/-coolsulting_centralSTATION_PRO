@@ -120,10 +120,10 @@ def main():
     # --- HEADER ---
     st.markdown('<p class="cs-welcome">Willkommen im Cockpit der</p>', unsafe_allow_html=True)
 
-    _, col_m, _ = st.columns([1, 1.2, 1])
+    _, col_m, _ = st.columns([1.5, 1, 1.5])
     with col_m:
         if os.path.exists(LOGO_PATH):
-            st.image(LOGO_PATH, use_container_width=True)
+            st.image(LOGO_PATH, width=300)  # Feste Breite statt use_container_width
     
     st.markdown(f"""
         <div class="cs-title-line">
