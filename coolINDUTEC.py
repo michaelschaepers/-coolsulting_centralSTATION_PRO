@@ -291,16 +291,23 @@ with w4:
     t_c = st.number_input("Abkühlzeit (h)", value=12.0, step=0.5)
 
 # --- 6. BERECHNUNG ---
-# Transmission
+# Transmission (konstante Last über 24h)
 q_trans = ((2*(l*h+b*h)*(t_w-t_r) + l*b*(t_b-t_r) + l*b*(t_d-t_r)) * u_calc * 24) / 1000
 
-# Ware
+# Ware - WICHTIG: t_c bestimmt die Spitzenlast!
 dh_w = h_in - h_out
+
+# Gesamtenergie für Warenabkühlung [kWh]
+q_ware_total = (m_w * dh_w) / 3600
+
+# PEAK-Leistung während der Abkühlzeit [kW]
 if t_c > 0:
-    q_ware_kw = (m_w * dh_w) / (3600 * t_c)
+    q_ware_peak_kw = (m_w * dh_w) / (3600 * t_c)
 else:
-    q_ware_kw = 0
-q_ware_day = (m_w * dh_w) / 3600
+    q_ware_peak_kw = 0
+
+# Für die tägliche Energiebilanz
+q_ware_day = q_ware_total
 
 # Infiltration - KORRIGIERT
 v_raum = l * b * h
@@ -318,12 +325,24 @@ q_intern = q_pers_day + q_stap_day
 q_def_entry = p_def * (t_def / 60) * n_def * 0.4
 q_sys = ((p_fan * t_run) / 1000) + q_def_entry
 
-# Gesamt
+# Gesamt - Tägliche Energie
 q_tot = (q_trans + q_ware_day + q_inf + q_intern + q_sys) * 1.1
 
-# Kälteleistung Q0
+# Kälteleistung Q0 - PEAK Leistung
+# WICHTIG: Wenn Warenabkühlzeit < Laufzeit ist, muss Peak-Last berücksichtigt werden!
 if t_run > 0:
-    q0 = q_tot / t_run
+    # Basis-Last (ohne Warenlast Peak)
+    q_basis = ((q_trans + q_inf + q_intern + q_sys) * 1.1) / t_run
+    
+    # Warenlast Peak hinzufügen
+    # Wenn t_c <= t_run: Peak-Last fällt während Laufzeit an
+    # Wenn t_c > t_run: Warenlast wird über mehrere Zyklen verteilt
+    if t_c > 0 and t_c <= t_run:
+        # Peak-Last der Ware
+        q0 = q_basis + q_ware_peak_kw * 1.1  # Mit Sicherheitsfaktor
+    else:
+        # Warenlast gemittelt über Laufzeit
+        q0 = q_basis + (q_ware_day * 1.1 / t_run)
 else:
     q0 = 0.0
 
