@@ -37,14 +37,29 @@ st.markdown(f"""
         font-family: 'POE Helvetica UI', 'Helvetica', sans-serif !important;
     }}
     
+    /* Verstecke Arrow-Platzhalter */
+    [data-testid="stExpander"] summary::before {{
+        display: none !important;
+    }}
+    
     .title-box {{ 
         font-size: 42px; 
         font-weight: bold; 
         margin-bottom: 20px; 
         padding-top: 10px;
+        background-color: transparent !important;
     }}
-    .blue-t {{ color: #36A9E1; }}
-    .gray-t {{ color: #3C3C3B; }}
+    
+    .title-box .blue-t {{ 
+        color: #FFFFFF !important; 
+        background-color: transparent !important;
+    }}
+    
+    .title-box .gray-t {{ 
+        color: #3C3C3B !important;
+        background-color: transparent !important;
+    }}
+    
     .stNumberInput input {{ background-color: white !important; }}
     .stSelectbox div[data-baseweb="select"] > div {{ background-color: white !important; }}
     </style>
@@ -144,9 +159,11 @@ class PDF(FPDF):
     def header(self):
         self.set_fill_color(54, 169, 225) 
         self.rect(0, 0, 210, 35, 'F') 
-        logo = "Coolsulting_Logo_ohneHG_outlines_weiss.png"
+        
+        # Logo RECHTS OBEN - 200% größer (100mm statt 50mm)
+        logo = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
         if os.path.exists(logo): 
-            self.image(logo, x=150, y=8, w=50)
+            self.image(logo, x=110, y=5, w=95)  # Rechts, größer
         
         self.set_y(10)
         
@@ -156,14 +173,16 @@ class PDF(FPDF):
         else:
             self.set_font('helvetica', 'B', 24)
         
-        # °cool in WEISS
-        self.set_text_color(255, 255, 255)
+        # °coolINDUTEC in EINER Zeile - °cool WEIẞ, INDUTEC GRAU
         grad_symbol = chr(176)
+        
+        # °cool in WEIẞ
+        self.set_text_color(255, 255, 255)
         self.text(10, 20, f"{grad_symbol}cool")
         
-        # INDUTEC in GRAU
+        # INDUTEC in GRAU direkt daneben (KEINE Leerzeile)
         self.set_text_color(60, 60, 59)
-        self.text(34, 20, "INDUTEC") 
+        self.text(31, 20, "INDUTEC")  # x=31 statt 34 - näher ran
         
         self.set_y(24)
         self.set_text_color(255, 255, 255)
