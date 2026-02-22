@@ -1,24 +1,24 @@
 # ============================================================================
 # DATEI: centralSTATION_PRO.py
-# VERSION: 4.8.0
-# STAND: 20.02.2026
+# VERSION: 4.7.1
+# STAND: 17.02.2026 - 12:55 Uhr
 # AUTOR: Michael Schäpers, coolsulting
-# BESCHREIBUNG: °central_STATION_PRO - Dashboard für Berechnungsmodule
-# ÄNDERUNGEN v4.8.0:
-#   - coolMATCH entfernt (wird separat gestartet)
-#   - coolMATH entfernt
+# BESCHREIBUNG: °central_STATION_PRO - Optimierte Menüstruktur & Reihung
 # ============================================================================
 
 import streamlit as st
 import os
 import base64
 from datetime import datetime
+from PIL import Image
 
 # ============================================================
 # 1. SEITE KONFIGURIEREN
 # ============================================================
+icon_image = Image.open("Coolsulting_Logo_ohneHG_weiß_grau.png")
 st.set_page_config(
     page_title="°central_STATION_PRO | coolsulting", 
+    page_icon=icon_image,
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -54,10 +54,10 @@ def main():
     # --- DESIGN VARIABLEN ---
     BG_COLOR = "#36A9E1"    # Coolsulting Blau
     TEXT_GRAY = "#3C3C3B"   # Dunkelgrau
-    FONT_FILE = "POE_Vetica_UI.ttf"
+    FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
     
-    VERSION = "4.8.0"
+    VERSION = "4.7.1"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     # --- CSS STYLING ---
@@ -84,24 +84,10 @@ def main():
         font-weight: bold !important;
         text-align: center;
         margin-top: -30px !important;
-        background: none !important;
-        background-color: transparent !important;
     }}
     
-    .cs-title-line span {{
-        background: none !important;
-        background-color: transparent !important;
-    }}
-    
-    .cs-title-line .white-part {{ 
-        color: white !important; 
-        background: none !important;
-    }}
-    
-    .cs-title-line .gray-part {{ 
-        color: {TEXT_GRAY} !important;
-        background: none !important;
-    }}
+    .white-part {{ color: white !important; }}
+    .gray-part {{ color: {TEXT_GRAY} !important; }}
     
     hr {{ border: 1px solid {TEXT_GRAY} !important; opacity: 0.2 !important; margin: 20px 0 !important; }}
     
@@ -120,14 +106,14 @@ def main():
     # --- HEADER ---
     st.markdown('<p class="cs-welcome">Willkommen im Cockpit der</p>', unsafe_allow_html=True)
 
-    _, col_m, _ = st.columns([1.5, 1, 1.5])
+    _, col_m, _ = st.columns([1, 1.2, 1])
     with col_m:
         if os.path.exists(LOGO_PATH):
-            st.image(LOGO_PATH, width=300)  # Feste Breite statt use_container_width
+            st.image(LOGO_PATH, use_container_width=True)
     
     st.markdown(f"""
         <div class="cs-title-line">
-            <span class="white-part">°central</span><span class="gray-part">STATION_PRO</span>
+            <span class="white-part">°central_</span><span class="gray-part">STATION_PRO</span>
             <div style="font-size: 14px; font-weight: normal; color: {TEXT_GRAY}; opacity: 0.8; margin-top: 10px;">
                 Version {VERSION} | Autor: Michael Schäpers | {ZEIT}
             </div>
@@ -136,13 +122,15 @@ def main():
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # --- NAVIGATION ---
+    # --- NAVIGATION (AKTUALISIERTE REIHFOLGE) ---
     menu_options = {
         "°Übersicht": None,
         "°Heizlast WP (Modul 1)": "Waermepumpen_Auslegung.py",
         "°WP Quick-Kalkulator (Quickie)": "WP_Quick_Kalkulator.py",
+        "°coolMATCH (Samsung Kalkulator)": "coolMATCH_v7.py",  # Nach unten verschoben
+        "°coolMATH (AC Simulation)": "coolMATH.py",
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
-        "°coolINDUTEC (Industrielle Kühllastberechnung)": "coolINDUTEC.py",
+        "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py"
     }
