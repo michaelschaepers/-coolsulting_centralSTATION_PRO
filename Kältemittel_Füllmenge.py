@@ -156,6 +156,15 @@ def main():
 
     if calc_btn:
         m_max, v_raum, grund = berechne_fuellmenge(gas, flaeche, hoehe, einbau)
+
+        if "verlauf_heute" not in st.session_state:
+            st.session_state.verlauf_heute = []
+        st.session_state.verlauf_heute.append({
+            "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+            "modul": "Kältemittel-Füllmenge",
+            "bezeichnung": f"{kunde} | {raum} | {gas}",
+            "ergebnis": f"Max. Füllmenge: {m_max:.3f} kg"
+        })
         st.markdown('<div style="margin-top: 30px;"></div>', unsafe_allow_html=True)
         
         res_l, res_r = st.columns([1, 1])

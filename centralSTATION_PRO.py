@@ -56,9 +56,13 @@ def main():
     TEXT_GRAY = "#3C3C3B"   # Dunkelgrau
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
-    
+
     VERSION = "4.7.1"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
+
+    # --- VERLAUF INITIALISIEREN ---
+    if "verlauf_heute" not in st.session_state:
+        st.session_state.verlauf_heute = []
 
     # --- CSS STYLING ---
     font_base64 = get_font_as_base64(FONT_FILE)
@@ -132,6 +136,7 @@ def main():
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
+        "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py"
     }
 
@@ -144,6 +149,25 @@ def main():
     if tool_wahl == "°Übersicht":
         st.info("### System-Status: Bereit\nWählen Sie oben ein Modul aus, um die Berechnung zu starten.")
         st.write("Dies ist die zentrale Steuereinheit für alle Coolsulting-Berechnungsmodule.")
+
+        # --- VERLAUF VON HEUTE ---
+        st.markdown("---")
+        st.markdown("### 📋 Verlauf von heute")
+        datum_heute = datetime.now().strftime("%d.%m.%Y")
+        eintraege = st.session_state.verlauf_heute
+        if eintraege:
+            st.caption(f"Gespeicherte Berechnungen am {datum_heute} ({len(eintraege)} Einträge):")
+            for e in reversed(eintraege):
+                if isinstance(e, dict):
+                    st.markdown(
+                        f"**{e['uhrzeit']}** &nbsp;|&nbsp; `{e['modul']}` &nbsp;|&nbsp; "
+                        f"{e['bezeichnung']} &nbsp;→&nbsp; **{e['ergebnis']}**"
+                    )
+                else:
+                    st.markdown(f"- {e}")
+        else:
+            st.caption(f"Noch keine Berechnungen am {datum_heute} gespeichert.")
+
     elif selected_file:
         run_app(selected_file)
 
