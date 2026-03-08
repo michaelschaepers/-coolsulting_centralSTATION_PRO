@@ -151,6 +151,17 @@ res1.metric("VOLUMENSTROM", f"{v_dot:.2f} m³/h", f"{q_kw:.1f} kW Leistung")
 res2.metric("GESCHWINDIGKEIT", f"{velocity:.2f} m/s", f"{pipe_data[dn_sel_idx][0]}")
 res3.metric("MASSENSTROM", f"{m_dot_h:.0f} kg/h", f"{m_dot_s:.2f} kg/s")
 
+if st.button("💾 Im Verlauf speichern"):
+    if "verlauf_heute" not in st.session_state:
+        st.session_state.verlauf_heute = []
+    st.session_state.verlauf_heute.append({
+        "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+        "modul": "coolFLOW",
+        "bezeichnung": f"{kunde} | {projekt}",
+        "ergebnis": f"Volumenstrom: {v_dot:.2f} m³/h | v: {velocity:.2f} m/s"
+    })
+    st.success("✅ Im Verlauf gespeichert.")
+
 # --- VERGLEICHSTABELLE ---
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown(f"<p style='color:white; font-weight:bold;'>DIMENSIONIERUNGS-VERGLEICH</p>", unsafe_allow_html=True)

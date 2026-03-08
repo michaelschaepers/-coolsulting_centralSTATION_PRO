@@ -153,7 +153,16 @@ def main():
             input_kwh = v_gas * 10.5 if einheit == "m³" else v_gas
             
             hl, heiz_e, ww_e, verlust_e, pfad = calculate_heizlast(input_kwh, wirk_gas, ww_gas_active, pers_gas)
-            
+
+            if "verlauf_heute" not in st.session_state:
+                st.session_state.verlauf_heute = []
+            st.session_state.verlauf_heute.append({
+                "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+                "modul": "WP Quick-Kalkulator",
+                "bezeichnung": f"Gas | {v_gas:,.0f} {einheit}",
+                "ergebnis": f"Heizlast: {hl:.2f} kW"
+            })
+
             res_c1, res_c2 = st.columns([1, 1])
             with res_c1:
                 st.markdown(f'<p style="color:white; font-size:18px;">Empfohlene Heizlast:</p>', unsafe_allow_html=True)
@@ -193,7 +202,16 @@ def main():
             input_kwh_o = v_oil * 10.0
             
             hl_o, heiz_e_o, ww_e_o, verlust_e_o, pfad_o = calculate_heizlast(input_kwh_o, wirk_oil, ww_oil_active, pers_oil)
-            
+
+            if "verlauf_heute" not in st.session_state:
+                st.session_state.verlauf_heute = []
+            st.session_state.verlauf_heute.append({
+                "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+                "modul": "WP Quick-Kalkulator",
+                "bezeichnung": f"Öl | {v_oil:,.0f} Liter",
+                "ergebnis": f"Heizlast: {hl_o:.2f} kW"
+            })
+
             res_c1, res_c2 = st.columns([1, 1])
             with res_c1:
                 st.markdown(f'<p style="color:white; font-size:18px;">Empfohlene Heizlast:</p>', unsafe_allow_html=True)
