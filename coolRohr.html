@@ -81,7 +81,7 @@ select option{background:var(--dark);}
 .tl-lbl{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;}
 .tl-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--blue);}
 input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;}
-.tl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px;}
+.tl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
 .tl-cell{background:var(--card);border-radius:5px;padding:8px 10px;border:1px solid var(--border);}
 .tl-cell-lbl{font-size:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
 .tl-cell-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
@@ -883,6 +883,11 @@ function render() {
   const cFl    = res('fl');
   const cKond  = res('kond');
 
+  // Fix 5: Effective evaporation temperature after suction-side pressure loss
+  const dpK_saug_total = cSaug.dpK;
+  const t0_eff = i.t0 - dpK_saug_total;
+  const t0_effStr = t0_eff.toFixed(1);
+
   // Stoffdaten-Info fuer aktuelles Kaeltemittel und Temperaturen
   const rhoV_t0 = ref.rhoV(i.t0), rhoL_t0 = ref.rhoL(i.t0);
   const muV_t0  = ref.muV(i.t0),  muL_t0  = ref.muL(i.t0);
@@ -917,6 +922,14 @@ function render() {
     + '&#961;\'\'=' + rhoV_tc.toFixed(1) + ' kg/m&sup3; &nbsp;|&nbsp; '
     + '&mu;V=' + (muV_tc*1e5).toFixed(2) + '&times;10&#8315;&sup5; Pa&middot;s'
     + '</div>';
+  // Fix 5: Show effective evaporation temperature
+  const t0_effColor = t0_eff < i.t0 - 2 ? 'var(--orange)' : 'var(--green)';
+  H += '<div style="margin-top:8px;padding:8px 11px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:5px;font-size:11px;font-family:\'IBM Plex Mono\',monospace;line-height:1.8;">'
+    + '<b>&#8680; Effektive Verdampfungstemperatur t&#8320;,eff</b><br>'
+    + '&Delta;p_SL = ' + dpK_saug_total.toFixed(3) + ' K &rarr; '
+    + '<span style="color:' + t0_effColor + ';font-weight:600;">t&#8320;,eff = ' + t0_effStr + ' &deg;C</span>'
+    + ' <span style="color:var(--muted);font-size:9px;">(Eingestelltes t&#8320; = ' + i.t0 + ' &deg;C)</span>'
+    + '</div>';
   if (ref.note) H += '<div class="infobox">' + ref.note + '</div>';
   if (ref.A2L)  H += '<div class="warnbox">&#9888; A2L: EN 378 F&uuml;llmengengrenzen &middot; Leckageerkennung &middot; Sicherheitsabstand zu Z&uuml;ndquellen</div>';
   H += '</div>';
@@ -924,19 +937,20 @@ function render() {
   // ROHRE
   H += '<div class="card"><div class="card-title">&#128297; Rohrdimensionierung</div>';
 
-  ['saug','druck'].forEach(type => {
-    const r      = type==='saug' ? cSaug : cDruck;
+  // SL pipe row (Fix 3+4: embed renderSplit inside loop, Fix 4: SL first)
+  ['saug'].forEach(type => {
+    const r      = cSaug;
     const dOn    = DSR_ON[type];
-    const badge  = type==='saug' ? 'b-saug' : 'b-druck';
-    const short  = type==='saug' ? 'SL' : 'DL';
-    const label  = type==='saug' ? 'Saugleitung (SL)' : 'Druckleitung (DL)';
+    const badge  = 'b-saug';
+    const short  = 'SL';
+    const label  = 'Saugleitung (SL)';
     const ovrKey = type;
     const curIdx = OVR[ovrKey]!==null ? OVR[ovrKey] : LR[type].autoIdx;
     const isMan  = OVR[ovrKey]!==null && OVR[ovrKey]!==LR[type].autoIdx;
     const vMinR  = r.vMin;
     const needsDSR = r.v < vMinR && vMinR > 0;
-    const lH = type==='saug' ? i.lSH : i.lDH;
-    const lV = type==='saug' ? i.lSV : i.lDV;
+    const lH = i.lSH;
+    const lV = i.lSV;
     const dirParts = [];
     if (lH > 0) dirParts.push('&#8594; ' + lH + ' m');
     if (lV > 0) dirParts.push('&#8593; ' + lV + ' m');
@@ -954,7 +968,7 @@ function render() {
       + velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
 
     if (LR.hasCalc) {
-      const dsrTitle = type==='druck' ? 'Double HP Riser' : 'Double Suction Riser';
+      const dsrTitle = 'Double Suction Riser';
       H += '<div class="dsr-box"><div class="dsr-header">'
         + '<span class="dsr-title">&#8645; ' + dsrTitle + '</span>'
         + '<label class="dsr-toggle"><input type="checkbox" '+(dOn?'checked':'')+' onchange="toggleDSR(\''+type+'\')"><span class="dsr-toggle-lbl">Doppel-Steigleitung aktivieren</span></label>'
@@ -1002,12 +1016,14 @@ function render() {
       }
       H += '</div>';
     }
+    H += renderSplit(type);
     H += '</div>';
   });
 
-  // FL + KOND
-  [{type:'fl',badge:'b-fl',short:'FL',label:'Fl&uuml;ssigkeitsleitung (FL)'},{type:'kond',badge:'b-kond',short:'KL',label:'Kondensatleitung (KL)'}].forEach(({type,badge,short,label}) => {
-    const r = type==='fl' ? cFl : cKond;
+  // FL pipe row (Fix 4: FL second)
+  {
+    const type = 'fl', badge = 'b-fl', short = 'FL', label = 'Fl&uuml;ssigkeitsleitung (FL)';
+    const r = cFl;
     const curIdx = OVR[type]!==null ? OVR[type] : LR[type].autoIdx;
     const isMan  = OVR[type]!==null && OVR[type]!==LR[type].autoIdx;
     const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
@@ -1018,19 +1034,111 @@ function render() {
       + '<div class="ctrlrow"><select class="odsel'+(isMan?' manual':'')+'" onchange="setPipe(\''+type+'\',this.value)">'+odOpts+'</select>'
       + (isMan ? '<button class="breset" onclick="resetPipe(\''+type+'\')">A</button>' : '')
       + '</div></div>';
-    if (type==='fl') { H += velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : ''); }
-    else {
-      const dOD = cDruck.p.od, ok = r.p.od >= dOD;
-      H += '<div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:\'IBM Plex Mono\',monospace;line-height:1.8;">Kanalisationsfluss &middot; Gef&auml;lle &ge; 1% &middot; Gasausgleich<br>KL &ge; DL ('+dOD+' mm OD) '+(ok?'<span style="color:var(--green)">&#10003;</span>':'<span style="color:var(--red)">&#10007; Zu klein!</span>')+'</div>';
+    H += velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
+    H += '</div>';
+  }
+
+  // DL pipe row (Fix 3+4: embed renderSplit inside loop, Fix 4: DL third)
+  ['druck'].forEach(type => {
+    const r      = cDruck;
+    const dOn    = DSR_ON[type];
+    const badge  = 'b-druck';
+    const short  = 'DL';
+    const label  = 'Druckleitung (DL)';
+    const ovrKey = type;
+    const curIdx = OVR[ovrKey]!==null ? OVR[ovrKey] : LR[type].autoIdx;
+    const isMan  = OVR[ovrKey]!==null && OVR[ovrKey]!==LR[type].autoIdx;
+    const vMinR  = r.vMin;
+    const needsDSR = r.v < vMinR && vMinR > 0;
+    const lH = i.lDH;
+    const lV = i.lDV;
+    const dirParts = [];
+    if (lH > 0) dirParts.push('&#8594; ' + lH + ' m');
+    if (lV > 0) dirParts.push('&#8593; ' + lV + ' m');
+    const dirLabel = dirParts.join(' &middot; ');
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge ' + badge + '">' + short + '</span>'
+      + '<div class="dimblk"><div class="dm">' + r.p.od + ' mm <span class="u">OD</span></div>'
+      + '<div class="ds">WT ' + r.p.wt + ' mm &middot; ID ' + r.p.id + ' mm &middot; <span style="color:var(--muted)">' + label + '</span>'
+      + (dirLabel ? ' <span style="color:#36A9E1;font-size:9px;">' + dirLabel + '</span>' : '') + '</div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel' + (isMan?' manual':'') + '" onchange="setPipe(\''+ovrKey+'\',this.value)">' + odOpts + '</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+ovrKey+'\')">A</button>' : '')
+      + '</div></div>'
+      + velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
+
+    if (LR.hasCalc) {
+      const dsrTitle = 'Double HP Riser';
+      H += '<div class="dsr-box"><div class="dsr-header">'
+        + '<span class="dsr-title">&#8645; ' + dsrTitle + '</span>'
+        + '<label class="dsr-toggle"><input type="checkbox" '+(dOn?'checked':'')+' onchange="toggleDSR(\''+type+'\')"><span class="dsr-toggle-lbl">Doppel-Steigleitung aktivieren</span></label>'
+        + '<button class="dsr-schbtn" onclick="showSchema(\''+type+'\')">&#128208; Schema</button>'
+        + '</div>';
+      if (!dOn) {
+        if (needsDSR) {
+          H += '<div class="warnbox" style="margin-top:9px;">&#9888; v = '+r.v.toFixed(2)+' m/s &lt; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung bei Teillast nicht gesichert!<br>&rarr; <b>Doppel-Steigleitung empfohlen.</b></div>';
+        } else {
+          const margin = (((r.v-vMinR)/vMinR)*100).toFixed(0);
+          H += '<div class="tealbox" style="margin-top:9px;">&#8505; v = '+r.v.toFixed(2)+' m/s &ge; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung gesichert (+'+margin+'%).</div>';
+        }
+      } else {
+        const d = resDSR(type);
+        const lIdx = d.large.idx, sIdx = d.small.idx;
+        const odOptsS = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===sIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].small.idx?' \u2713':'')+'</option>').join('');
+        const odOptsL = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===lIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].large.idx?' \u2713':'')+'</option>').join('');
+        H += '<div class="dsr-pipes">'
+          + '<div class="dsr-pipe small"><div class="dsr-pipe-lbl">&#11041; SPEED RISER &mdash; kleines Rohr (Teillast / &Ouml;lr&uuml;ckf&uuml;hrung)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.small.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.small.p.wt+' mm &middot; ID '+d.small.p.id+' mm</div></div>'
+          + pill2(d.small.v_alone >= d.small.vMin, d.small.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.small.isManual?' manual':'')+'" onchange="setPipe(\''+type+'S\',this.value)">'+odOptsS+'</select>'
+          + (d.small.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'S\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_small(d.small) + dpBar(d.small)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--teal);font-size:10px;">&larr; Teillast: volles &#7745; allein durch dieses Rohr &rarr; v_min erreichen!</div></div>'
+          + '<div class="dsr-pipe large"><div class="dsr-pipe-lbl">&#11041; MAIN RISER &mdash; gro&szlig;es Rohr (Vollast / Druckverlust)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.large.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.large.p.wt+' mm &middot; ID '+d.large.p.id+' mm</div></div>'
+          + pill2(d.large.v_fullload <= d.large.vMax && d.dpLok, d.large.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.large.isManual?' manual':'')+'" onchange="setPipe(\''+type+'L\',this.value)">'+odOptsL+'</select>'
+          + (d.large.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'L\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_large(d.large) + dpBar(d.large)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--blue);font-size:10px;">&larr; Vollast: &#7745; proportional Querschnitt &middot; v &le; v_max &middot; &Delta;p ok</div></div></div>';
+        if (d.vMinOk && d.vMaxOk && d.dpLok) {
+          H += '<div class="tealbox" style="margin-top:8px;font-size:11px;">&#10003; DSR korrekt dimensioniert:<br>Speed Riser '+d.small.p.od+' mm: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &ge; v_min '+d.small.vMin+' m/s &#10003;<br>Main Riser '+d.large.p.od+' mm: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &le; v_max '+d.large.vMax+' m/s &#10003; &middot; &Delta;p = '+d.large.dpK.toFixed(3)+' K &le; '+d.large.dMax.toFixed(2)+' K &#10003;</div>';
+        } else {
+          H += '<div class="warnbox" style="margin-top:8px;font-size:11px;">';
+          if (!d.vMinOk) H += '&#9888; Speed Riser: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &lt; v_min ('+d.small.vMin+' m/s) &mdash; kleineres Rohr!<br>';
+          if (!d.vMaxOk) H += '&#9888; Main Riser: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &gt; v_max<br>';
+          if (!d.dpLok)  H += '&#9888; Main Riser: &Delta;p = '+d.large.dpK.toFixed(3)+' K &gt; &Delta;p_max ('+d.large.dMax.toFixed(2)+' K)<br>';
+          H += '</div>';
+        }
+        H += '<div class="infobox" style="font-size:10px;margin-top:6px;line-height:1.7;">&#8505; <b>Funktion:</b> Am Fu&szlig; der Steigleitung sitzt ein U-Bogen (Falle). Das <span style="color:var(--teal)">kleine Rohr (Speed Riser)</span> startet von der <b>Sohle</b> des U-Bogens. Das <span style="color:var(--blue)">gro&szlig;e Rohr (Main Riser)</span> startet vom <b>Scheitelpunkt</b>.<br><b>Teillast:</b> &Ouml;l f&uuml;llt U-Bogen &rarr; sperrt Main Riser &rarr; volles &#7745; durch Speed Riser &rarr; v &ge; v_min &#10003;<br><b>Vollast:</b> Gasdruck &uuml;berwindet &Ouml;l &rarr; beide Rohre aktiv &rarr; v &le; v_max &#10003;</div>';
+      }
+      H += '</div>';
     }
+    H += renderSplit(type);
     H += '</div>';
   });
-  H += '</div>';
 
-  // SPLIT-STRANG
-  H += '<div class="card"><div class="card-title">&#8961; Split-Strang Auslegung</div>';
-  H += renderSplit('saug');
-  H += renderSplit('druck');
+  // KL pipe row (Fix 4: KL last)
+  {
+    const type = 'kond', badge = 'b-kond', short = 'KL', label = 'Kondensatleitung (KL)';
+    const r = cKond;
+    const curIdx = OVR[type]!==null ? OVR[type] : LR[type].autoIdx;
+    const isMan  = OVR[type]!==null && OVR[type]!==LR[type].autoIdx;
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge '+badge+'">'+short+'</span>'
+      + '<div class="dimblk"><div class="dm">'+r.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+r.p.wt+' mm &middot; ID '+r.p.id+' mm &middot; <span style="color:var(--muted)">'+label+'</span></div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel'+(isMan?' manual':'')+'" onchange="setPipe(\''+type+'\',this.value)">'+odOpts+'</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+type+'\')">A</button>' : '')
+      + '</div></div>';
+    const dOD = cDruck.p.od, ok = r.p.od >= dOD;
+    H += '<div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:\'IBM Plex Mono\',monospace;line-height:1.8;">Kanalisationsfluss &middot; Gef&auml;lle &ge; 1% &middot; Gasausgleich<br>KL &ge; DL ('+dOD+' mm OD) '+(ok?'<span style="color:var(--green)">&#10003;</span>':'<span style="color:var(--red)">&#10007; Zu klein!</span>')+'</div>';
+    H += '</div>';
+  }
   H += '</div>';
 
   // ISO
@@ -1258,8 +1366,12 @@ function renderSliderGrid(type, load, sc) {
   const dpTotal = dpMainK + dpVertK;
   const vcfn = (v, vMin, vMax) => v > vMax ? 'var(--red)' : (vMin > 0 && v < vMin) ? 'var(--orange)' : 'var(--green)';
   const vMaxG = sc.vMaxG, vMinH = sc.vMinH, vMinV2 = sc.vMinV;
+  // Fix 6: Riser velocity at current load
+  const mR_full = speedOnly ? 0 : (sc.aRiser > 0 && (sc.aRiser + sc.aSpeed) > 0 ? m * sc.aRiser / (sc.aRiser + sc.aSpeed) : 0);
+  const vRiser = (sc.aRiser > 0 && !speedOnly) ? mR_full / (rho * sc.aRiser) : 0;
   let H = '';
   H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8594; Hauptltg.</div><div class="tl-cell-val" style="color:'+vcfn((sc.aMain>0?m/(rho*sc.aMain):0),vMinH,vMaxG)+'">'+(sc.aMain>0?(m/(rho*sc.aMain)).toFixed(2):'0.00')+' m/s</div></div>';
+  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8593; Steigleitung</div><div class="tl-cell-val" style="color:'+vcfn(vRiser,0,vMaxG)+'">'+vRiser.toFixed(2)+' m/s</div></div>';
   H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8635; Speed Riser</div><div class="tl-cell-val" style="color:'+vcfn(vS,speedOnly?vMinV2:0,vMaxG)+'">'+vS.toFixed(2)+' m/s'+(speedOnly && vMinV2 > 0 ? ' <span style="font-size:9px;color:'+vcfn(vS,vMinV2,vMaxG)+';">'+(vS>=vMinV2?'&#10003;':'&#10007;')+'</span>' : '')+'</div></div>';
   H += '<div class="tl-cell" style="grid-column:1/-1;border-color:rgba(54,169,225,.3);"><div class="tl-cell-lbl">Gesamt &Delta;p Strang</div><div class="tl-cell-val" style="color:'+(dpTotal<=sc.dMax?'var(--green)':'var(--red)')+'">'+dpTotal.toFixed(3)+' K <span style="font-size:9px;color:var(--muted)">/ '+sc.dMax.toFixed(2)+' K</span></div></div>';
   return H;
@@ -1338,8 +1450,7 @@ let _lightTheme = false;
 function toggleTheme() {
   _lightTheme = !_lightTheme;
   document.body.classList.toggle('light', _lightTheme);
-  document.getElementById('themeBtn').textContent = _lightTheme ? '\u263d' : '\u2600';
-  document.getElementById('themeBtn').title = _lightTheme ? 'Dunkel-Modus' : 'Hellblau-Modus';
+  document.getElementById('themeBtn').innerHTML = _lightTheme ? '&#9790;' : '&#9788;';
 }
 
 // SCHEMA — SVG-Rohrschemata
@@ -1566,13 +1677,22 @@ function showSchema(type) {
   document.getElementById('modal').style.display = 'flex';
 }
 
-// LANGUAGE (minimal)
+// LANGUAGE (Fix 8: I18N dictionary)
 let LANG = 'de';
-function T(key) { return key; }
+const I18N = {
+  de: { tabNK:'Normalk\u00fchlungNK', tabTK:'Tiefk\u00fchlung TK', cardParams:'\u2699 Betriebsparameter', cardLengths:'\ud83d\udcd4 Leitungsl\u00e4ngen & Verlegung', lblRefrig:'K\u00e4ltemittel', lblT0:'Verdampfung t\u2080 (\u00b0C)', lblTc:'Kondensation tc (\u00b0C)', lblQ0:'K\u00e4lteleistung Q\u2080 (kW)', btnCalc:'\u25b6 BERECHNUNG STARTEN' },
+  en: { tabNK:'Normal Cooling NC', tabTK:'Deep Freeze DX', cardParams:'\u2699 System Parameters', cardLengths:'\ud83d\udcd4 Pipe Lengths & Routing', lblRefrig:'Refrigerant', lblT0:'Evaporating t\u2080 (\u00b0C)', lblTc:'Condensing tc (\u00b0C)', lblQ0:'Cooling Capacity Q\u2080 (kW)', btnCalc:'\u25b6 START CALCULATION' }
+};
+function T(key) { return (I18N[LANG] && I18N[LANG][key]) ? I18N[LANG][key] : key; }
 function setLang(lang, btn) {
   LANG = lang;
   document.getElementById('langDE').classList.toggle('active', lang === 'de');
   document.getElementById('langEN').classList.toggle('active', lang === 'en');
+  // Apply translations to elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
+  });
   if (LR.hasCalc) render();
 }
 
@@ -1623,6 +1743,11 @@ function exportXLSX() {
     ['\u03bcL @t\u2080 (interpol.)', (ref.muL(i.t0)*1e5).toFixed(3), '\u00d710\u207b\u2075 Pa\u00b7s'],
     ['Massenstrom \u1e41', cSaug.m.toFixed(5), 'kg/s'],
   ];
+  // Fix 10: Add effective evaporation temperature
+  const dpK_saug_total_xl = cSaug.dpK;
+  const t0_effXL = (i.t0 - dpK_saug_total_xl).toFixed(1);
+  inpRows.push(['Effektive Verdampfungstemperatur t\u2080,eff', t0_effXL, '\u00b0C']);
+  inpRows.push(['Druckverlust Saugleitung gesamt \u0394p', dpK_saug_total_xl.toFixed(3), 'K']);
   const wsInp = XLSX.utils.aoa_to_sheet(inpRows);
   wsInp['!cols'] = [{wch:38},{wch:16},{wch:12}];
   XLSX.utils.book_append_sheet(wb, wsInp, 'Eingaben');
@@ -1632,6 +1757,16 @@ function exportXLSX() {
     return [label, r.p.od, r.p.id, r.p.wt, r.lenEq.toFixed(2), r.v.toFixed(3), r.vMin||'', r.vMax<90?r.vMax:'', r.dpK.toFixed(4), r.dpBar.toFixed(5), r.dMax.toFixed(2), pSat.toFixed(2), isoVal, st];
   }
   const pipeRows = [hdr, pipeRow('Saugleitung (SL)', cSaug, p0, iso.saug), pipeRow('Druckleitung (DL)', cDruck, pc, iso.druck), pipeRow('Fl\u00fcssigkeitsleitung (FL)', cFl, p0, iso.fl), pipeRow('Kondensatleitung (KL)', cKond, pc, iso.kond)];
+  // Fix 7: Add split strang data
+  ['saug','druck'].forEach(st => {
+    if (LR.strangCalc && LR.strangCalc[st]) {
+      const sc = LR.strangCalc[st];
+      const lbl = st === 'saug' ? 'SL' : 'DL';
+      pipeRows.push([lbl+' Hauptleitung', sc.pMain.od, sc.pMain.id, sc.pMain.wt, '-', sc.vMain.toFixed(3), sc.vMinH||'', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+      pipeRows.push([lbl+' Steigleitung (Riser)', sc.pRiser.od, sc.pRiser.id, sc.pRiser.wt, '-', sc.vRiserFull.toFixed(3), '-', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+      pipeRows.push([lbl+' Speed Riser', sc.pSpeed.od, sc.pSpeed.id, sc.pSpeed.wt, '-', sc.vSpeedAlone.toFixed(3), sc.vMinV||'', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+    }
+  });
   const wsPipe = XLSX.utils.aoa_to_sheet(pipeRows);
   wsPipe['!cols'] = [{wch:24},{wch:8},{wch:8},{wch:8},{wch:14},{wch:10},{wch:8},{wch:8},{wch:10},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10}];
   XLSX.utils.book_append_sheet(wb, wsPipe, 'Rohrdimensionierung');
