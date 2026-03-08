@@ -1309,7 +1309,7 @@ function renderSplit(type) {
     + '<div style="font-size:9px;color:var(--muted);margin-bottom:6px;">ID '+sc.pSpeed.id+' mm &middot; '+lV.toFixed(1)+' m</div>'
     + odSel('Speed', curSpeed, st.speedIdx, isManSpeed);
   if (lV > 0 && dir === 'up') {
-    H += miniVBar(sc.vSpeedAlone, sc.vMinV, sc.vMaxG, 'v Speed (Teillast)');
+    H += miniVBar(sc.vSpeedAlone, sc.vMinV, sc.vMaxG, 'v Speed (\u1e41 allein, DSR-Check)');
     H += '<div style="font-size:9px;margin-top:3px;color:'+(sc.vSpeedOelOK?'var(--teal)':'var(--orange))') + ';">'+(sc.vSpeedOelOK ? '&#10003; &Ouml;l-v_min &ge; '+sc.vMinV+' m/s' : '&#10007; v &lt; v_min '+sc.vMinV+' m/s')+'</div>';
   } else if (lV > 0) {
     H += miniVBar(sc.vSpeedAlone, 0, sc.vMaxG, 'v Speed');
@@ -1324,6 +1324,7 @@ function renderSplit(type) {
     H += '<div class="tl-slider-wrap">'
       + '<div class="tl-hdr"><span class="tl-lbl">&#9889; TEILLAST-SIMULATION &mdash; &Ouml;lr&uuml;cktransport</span>'
       + '<span class="tl-val" id="tlVal_'+type+'">100 %</span></div>'
+      + (function(){const lc=sc.vMinV>0?Math.min(1.0,sc.vMinV*sc.rho*sc.aSpeed/sc.m):0;return lc>0?'<div style="font-size:9px;color:var(--muted);margin-bottom:3px;">&#8635; Speed Riser allein (Ölsperrung) bei &le; '+Math.round(lc*100)+' % &nbsp;|&nbsp; &#8593; Beide Steigleitungen bei &gt; '+Math.round(lc*100)+' %</div>':'';}())
       + '<input type="range" id="'+sliderId+'" min="10" max="100" step="5" value="100" oninput="updateSlider(\''+type+'\')">'
       + '<div class="tl-grid" id="tlGrid_'+type+'">'
       + renderSliderGrid(type, 1.0, sc)
@@ -1344,7 +1345,7 @@ function renderSliderGrid(type, load, sc) {
   const mFull  = sc.m;
   const vMinV  = sc.vMinV;
   const loadCrit = vMinV > 0 ? Math.min(1.0, vMinV * rho * sc.aSpeed / mFull) : 0;
-  const speedOnly = load <= loadCrit + 0.05;
+  const speedOnly = load <= loadCrit;
   let vR = 0, vS = 0, dpVertK = 0;
   const ref = RM[i.rk];
   const tMed = type==='druck' ? i.tc : i.t0;
@@ -1371,7 +1372,7 @@ function renderSliderGrid(type, load, sc) {
   const vRiser = (sc.aRiser > 0 && !speedOnly) ? mR_full / (rho * sc.aRiser) : 0;
   let H = '';
   H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8594; Hauptltg.</div><div class="tl-cell-val" style="color:'+vcfn((sc.aMain>0?m/(rho*sc.aMain):0),vMinH,vMaxG)+'">'+(sc.aMain>0?(m/(rho*sc.aMain)).toFixed(2):'0.00')+' m/s</div></div>';
-  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8593; Steigleitung</div><div class="tl-cell-val" style="color:'+vcfn(vRiser,0,vMaxG)+'">'+vRiser.toFixed(2)+' m/s</div></div>';
+  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8593; Steigleitung</div>' + (speedOnly ? '<div class="tl-cell-val" style="color:var(--muted);font-size:9px;" title="&Ouml;lsperrung im U-Bogen: Main Riser gesperrt">&#128274; gesperrt</div>' : '<div class="tl-cell-val" style="color:'+vcfn(vRiser,0,vMaxG)+'">'+vRiser.toFixed(2)+' m/s</div>') + '</div>';
   H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8635; Speed Riser</div><div class="tl-cell-val" style="color:'+vcfn(vS,speedOnly?vMinV2:0,vMaxG)+'">'+vS.toFixed(2)+' m/s'+(speedOnly && vMinV2 > 0 ? ' <span style="font-size:9px;color:'+vcfn(vS,vMinV2,vMaxG)+';">'+(vS>=vMinV2?'&#10003;':'&#10007;')+'</span>' : '')+'</div></div>';
   H += '<div class="tl-cell" style="grid-column:1/-1;border-color:rgba(54,169,225,.3);"><div class="tl-cell-lbl">Gesamt &Delta;p Strang</div><div class="tl-cell-val" style="color:'+(dpTotal<=sc.dMax?'var(--green)':'var(--red)')+'">'+dpTotal.toFixed(3)+' K <span style="font-size:9px;color:var(--muted)">/ '+sc.dMax.toFixed(2)+' K</span></div></div>';
   return H;
