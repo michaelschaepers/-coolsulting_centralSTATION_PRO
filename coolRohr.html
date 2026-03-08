@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>°coolROHR v6.3 | °coolsulting</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+:root{
+  --blue:#36A9E1;--dark:#1a1f2e;--darker:#111520;--card:#1e2438;
+  --border:#2a3050;--text:#c8d4e8;--muted:#4a5a7a;
+  --green:#00c896;--orange:#f5a623;--red:#e84040;--yellow:#f0d060;
+  --purple:#a78bfa;--teal:#2dd4bf;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--darker);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;min-height:100vh;}
+header{background:var(--dark);border-bottom:2px solid var(--blue);padding:13px 28px;display:flex;align-items:center;gap:14px;}
+.logo-main{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;color:var(--blue);letter-spacing:.05em;}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:1px;}
+.hbadge{margin-left:auto;background:rgba(54,169,225,.1);border:1px solid rgba(54,169,225,.25);color:var(--blue);font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.08em;}
+.container{max-width:1580px;margin:0 auto;padding:18px;}
+.tabs{display:flex;gap:3px;margin-bottom:18px;background:var(--dark);border:1px solid var(--border);border-radius:6px;padding:3px;width:fit-content;}
+.tab{padding:7px 22px;border:none;border-radius:4px;background:transparent;color:var(--muted);font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.06em;text-transform:uppercase;}
+.tab.active{background:var(--blue);color:#fff;}
+.main-grid{display:grid;grid-template-columns:355px 1fr;gap:14px;align-items:start;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:15px;margin-bottom:11px;}
+.card:last-child{margin-bottom:0;}
+.card-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--blue);letter-spacing:.18em;text-transform:uppercase;margin-bottom:13px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.fg{margin-bottom:10px;}
+label{display:block;font-size:10px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+input[type="number"],select{width:100%;background:var(--darker);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:12px;padding:6px 8px;transition:border-color .15s;outline:none;}
+input[type="number"]:focus,select:focus{border-color:var(--blue);}
+select option{background:var(--dark);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.btn-calc{width:100%;padding:11px;background:var(--blue);border:none;border-radius:6px;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.1em;cursor:pointer;transition:opacity .15s;text-transform:uppercase;margin-top:4px;}
+.btn-calc:hover{opacity:.85;}
+.pipe-row{background:var(--darker);border:1px solid var(--border);border-radius:8px;padding:13px 15px;margin-bottom:9px;}
+.pipe-row:last-child{margin-bottom:0;}
+.prhead{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.ptbadge{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:3px;white-space:nowrap;}
+.b-saug{background:rgba(0,200,150,.12);color:var(--green);border:1px solid rgba(0,200,150,.3);}
+.b-druck{background:rgba(245,166,35,.12);color:var(--orange);border:1px solid rgba(245,166,35,.3);}
+.b-fl{background:rgba(54,169,225,.12);color:var(--blue);border:1px solid rgba(54,169,225,.3);}
+.b-kond{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+.dimblk{flex:1;min-width:140px;}
+.dm{font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:#fff;line-height:1.1;}
+.dm .u{font-size:12px;color:var(--muted);font-weight:300;}
+.ds{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+.ctrlrow{display:flex;align-items:center;gap:5px;}
+.bdim{width:26px;height:26px;border:1px solid var(--border);background:var(--card);color:var(--text);font-size:15px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-family:'IBM Plex Mono',monospace;flex-shrink:0;line-height:1;}
+.bdim:hover{border-color:var(--blue);color:var(--blue);}
+.mtag{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--orange);}
+.odsel{background:var(--darker);border:1px solid var(--border);color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;border-radius:4px;padding:3px 5px;cursor:pointer;height:26px;}
+.odsel.manual{border-color:var(--orange);color:var(--orange);}
+.odsel:focus{outline:none;border-color:var(--blue);}
+.breset{font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:4px;padding:2px 6px;cursor:pointer;height:26px;transition:all .15s;}
+.breset:hover{border-color:var(--red);color:var(--red);}
+.lang-switch{display:flex;gap:2px;background:var(--darker);border:1px solid var(--border);border-radius:4px;padding:2px;}
+.lang-btn{padding:4px 10px;border:none;background:transparent;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;cursor:pointer;border-radius:3px;transition:all .15s;letter-spacing:.06em;}
+.lang-btn.active{background:var(--blue);color:#fff;}
+.btn-xl{padding:5px 14px;background:rgba(0,168,100,.15);border:1px solid rgba(0,168,100,.4);color:#00c896;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;border-radius:4px;cursor:pointer;letter-spacing:.08em;transition:all .15s;}
+.btn-xl:hover{background:rgba(0,168,100,.28);}
+.sec-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.b-saug-lbl{color:var(--green);}.b-druck-lbl{color:var(--orange);}.b-fl-lbl{color:var(--blue);}
+.dir-row{display:flex;flex-direction:column;gap:5px;}
+.dir-btns{display:flex;gap:4px;}
+.dir-btn{flex:1;padding:5px 8px;border:1px solid var(--border);background:var(--darker);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:10px;border-radius:4px;cursor:pointer;transition:all .15s;letter-spacing:.04em;}
+.dir-btn:hover{border-color:var(--blue);color:var(--blue);}
+.dir-btn.active{background:rgba(54,169,225,.15);border-color:var(--blue);color:var(--blue);}
+.split-section{background:var(--darker);border:1px solid rgba(54,169,225,.2);border-radius:8px;padding:14px;margin-bottom:10px;}
+.split-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--blue);letter-spacing:.15em;text-transform:uppercase;margin-bottom:12px;}
+.split-pipes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.split-pipe{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px;}
+.split-pipe-lbl{font-size:8px;letter-spacing:.12em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;font-weight:600;margin-bottom:6px;}
+.sp-main .split-pipe-lbl{color:var(--muted);}.sp-riser .split-pipe-lbl{color:var(--blue);}.sp-speed .split-pipe-lbl{color:var(--teal);}
+.sp-main{border-color:rgba(100,120,160,.3);}.sp-riser{border-color:rgba(54,169,225,.3);}.sp-speed{border-color:rgba(45,212,191,.35);}
+.split-od{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#fff;margin-bottom:5px;}
+.tl-slider-wrap{margin-top:12px;}
+.tl-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.tl-lbl{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;}
+.tl-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--blue);}
+input[type=range]{width:100%;accent-color:var(--blue);height:4px;cursor:pointer;}
+.tl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px;}
+.tl-cell{background:var(--card);border-radius:5px;padding:8px 10px;border:1px solid var(--border);}
+.tl-cell-lbl{font-size:8px;color:var(--muted);font-family:'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.tl-cell-val{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;}
+.tl-total{background:rgba(54,169,225,.08);border:1px solid rgba(54,169,225,.25);border-radius:5px;padding:8px 12px;margin-top:8px;display:flex;justify-content:space-between;align-items:center;}
+.tl-total-lbl{font-size:10px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.sp{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 9px;border-radius:10px;letter-spacing:.08em;white-space:nowrap;}
+.sp-ok{background:rgba(0,200,150,.12);color:var(--green);border:1px solid rgba(0,200,150,.25);}
+.sp-warn{background:rgba(245,166,35,.12);color:var(--orange);border:1px solid rgba(245,166,35,.25);}
+.sp-err{background:rgba(232,64,64,.12);color:var(--red);border:1px solid rgba(232,64,64,.25);}
+.sp-man{background:rgba(245,166,35,.15);color:var(--orange);border:1px solid rgba(245,166,35,.4);}
+.vbhdr{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:2px;font-family:'IBM Plex Mono',monospace;}
+.vbtrack{height:7px;background:rgba(42,48,80,.9);border-radius:4px;position:relative;overflow:visible;margin-bottom:2px;}
+.vbfill{height:100%;border-radius:4px;transition:width .35s ease;}
+.vbmin{position:absolute;top:-3px;height:13px;width:2px;background:var(--orange);opacity:.85;}
+.vbmax{position:absolute;top:-3px;height:13px;width:2px;background:rgba(255,255,255,.18);}
+.vbftr{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
+.dpwhdr{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:2px;font-family:'IBM Plex Mono',monospace;margin-top:7px;}
+.dpwtrack{height:5px;background:rgba(42,48,80,.9);border-radius:3px;position:relative;overflow:hidden;}
+.dpwfill{height:100%;border-radius:3px;transition:width .35s ease;}
+.dpwlim{position:absolute;top:0;height:100%;width:2px;background:rgba(255,255,255,.15);}
+.dpwftr{font-size:9px;color:var(--muted);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.warnbox{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.25);border-radius:5px;padding:8px 11px;font-size:11px;color:var(--orange);margin-top:8px;line-height:1.65;}
+.infobox{background:rgba(54,169,225,.07);border:1px solid rgba(54,169,225,.2);border-radius:5px;padding:8px 11px;font-size:11px;color:var(--blue);margin-top:8px;line-height:1.65;}
+.errbox{background:rgba(232,64,64,.07);border:1px solid rgba(232,64,64,.25);border-radius:5px;padding:8px 11px;font-size:11px;color:var(--red);margin-top:8px;line-height:1.65;}
+.tealbox{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.2);border-radius:5px;padding:8px 11px;font-size:11px;color:var(--teal);margin-top:8px;line-height:1.7;}
+.dsr-box{background:rgba(45,212,191,.04);border:1px solid rgba(45,212,191,.18);border-radius:7px;padding:12px 14px;margin-top:10px;}
+.dsr-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:0;}
+.dsr-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--teal);letter-spacing:.14em;text-transform:uppercase;}
+.dsr-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;}
+.dsr-toggle input[type=checkbox]{accent-color:var(--teal);width:14px;height:14px;cursor:pointer;}
+.dsr-toggle-lbl{font-size:11px;color:var(--muted);}
+.dsr-schbtn{font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--teal);background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.25);border-radius:4px;padding:3px 9px;cursor:pointer;letter-spacing:.06em;transition:all .15s;white-space:nowrap;margin-left:auto;}
+.dsr-schbtn:hover{background:rgba(45,212,191,.16);}
+.dsr-pipes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;}
+.dsr-pipe{background:var(--darker);border-radius:6px;padding:11px;}
+.dsr-pipe.large{border:1px solid rgba(54,169,225,.25);}.dsr-pipe.small{border:1px solid rgba(45,212,191,.35);}
+.dsr-pipe-lbl{font-size:9px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+.dsr-pipe.large .dsr-pipe-lbl{color:var(--blue);}.dsr-pipe.small .dsr-pipe-lbl{color:var(--teal);}
+.dsr-phead{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:var(--dark);border:1px solid var(--border);border-radius:10px;max-width:960px;width:100%;max-height:92vh;overflow-y:auto;padding:22px;}
+.modal-top{font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--teal);margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;}
+.modal-close{cursor:pointer;color:var(--muted);font-size:20px;background:none;border:none;transition:color .15s;padding:0 4px;}
+.modal-close:hover{color:var(--text);}
+.diag-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.diag-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;}
+.diag-card.full{grid-column:1/-1;}
+.diag-card-title{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:var(--text);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px;}
+.diag-desc{font-size:11px;color:var(--muted);line-height:1.65;margin-top:8px;}
+.sum-table{width:100%;border-collapse:collapse;}
+.sum-table th{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;text-align:left;padding:5px 7px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.sum-table td{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text);padding:5px 7px;border-bottom:1px solid rgba(42,48,80,.4);white-space:nowrap;}
+.sum-table tr:last-child td{border-bottom:none;}
+.sum-table tr:hover td{background:rgba(54,169,225,.03);}
+.c-ok{color:var(--green);}.c-warn{color:var(--orange);}.c-err{color:var(--red);}
+.iso-row,.pres-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;}
+.iso-card,.pres-card{background:var(--darker);border:1px solid var(--border);border-radius:6px;padding:10px;}
+.iso-lbl,.pres-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.iso-val{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:600;color:var(--yellow);text-align:center;}
+.pres-val{font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:600;}
+.pres-sub{font-size:9px;color:var(--muted);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.placeholder{text-align:center;padding:80px 20px;color:var(--muted);}
+.placeholder-icon{font-size:42px;margin-bottom:10px;opacity:.25;}
+.placeholder-text{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;}
+/* Stoffdaten-Info Box */
+.data-badge{display:inline-block;background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.25);color:var(--teal);font-family:'IBM Plex Mono',monospace;font-size:8px;padding:2px 7px;border-radius:3px;letter-spacing:.1em;margin-left:8px;}
+/* === THEME TOGGLE === */
+.theme-btn{width:30px;height:30px;border:1px solid var(--border);background:var(--darker);color:var(--muted);border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;line-height:1;}
+.theme-btn:hover{border-color:var(--blue);color:var(--blue);}
+/* === LIGHT / HELLBLAU THEME === */
+body.light{
+  --blue:#1470af;--dark:#c4ddf0;--darker:#e4f1fb;--card:#f6fafe;
+  --border:#7ab5d8;--text:#0b2640;--muted:#3a6888;
+  --green:#006840;--orange:#a05808;--red:#a02020;--yellow:#806010;
+  --purple:#4828a0;--teal:#0a7868;
+}
+body.light header{background:var(--dark);border-bottom-color:var(--blue);}
+body.light .tabs{background:var(--dark);}
+body.light .tab{color:var(--muted);}
+body.light .tab.active{background:var(--blue);color:#fff;}
+body.light input[type="number"],body.light select{background:#fff;color:var(--text);border-color:var(--border);}
+body.light select option{background:#fff;color:var(--text);}
+body.light .odsel{background:#fff;color:var(--text);}
+body.light .odsel.manual{border-color:var(--orange);color:var(--orange);}
+body.light .dir-btn{border-color:var(--border);background:var(--darker);color:var(--muted);}
+body.light .dir-btn.active{background:rgba(20,112,175,.12);border-color:var(--blue);color:var(--blue);}
+body.light .bdim{border-color:var(--border);background:var(--card);color:var(--text);}
+body.light .breset{border-color:var(--border);color:var(--muted);}
+body.light .breset:hover{border-color:var(--red);color:var(--red);}
+body.light .modal-box{background:var(--dark);border-color:var(--border);}
+body.light .modal-ov{background:rgba(0,20,50,.6);}
+body.light .modal-top{color:var(--teal);}
+body.light .sum-table th{color:var(--muted);}
+body.light .sum-table td{color:var(--text);}
+body.light .sum-table tr:hover td{background:rgba(20,112,175,.05);}
+body.light .diag-card{background:var(--card);}
+body.light .hbadge{background:rgba(20,112,175,.12);border-color:rgba(20,112,175,.3);color:var(--blue);}
+body.light .btn-calc{background:var(--blue);}
+body.light .lang-btn{color:var(--muted);}
+body.light .lang-btn.active{background:var(--blue);color:#fff;}
+body.light .btn-xl{background:rgba(0,104,64,.12);border-color:rgba(0,104,64,.35);color:var(--green);}
+body.light .logo-main{color:var(--blue);}
+body.light .logo-sub{color:var(--muted);}
+body.light .dsr-toggle-lbl{color:var(--muted);}
+body.light .tl-lbl{color:var(--muted);}
+body.light .vbtrack,.body.light .dpwtrack{background:rgba(160,200,230,.4);}
+body.light .pipe-row{background:var(--card);}
+body.light .split-pipe{background:var(--card);}
+body.light .dsr-pipe{background:var(--darker);}
+body.light .tl-cell{background:var(--card);}
+body.light .tl-total{background:rgba(20,112,175,.07);}
+body.light .infobox{background:rgba(20,112,175,.07);border-color:rgba(20,112,175,.25);color:var(--blue);}
+body.light .warnbox{background:rgba(160,88,8,.07);border-color:rgba(160,88,8,.25);color:var(--orange);}
+body.light .errbox{background:rgba(160,32,32,.07);border-color:rgba(160,32,32,.25);color:var(--red);}
+body.light .tealbox{background:rgba(10,120,104,.07);border-color:rgba(10,120,104,.2);color:var(--teal);}
+body.light .dsr-box{background:rgba(10,120,104,.06);border-color:rgba(10,120,104,.22);}
+body.light .split-section{background:var(--darker);border-color:rgba(20,112,175,.25);}
+body.light .card-title{color:var(--blue);}
+body.light .split-title{color:var(--blue);}
+body.light .dm{color:var(--text);}
+body.light .ds{color:var(--muted);}
+body.light .placeholder{color:var(--muted);}
+</style>
+</head><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<body>
+<div id="modal" class="modal-ov" style="display:none" onclick="if(event.target===this)this.style.display='none'">
+  <div class="modal-box">
+    <div class="modal-top">
+      <span id="modalTitle">Double Suction Riser</span>
+      <button class="modal-close" onclick="document.getElementById('modal').style.display='none'">&#x2715;</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+<header style="position:relative;">
+  <div>
+    <div class="logo-main">&#176;coolsulting</div>
+    <div class="logo-sub" id="hdrSub">CU-Rohrdimensionierung &middot; K&auml;ltemittelleitungen</div>
+  </div>
+  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);">
+    <img src="data:image/png;base64,__LOGO__" style="height:38px;display:block;">
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Hellblau / Dunkel umschalten">&#9788;</button>
+    <div class="lang-switch">
+      <button class="lang-btn active" id="langDE" onclick="setLang('de',this)">DE</button>
+      <button class="lang-btn" id="langEN" onclick="setLang('en',this)">EN</button>
+    </div>
+    <button class="btn-xl" id="btnXL" onclick="exportXLSX()" style="display:none;">&#11015; Excel</button>
+    <div class="hbadge">v6.5 &middot; &#176;coolROHR &middot; EN 378 &middot; Lookup-Tabellen</div>
+  </div>
+</header>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="setMode('NK',this)" data-i18n="tabNK">Normalk&uuml;hlung NK</button>
+    <button class="tab" onclick="setMode('TK',this)" data-i18n="tabTK">Tiefk&uuml;hlung TK</button>
+  </div>
+  <div class="main-grid">
+    <div>
+      <div class="card">
+        <div class="card-title" data-i18n="cardParams">&#9881; Betriebsparameter <span class="data-badge">REFPROP-Tabellen</span></div>
+        <div class="fg"><label data-i18n="lblRefrig">K&auml;ltemittel</label>
+          <select id="refrigerant" onchange="onRefChange()">
+            <option value="R744">R744 (CO&#8322;)</option>
+            <option value="R1234yf">R1234yf</option>
+            <option value="R455A">R455A</option>
+            <option value="R452A">R452A</option>
+            <option value="R513A">R513A</option>
+            <option value="R449A" selected>R449A</option>
+          </select>
+        </div>
+        <div class="g2">
+          <div class="fg"><label data-i18n="lblT0">Verdampfung t&#8320; (&#176;C)</label><input type="number" id="t0" value="-8" step="1"></div>
+          <div class="fg"><label data-i18n="lblTc">Kondensation tc (&#176;C)</label><input type="number" id="tc" value="45" step="1"></div>
+        </div>
+        <div class="g2">
+          <div class="fg"><label data-i18n="lblTamb">Umgebung tamb (&#176;C)</label><input type="number" id="tamb" value="25" step="1"></div>
+          <div class="fg"><label data-i18n="lblRh">Rel. Feuchte (%)</label><input type="number" id="rh" value="60" min="0" max="100" step="5"></div>
+        </div>
+        <div class="fg"><label data-i18n="lblQ0">K&auml;lteleistung Q&#8320; (kW)</label><input type="number" id="qo" value="10" step="0.5" min="0.1"></div>
+      </div>
+      <div class="card">
+        <div class="card-title" data-i18n="cardLengths">&#128208; Leitungsl&auml;ngen &amp; Verlegung</div>
+        <div class="sec-lbl b-saug-lbl">SL &mdash; Saugleitung</div>
+        <div class="g2" style="margin-bottom:6px;">
+          <div class="fg"><label>Hauptltg. horiz. (m)</label><input type="number" id="lenSaugH" value="10" min="0" step="0.5"></div>
+          <div class="fg"><label>Steigleitung (m)</label><input type="number" id="lenSaugV" value="3" min="0" step="0.5"></div>
+        </div>
+        <div class="fg dir-row">
+          <label>Richtung Steigleitung</label>
+          <div class="dir-btns">
+            <button class="dir-btn active" id="dirSaugUp" onclick="setDir('saug','up',this)">&#8593; aufw&auml;rts</button>
+            <button class="dir-btn" id="dirSaugDown" onclick="setDir('saug','down',this)">&#8595; abw&auml;rts</button>
+          </div>
+        </div>
+        <div class="sec-lbl b-druck-lbl" style="margin-top:12px;">DL &mdash; Druckleitung</div>
+        <div class="g2" style="margin-bottom:6px;">
+          <div class="fg"><label>Hauptltg. horiz. (m)</label><input type="number" id="lenDruckH" value="0.5" min="0" step="0.5"></div>
+          <div class="fg"><label>Steigleitung (m)</label><input type="number" id="lenDruckV" value="0" min="0" step="0.5"></div>
+        </div>
+        <div class="fg dir-row">
+          <label>Richtung Steigleitung</label>
+          <div class="dir-btns">
+            <button class="dir-btn active" id="dirDruckUp" onclick="setDir('druck','up',this)">&#8593; aufw&auml;rts</button>
+            <button class="dir-btn" id="dirDruckDown" onclick="setDir('druck','down',this)">&#8595; abw&auml;rts</button>
+          </div>
+        </div>
+        <div class="sec-lbl b-fl-lbl" style="margin-top:12px;">FL &mdash; Fl&uuml;ssigkeitsleitung</div>
+        <div class="g2" style="margin-bottom:6px;">
+          <div class="fg"><label>Gesamtl&auml;nge (m)</label><input type="number" id="lenFl" value="15" min="1"></div>
+          <div class="fg"><label>Kondensatltg. (m)</label><input type="number" id="lenKond" value="5" min="1"></div>
+        </div>
+        <div class="fg dir-row">
+          <label>Richtung (FL)</label>
+          <div class="dir-btns">
+            <button class="dir-btn active" id="dirFlDown" onclick="setDir('fl','down',this)">&#8595; abw&auml;rts (Norm)</button>
+            <button class="dir-btn" id="dirFlUp" onclick="setDir('fl','up',this)">&#8593; aufw&auml;rts</button>
+          </div>
+        </div>
+        <div class="fg" style="margin-top:6px;">
+          <label>Unterk&uuml;hlung vorhanden</label>
+          <select id="subcool">
+            <option value="0">Nein &mdash; dp_max Standard</option>
+            <option value="1">Ja &mdash; dp_max = 3,8 K, v_max = 1,6 m/s</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">&#128295; Armaturen</div>
+        <div class="g3">
+          <div class="fg"><label>90&#176; B&ouml;gen</label><input type="number" id="bends" value="4" min="0"></div>
+          <div class="fg"><label>Absperrventile</label><input type="number" id="shutoff" value="2" min="0"></div>
+          <div class="fg"><label>Magnetventile</label><input type="number" id="solenoid" value="1" min="0"></div>
+        </div>
+        <div class="fg"><label>Gleichzeitigkeitsfaktor GZF</label>
+          <select id="gzf">
+            <option value="1.0">1,00 &mdash; Einzelanlage</option>
+            <option value="0.99">0,99 &mdash; 4 K&uuml;hlstellen</option>
+            <option value="0.97">0,97 &mdash; 6 K&uuml;hlstellen</option>
+            <option value="0.94">0,94 &mdash; 9+ K&uuml;hlstellen</option>
+          </select>
+        </div>
+        <button class="btn-calc" onclick="calculate()">&#9654; BERECHNUNG STARTEN</button>
+      </div>
+    </div>
+    <div id="resultArea">
+      <div class="card"><div class="placeholder">
+        <div class="placeholder-icon">&#8635;</div>
+        <div class="placeholder-text" id="placeholderTxt">Parameter eingeben &rarr; Berechnung starten</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+<script>
+'use strict';
+// ============================================================
+// SATURATION PROPERTY LOOKUP TABLES (v6.3)
+// Source: NIST REFPROP 10 / ASHRAE Fundamentals / manufacturer data
+// Columns: [T_C, p_bar, rhoV_kg_m3, rhoL_kg_m3, hfg_kJ_kg, muV_Pas, muL_Pas]
+// Temperature range: -50 to +65 degC (where physically valid)
+// ============================================================
+const SAT_DATA = {
+  R744: [
+    // CO2 - NIST REFPROP. Critical point: 31.07 degC, 73.77 bar
+    [-50, 6.80,  18.2,  1148, 330, 1.38e-5, 9.5e-5],
+    [-40, 10.05, 27.7,  1104, 316, 1.41e-5, 8.5e-5],
+    [-30, 14.29, 41.1,  1056, 298, 1.44e-5, 7.5e-5],
+    [-20, 19.70, 59.5,  1002, 274, 1.47e-5, 6.6e-5],
+    [-10, 26.49, 84.6,   939, 245, 1.51e-5, 5.8e-5],
+    [  0, 34.85, 118.8,  866, 208, 1.55e-5, 5.0e-5],
+    [ 10, 45.02, 165.9,  780, 162, 1.60e-5, 4.3e-5],
+    [ 20, 57.34, 233.5,  671, 102, 1.67e-5, 3.5e-5],
+    [ 30, 72.14, 352.0,  513,  32, 1.80e-5, 2.6e-5]
+  ],
+  R1234yf: [
+    // HFO R1234yf - Honeywell/NIST data
+    [-50, 0.45,   3.0,  1280, 221, 1.08e-5, 2.20e-4],
+    [-40, 0.78,   5.2,  1238, 214, 1.10e-5, 2.00e-4],
+    [-30, 1.29,   8.6,  1193, 206, 1.12e-5, 1.80e-4],
+    [-20, 1.99,  13.5,  1145, 196, 1.14e-5, 1.62e-4],
+    [-10, 2.93,  20.4,  1094, 185, 1.16e-5, 1.44e-4],
+    [  0, 4.18,  30.0,  1039, 173, 1.18e-5, 1.27e-4],
+    [ 10, 5.78,  42.8,   980, 159, 1.21e-5, 1.11e-4],
+    [ 20, 7.79,  59.9,   916, 143, 1.24e-5, 9.6e-5],
+    [ 30,10.25,  83.0,   847, 123, 1.28e-5, 8.2e-5],
+    [ 40,13.27, 115.0,   767,  98, 1.33e-5, 6.8e-5],
+    [ 50,16.93, 161.0,   668,  65, 1.40e-5, 5.4e-5],
+    [ 60,21.32, 229.0,   542,  27, 1.50e-5, 4.0e-5]
+  ],
+  R455A: [
+    // R32/R1234yf/CO2 (21.5/75.5/3%) - Honeywell Solstice L40X
+    // Note: temperature glide ~5K; use bubble point pressure for design
+    [-50, 0.49,   3.3,  1310, 290, 1.10e-5, 2.30e-4],
+    [-40, 0.84,   5.6,  1270, 280, 1.12e-5, 2.05e-4],
+    [-30, 1.36,   9.1,  1225, 268, 1.14e-5, 1.82e-4],
+    [-20, 2.11,  14.4,  1178, 255, 1.16e-5, 1.62e-4],
+    [-10, 3.13,  21.7,  1128, 241, 1.18e-5, 1.43e-4],
+    [  0, 4.48,  31.6,  1074, 225, 1.21e-5, 1.25e-4],
+    [ 10, 6.24,  45.1,  1017, 207, 1.24e-5, 1.08e-4],
+    [ 20, 8.46,  63.5,   955, 187, 1.27e-5, 9.3e-5],
+    [ 30,11.21,  88.4,   887, 164, 1.31e-5, 7.8e-5],
+    [ 40,14.59, 122.4,   810, 136, 1.36e-5, 6.4e-5],
+    [ 50,18.70, 168.0,   719, 100, 1.42e-5, 5.0e-5],
+    [ 60,23.60, 234.0,   608,  56, 1.51e-5, 3.7e-5]
+  ],
+  R452A: [
+    // R32/R125/R1234yf (11/59/30%) - Chemours Opteon XP44
+    [-50, 1.00,   6.4,  1360, 213, 1.20e-5, 2.00e-4],
+    [-40, 1.55,   9.8,  1320, 205, 1.22e-5, 1.80e-4],
+    [-30, 2.29,  14.6,  1277, 196, 1.24e-5, 1.62e-4],
+    [-20, 3.28,  21.3,  1231, 185, 1.26e-5, 1.45e-4],
+    [-10, 4.59,  30.5,  1183, 173, 1.29e-5, 1.28e-4],
+    [  0, 6.26,  42.5,  1131, 160, 1.32e-5, 1.13e-4],
+    [ 10, 8.36,  58.4,  1075, 146, 1.35e-5, 9.8e-5],
+    [ 20,10.97,  79.3,  1016, 129, 1.39e-5, 8.4e-5],
+    [ 30,14.16, 107.4,   950, 110, 1.43e-5, 7.1e-5],
+    [ 40,18.03, 145.1,   877,  87, 1.48e-5, 5.8e-5],
+    [ 50,22.68, 196.6,   793,  58, 1.55e-5, 4.6e-5],
+    [ 60,28.25, 270.0,   690,  23, 1.65e-5, 3.5e-5]
+  ],
+  R513A: [
+    // R1234yf/R134a (56/44%) - Chemours Opteon XP10
+    [-50, 0.39,   2.6,  1338, 217, 1.08e-5, 2.25e-4],
+    [-40, 0.67,   4.5,  1293, 210, 1.10e-5, 2.02e-4],
+    [-30, 1.09,   7.3,  1246, 201, 1.12e-5, 1.80e-4],
+    [-20, 1.69,  11.5,  1196, 191, 1.14e-5, 1.59e-4],
+    [-10, 2.52,  17.3,  1143, 180, 1.17e-5, 1.39e-4],
+    [  0, 3.63,  25.4,  1086, 168, 1.20e-5, 1.21e-4],
+    [ 10, 5.08,  36.4,  1025, 154, 1.23e-5, 1.04e-4],
+    [ 20, 6.91,  51.4,   959, 138, 1.27e-5, 8.8e-5],
+    [ 30, 9.20,  71.9,   886, 119, 1.31e-5, 7.3e-5],
+    [ 40,11.99,  99.5,   805,  96, 1.36e-5, 5.9e-5],
+    [ 50,15.39, 137.6,   710,  67, 1.43e-5, 4.6e-5],
+    [ 60,19.54, 191.0,   596,  31, 1.52e-5, 3.4e-5]
+  ],
+  R449A: [
+    // R32/R125/R1234yf/R134a (24.3/24.7/25.3/25.7%) - Chemours Opteon XP40
+    [-50, 1.94,  10.5,  1290, 258, 1.20e-5, 1.90e-4],
+    [-40, 2.87,  15.5,  1247, 250, 1.22e-5, 1.72e-4],
+    [-30, 4.09,  22.2,  1201, 240, 1.24e-5, 1.55e-4],
+    [-20, 5.67,  31.0,  1153, 229, 1.27e-5, 1.39e-4],
+    [-10, 7.68,  42.9,  1101, 217, 1.30e-5, 1.24e-4],
+    [  0,10.20,  58.4,  1046, 203, 1.33e-5, 1.10e-4],
+    [ 10,13.20,  78.3,   987, 188, 1.36e-5, 9.6e-5],
+    [ 20,16.90, 103.8,   924, 170, 1.40e-5, 8.3e-5],
+    [ 30,21.20, 136.5,   854, 150, 1.44e-5, 7.0e-5],
+    [ 40,26.30, 179.0,   776, 126, 1.49e-5, 5.8e-5],
+    [ 50,32.30, 237.0,   684,  96, 1.55e-5, 4.6e-5],
+    [ 60,39.30, 325.0,   570,  58, 1.63e-5, 3.5e-5]
+  ]
+};
+
+// Linear interpolation from lookup table
+// col: 0=T, 1=p_bar, 2=rhoV, 3=rhoL, 4=hfg, 5=muV, 6=muL
+function interpSat(rk, t, col) {
+  const tbl = SAT_DATA[rk];
+  if (!tbl) return 1e-3;
+  const n = tbl.length;
+  if (n === 0) return 1e-3;
+  // Below lower bound: linear extrapolation (clamped to positive)
+  if (t <= tbl[0][0]) {
+    const dt = tbl[1][0] - tbl[0][0];
+    const dv = tbl[1][col] - tbl[0][col];
+    return Math.max(1e-6, tbl[0][col] + (t - tbl[0][0]) * dv / dt);
+  }
+  // Above upper bound: linear extrapolation (clamped)
+  if (t >= tbl[n-1][0]) {
+    const dt = tbl[n-1][0] - tbl[n-2][0];
+    const dv = tbl[n-1][col] - tbl[n-2][col];
+    return Math.max(1e-6, tbl[n-1][col] + (t - tbl[n-1][0]) * dv / dt);
+  }
+  // Interpolate within table
+  for (let i = 0; i < n - 1; i++) {
+    if (t >= tbl[i][0] && t <= tbl[i+1][0]) {
+      const frac = (t - tbl[i][0]) / (tbl[i+1][0] - tbl[i][0]);
+      return tbl[i][col] + frac * (tbl[i+1][col] - tbl[i][col]);
+    }
+  }
+  return tbl[0][col];
+}
+
+// RM: Compatibility wrapper using interpolation functions
+// muV and muL are now FUNCTIONS of temperature (not constants)
+const RM = {
+  R744:    { name:'R744 (CO₂)',  rhoV:t=>interpSat('R744',t,2),    rhoL:t=>interpSat('R744',t,3),    muV:t=>interpSat('R744',t,5),    muL:t=>interpSat('R744',t,6),    hfg:t=>Math.max(1,interpSat('R744',t,4)),    pSat:t=>Math.max(0.01,interpSat('R744',t,1)),    maxBar:120, mat:'K65-Cu / Edelstahl', A2L:false, note:'K65-Rohre (PN 120) erforderlich! Δp-Limit +15% zulässig (CO₂-Anlagen).', dpF:1.15 },
+  R1234yf: { name:'R1234yf',          rhoV:t=>interpSat('R1234yf',t,2), rhoL:t=>interpSat('R1234yf',t,3), muV:t=>interpSat('R1234yf',t,5), muL:t=>interpSat('R1234yf',t,6), hfg:t=>Math.max(1,interpSat('R1234yf',t,4)), pSat:t=>Math.max(0.01,interpSat('R1234yf',t,1)), maxBar:30,  mat:'Cu EN 12735',       A2L:true,  note:'A2L: EN 378 Füllmengenbegrenzung, Leckageerkennung.',        dpF:1.0  },
+  R455A:   { name:'R455A',             rhoV:t=>interpSat('R455A',t,2),   rhoL:t=>interpSat('R455A',t,3),   muV:t=>interpSat('R455A',t,5),   muL:t=>interpSat('R455A',t,6),   hfg:t=>Math.max(1,interpSat('R455A',t,4)),   pSat:t=>Math.max(0.01,interpSat('R455A',t,1)),   maxBar:32,  mat:'Cu EN 12735',       A2L:true,  note:'A2L + Temperaturglide ~5 K. Δp auf Taupunkt beziehen.',       dpF:1.0  },
+  R452A:   { name:'R452A',             rhoV:t=>interpSat('R452A',t,2),   rhoL:t=>interpSat('R452A',t,3),   muV:t=>interpSat('R452A',t,5),   muL:t=>interpSat('R452A',t,6),   hfg:t=>Math.max(1,interpSat('R452A',t,4)),   pSat:t=>Math.max(0.01,interpSat('R452A',t,1)),   maxBar:35,  mat:'Cu EN 12735',       A2L:true,  note:'A2L: EN 378 Sicherheitsanforderungen.',                       dpF:1.0  },
+  R513A:   { name:'R513A',             rhoV:t=>interpSat('R513A',t,2),   rhoL:t=>interpSat('R513A',t,3),   muV:t=>interpSat('R513A',t,5),   muL:t=>interpSat('R513A',t,6),   hfg:t=>Math.max(1,interpSat('R513A',t,4)),   pSat:t=>Math.max(0.01,interpSat('R513A',t,1)),   maxBar:32,  mat:'Cu EN 12735',       A2L:false, note:'A1-Kältemittel (HFO/HFC-Blend, R134a-Ersatz).',               dpF:1.0  },
+  R449A:   { name:'R449A',             rhoV:t=>interpSat('R449A',t,2),   rhoL:t=>interpSat('R449A',t,3),   muV:t=>interpSat('R449A',t,5),   muL:t=>interpSat('R449A',t,6),   hfg:t=>Math.max(1,interpSat('R449A',t,4)),   pSat:t=>Math.max(0.01,interpSat('R449A',t,1)),   maxBar:35,  mat:'Cu EN 12735',       A2L:false, note:'R404A-Nachfolger, niedrigerer GWP. Geeignet für TK/NK.',      dpF:1.0  }
+};
+
+// CU-Rohre EN 12735 / DIN EN 12449
+const PIPES = [
+  {od:6,  wt:1.0, id:4.0 }, {od:8,  wt:1.0, id:6.0 }, {od:10, wt:1.0, id:8.0 },
+  {od:12, wt:1.0, id:10.0}, {od:15, wt:1.0, id:13.0}, {od:18, wt:1.0, id:16.0},
+  {od:22, wt:1.0, id:20.0}, {od:28, wt:1.5, id:25.0}, {od:35, wt:1.5, id:32.0},
+  {od:42, wt:1.5, id:39.0}, {od:54, wt:2.0, id:50.0}, {od:67, wt:2.0, id:63.0},
+  {od:76, wt:2.0, id:72.0}, {od:89, wt:2.5, id:84.0}
+];
+const NP = PIPES.length;
+
+// Helper functions
+const area    = id => Math.PI * Math.pow(id/2000, 2);
+const eqBend  = od => Math.max(0.15, od * 0.022);
+const eqShut  = od => Math.max(0.08, od * 0.004);
+const eqSol   = od => Math.max(1.2,  od * 0.095);
+const dewPt   = (ta,rh) => { const a=17.625,b=243.04,al=Math.log(rh/100)+a*ta/(b+ta); return b*al/(a-al); };
+const mdotFn  = (Q,hfg) => Q*1000 / (hfg*1000);
+
+function dpCalc(m, rho, mu, id_mm, lenEq, hfg, tMed) {
+  const id=id_mm/1000, A=area(id_mm), v=m/(rho*A);
+  if (v <= 0) return {dpBar:0, dpK:0, v:0};
+  const Re = rho*v*id / Math.max(mu, 1e-9);
+  const f  = Re<2300 ? 64/Math.max(Re,1) : Re<4000 ? 0.028 : 0.316*Math.pow(Re,-0.25);
+  const dpPa = f*(lenEq/id)*0.5*rho*v*v;
+  const dTdp = (tMed+273.15) / (rho * hfg * 1000);
+  return { dpBar: Math.max(0,dpPa/1e5), dpK: Math.max(0,dpPa*dTdp), v };
+}
+
+function dpLim(type, len, mode, rk) {
+  const f = rk==='R744' ? 1.15 : 1.0;
+  if (type==='saug')  return (mode==='NK' ? (len<=25?1.5:len<=75?2.0:3.0) : (len<=25?2.0:len<=75?2.5:3.5)) * f;
+  if (type==='druck') return len<=10 ? 0.75 : len<=15 ? 1.0 : 1.3;
+  if (type==='fl')    return len<=25 ? 0.8  : len<=50 ? 1.1 : 1.3;
+  return 1.0;
+}
+
+function vLim(type, mode, h) {
+  if (type==='saug')  return { min: h>0 ? 7.6 : 3.8, max: mode==='NK' ? 20.0 : 18.0 };
+  if (type==='druck') return { min: h>0 ? 5.0 : 3.0, max: 12.0 };
+  if (type==='fl')    return { min: 0,                max: 1.0  };
+  return { min: 0, max: 99 };
+}
+
+// CORE CALCULATION - now uses muV(tMed) / muL(tMed) as temperature-dependent
+function calcOne(idx, type, mode, rk, Qkw, len, nb, ns, nsol, h) {
+  const ref  = RM[rk];
+  const t0   = parseFloat(document.getElementById('t0').value);
+  const tc   = parseFloat(document.getElementById('tc').value);
+  const tMed = type==='druck' ? tc : t0;
+  const isG  = type==='saug' || type==='druck';
+  const rho  = isG ? ref.rhoV(tMed) : ref.rhoL(tMed);
+  const mu   = isG ? ref.muV(tMed)  : ref.muL(tMed);   // TEMPERATURE-DEPENDENT
+  const hfg  = ref.hfg(t0);
+  const psat = ref.pSat(tMed);
+  const m    = mdotFn(Qkw, hfg);
+  const p    = PIPES[idx];
+  const lenEq = len + nb*eqBend(p.od) + ns*eqShut(p.od) + nsol*eqSol(p.od);
+  const v     = m / (rho * area(p.id));
+  const {dpBar, dpK} = dpCalc(m, rho, mu, p.id, lenEq, hfg, tMed);
+  const dMax = dpLim(type, len, mode, rk);
+  const vl   = vLim(type, mode, h);
+  const vOk  = v<=vl.max && (vl.min===0 || v>=vl.min);
+  const dpOk = dpK <= dMax;
+  const status = vOk&&dpOk ? 'ok' : !vOk&&!dpOk ? 'err' : 'warn';
+  const viol = [];
+  if (v > vl.max)              viol.push('v='+v.toFixed(2)+' m/s > v_max ('+vl.max+' m/s)');
+  if (vl.min>0 && v < vl.min) viol.push('v='+v.toFixed(2)+' m/s < v_min ('+vl.min+' m/s) — Ölrückführung!');
+  if (dpK > dMax)              viol.push('Δp='+dpK.toFixed(3)+' K > Δp_max ('+dMax.toFixed(2)+' K)');
+  return {p, idx, v, dpBar, dpK, dMax, vMin:vl.min, vMax:vl.max, lenEq, rho, m, psat, hfg, tMed, status, viol};
+}
+
+function autoSel(type, mode, rk, Qkw, len, nb, ns, nsol, h) {
+  const all  = PIPES.map((_,i) => calcOne(i, type, mode, rk, Qkw, len, nb, ns, nsol, h));
+  const perf = all.filter(r => r.status==='ok');
+  if (perf.length) return {...perf[0], autoIdx:perf[0].idx};
+  const vok  = all.filter(r => r.v<=r.vMax && (r.vMin===0 || r.v>=r.vMin));
+  if (vok.length) { vok.sort((a,b)=>a.dpK-b.dpK); return {...vok[0], autoIdx:vok[0].idx}; }
+  const vmok = all.filter(r => r.v<=r.vMax);
+  if (vmok.length) { vmok.sort((a,b)=>a.dpK-b.dpK); return {...vmok[0], autoIdx:vmok[0].idx}; }
+  return {...all[NP-1], autoIdx:NP-1};
+}
+
+function autoSelFL(mode, rk, Qkw, len, nb, ns, nsol, subcool) {
+  if (subcool) {
+    const all = PIPES.map((_,i) => {
+      const r = calcOne(i, 'fl', mode, rk, Qkw, len, nb, ns, nsol, 0);
+      const ok = r.v <= 1.6 && r.dpK <= 3.8;
+      return {...r, dMax:3.8, vMax:1.6, status: ok?'ok':'warn', subcool:true};
+    });
+    const perf = all.filter(r=>r.status==='ok');
+    if (perf.length) return {...perf[0], autoIdx:perf[0].idx};
+    return {...all[all.length-1], autoIdx:all.length-1};
+  }
+  return autoSel('fl', mode, rk, Qkw, len, nb, ns, nsol, 0);
+}
+
+// DOUBLE SUCTION RISER - uses temperature-dependent mu
+function calcDSR(type, mode, rk, Qkw, len, nb, ns, nsol, h) {
+  const ref  = RM[rk];
+  const t0   = parseFloat(document.getElementById('t0').value);
+  const tc   = parseFloat(document.getElementById('tc').value);
+  const tMed = type==='druck' ? tc : t0;
+  const rho  = ref.rhoV(tMed);
+  const mu   = ref.muV(tMed);   // TEMPERATURE-DEPENDENT
+  const hfg  = ref.hfg(t0);
+  const psat = ref.pSat(tMed);
+  const m    = mdotFn(Qkw, hfg);
+  const dMax = dpLim(type, len, mode, rk);
+  const vl   = vLim(type, mode, h);
+  let smallIdx = NP-1;
+  for (let i = 0; i < NP; i++) {
+    const p = PIPES[i];
+    const v = m / (rho * area(p.id));
+    if (v >= vl.min) { smallIdx = i; break; }
+  }
+  const pS    = PIPES[smallIdx];
+  const leqS  = len + nb*eqBend(pS.od) + ns*eqShut(pS.od) + nsol*eqSol(pS.od);
+  const vS    = m / (rho * area(pS.id));
+  const dpS   = dpCalc(m, rho, mu, pS.id, leqS, hfg, tMed);
+  let largeIdx = Math.min(smallIdx + 1, NP-1);
+  for (let i = smallIdx+1; i < NP; i++) {
+    const pL   = PIPES[i];
+    const aL   = area(pL.id);
+    const aS   = area(pS.id);
+    const aSum = aL + aS;
+    const mL   = m * aL / aSum;
+    const leqL = len + nb*eqBend(pL.od) + ns*eqShut(pL.od) + nsol*eqSol(pL.od);
+    const vL   = mL / (rho * aL);
+    const dpL  = dpCalc(mL, rho, mu, pL.id, leqL, hfg, tMed);
+    if (vL <= vl.max && dpL.dpK <= dMax) { largeIdx = i; break; }
+    largeIdx = i;
+  }
+  const pL    = PIPES[largeIdx];
+  const aL    = area(pL.id);
+  const aS    = area(pS.id);
+  const aSum  = aL + aS;
+  const mL    = m * aL / aSum;
+  const leqL  = len + nb*eqBend(pL.od) + ns*eqShut(pL.od) + nsol*eqSol(pL.od);
+  const vL    = mL / (rho * aL);
+  const dpL   = dpCalc(mL, rho, mu, pL.id, leqL, hfg, tMed);
+  const vS_alone = m / (rho * aS);
+  const vMinOk  = vS_alone >= vl.min;
+  const vMaxOk  = vL <= vl.max;
+  const dpLok   = dpL.dpK <= dMax;
+  return {
+    small: { p: pS, idx: smallIdx, v_alone: vS_alone, v_fullload: m * aS/aSum / (rho*aS), dpBar: dpS.dpBar, dpK: dpS.dpK, dMax, vMin: vl.min, vMax: vl.max, lenEq: leqS, rho, m, psat, hfg, tMed },
+    large: { p: pL, idx: largeIdx, v_fullload: vL, v_combined: m/(rho*aSum), dpBar: dpL.dpBar, dpK: dpL.dpK, dMax, vMin: vl.min, vMax: vl.max, lenEq: leqL, rho, m: mL, psat, hfg, tMed },
+    vMinOk, vMaxOk, dpLok, vl, m, rho, hfg, psat, tMed, dMax, aSmall: aS, aLarge: aL
+  };
+}
+
+// STATE
+const OVR = { saug:null, druck:null, fl:null, kond:null, saugL:null, saugS:null, druckL:null, druckS:null, saugMain:null, saugRiser:null, saugSpeed:null, druckMain:null, druckRiser:null, druckSpeed:null, flMain:null };
+const DSR_ON = {saug:false, druck:false};
+const DIR = {saug:'up', druck:'up', fl:'down'};
+let LR = {}, curMode = 'NK';
+
+function setMode(mode, btn) {
+  curMode = mode;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('t0').value = mode==='NK' ? -8 : -30;
+  document.getElementById('tc').value = 45;
+}
+function setDir(type, dir, btn) {
+  DIR[type] = dir;
+  const groupMap = {saug:['dirSaugUp','dirSaugDown'], druck:['dirDruckUp','dirDruckDown'], fl:['dirFlDown','dirFlUp']};
+  groupMap[type].forEach(id => { const el=document.getElementById(id); if(el) el.classList.toggle('active', el===btn); });
+}
+function onRefChange() {
+  const rk = document.getElementById('refrigerant').value;
+  if (rk==='R744') document.getElementById('t0').value = curMode==='NK' ? -10 : -35;
+}
+function adjPipe(key, delta) {
+  if (!LR.saug) return;
+  let baseIdx;
+  if      (key==='saugL')  baseIdx = LR.dsr.saug.large.idx;
+  else if (key==='saugS')  baseIdx = LR.dsr.saug.small.idx;
+  else if (key==='druckL') baseIdx = LR.dsr.druck.large.idx;
+  else if (key==='druckS') baseIdx = LR.dsr.druck.small.idx;
+  else                     baseIdx = LR[key]?.autoIdx ?? 0;
+  const cur = OVR[key] !== null ? OVR[key] : baseIdx;
+  OVR[key] = Math.max(0, Math.min(NP-1, cur + delta));
+  render();
+}
+function setPipe(key, val) {
+  if (!LR.saug) return;
+  const idx = parseInt(val);
+  let baseIdx;
+  if      (key==='saugL')  baseIdx = LR.dsr.saug.large.idx;
+  else if (key==='saugS')  baseIdx = LR.dsr.saug.small.idx;
+  else if (key==='druckL') baseIdx = LR.dsr.druck.large.idx;
+  else if (key==='druckS') baseIdx = LR.dsr.druck.small.idx;
+  else                     baseIdx = LR[key]?.autoIdx ?? 0;
+  OVR[key] = (idx === baseIdx) ? null : idx;
+  render();
+}
+function resetPipe(key) { if (!LR.saug) return; OVR[key] = null; render(); }
+function toggleDSR(type) { DSR_ON[type] = !DSR_ON[type]; OVR[type+'L'] = null; OVR[type+'S'] = null; render(); }
+
+// 3-STRANG (SPLIT LINE) - uses temperature-dependent mu
+function calcStrangOne(type, mode, rk, Qkw, lH, lV, mainIdx, riserIdx, speedIdx, nb, ns, nsol, dir) {
+  const ref   = RM[rk];
+  const t0    = parseFloat(document.getElementById('t0').value);
+  const tc    = parseFloat(document.getElementById('tc').value);
+  const tMed  = type==='druck' ? tc : t0;
+  const isG   = type==='saug' || type==='druck';
+  const rho   = isG ? ref.rhoV(tMed) : ref.rhoL(tMed);
+  const mu    = isG ? ref.muV(tMed)  : ref.muL(tMed);   // TEMPERATURE-DEPENDENT
+  const hfg   = ref.hfg(t0);
+  const m     = mdotFn(Qkw, hfg);
+  const dMax  = dpLim(type, lH + lV, mode, rk);
+  const isUp  = dir === 'up';
+  const vMinH = type==='saug' ? 3.8 : type==='druck' ? 3.0 : 0;
+  const vMinV = isUp ? (type==='saug' ? 7.6 : type==='druck' ? 5.0 : 0) : 0;
+  const vMaxG = type==='saug' ? (mode==='NK' ? 20 : 18) : type==='druck' ? 12 : 1.0;
+  const pMain  = PIPES[mainIdx]; const pRiser = PIPES[riserIdx]; const pSpeed = PIPES[speedIdx];
+  const aMain  = area(pMain.id); const aRiser = area(pRiser.id); const aSpeed = area(pSpeed.id);
+  const aVert  = aRiser + aSpeed;
+  const leqMain  = lH + nb*eqBend(pMain.od) + ns*eqShut(pMain.od) + nsol*eqSol(pMain.od);
+  const vMain    = m / (rho * aMain);
+  const dpMain   = dpCalc(m, rho, mu, pMain.id, leqMain, hfg, tMed);
+  const mRiser   = m * aRiser / aVert;
+  const mSpeed   = m * aSpeed / aVert;
+  const leqRiser = lV + Math.round(nb*0.4)*eqBend(pRiser.od);
+  const leqSpeed = lV + Math.round(nb*0.4)*eqBend(pSpeed.od);
+  const vRiserFull = mRiser / (rho * aRiser);
+  const vSpeedFull = mSpeed / (rho * aSpeed);
+  const dpRiserFull = dpCalc(mRiser, rho, mu, pRiser.id, leqRiser, hfg, tMed);
+  const dpVertFull = dpRiserFull;
+  const leqSpeedAlone = lV + Math.round(nb*0.4)*eqBend(pSpeed.od);
+  const vSpeedAlone  = m / (rho * aSpeed);
+  const dpSpeedAlone = dpCalc(m, rho, mu, pSpeed.id, leqSpeedAlone, hfg, tMed);
+  const dpTotalFull  = dpMain.dpK + dpVertFull.dpK;
+  const dpTotalPart  = dpMain.dpK + dpSpeedAlone.dpK;
+  const vSpeedOelOK = vSpeedAlone >= vMinV && vMinV > 0 || vMinV === 0;
+  return {
+    pMain, pRiser, pSpeed, mainIdx, riserIdx, speedIdx,
+    vMain, dpMain: dpMain.dpK, dpMainBar: dpMain.dpBar, vMinH, vMaxG,
+    vMainOK: vMain <= vMaxG && (vMinH === 0 || vMain >= vMinH),
+    vRiserFull, vSpeedFull, dpVertFull: dpVertFull.dpK,
+    vRiserFullOK: vRiserFull <= vMaxG,
+    vSpeedAlone, dpSpeedAlone: dpSpeedAlone.dpK, vMinV, vSpeedOelOK,
+    dpTotalFull, dpTotalPart, dMax, rho, m, hfg, tMed, lH, lV, dir,
+    aMain, aRiser, aSpeed
+  };
+}
+
+function autoStrang(type, mode, rk, Qkw, lH, lV, nb, ns, nsol, dir) {
+  const ref   = RM[rk];
+  const t0    = parseFloat(document.getElementById('t0').value);
+  const tc    = parseFloat(document.getElementById('tc').value);
+  const tMed  = type==='druck' ? tc : t0;
+  const rho   = ref.rhoV(tMed);
+  const hfg   = ref.hfg(t0);
+  const m     = mdotFn(Qkw, hfg);
+  const isUp  = dir === 'up';
+  const vMinH = type==='saug' ? 3.8 : type==='druck' ? 3.0 : 0;
+  const vMinV = isUp ? (type==='saug' ? 7.6 : type==='druck' ? 5.0 : 0) : 0;
+  const vMax  = type==='saug' ? (mode==='NK' ? 20 : 18) : type==='druck' ? 12 : 1.0;
+  let speedIdx = 0;
+  if (vMinV > 0) {
+    for (let i = 0; i < NP; i++) { if (m / (rho * area(PIPES[i].id)) >= vMinV) { speedIdx = i; break; } }
+  } else { speedIdx = autoSel(type, mode, rk, Qkw, lV, nb, ns, nsol, 0).autoIdx; }
+  let riserIdx = Math.min(speedIdx + 1, NP - 1);
+  for (let i = speedIdx + 1; i < NP; i++) {
+    const aS = area(PIPES[speedIdx].id), aR = area(PIPES[i].id);
+    if (m / (rho * (aS + aR)) <= vMax) { riserIdx = i; break; }
+    riserIdx = i;
+  }
+  if (lV === 0) { riserIdx = speedIdx; }
+  const mainIdx = lH > 0 ? autoSel(type, mode, rk, Qkw, lH, nb, ns, nsol, 0).autoIdx : speedIdx;
+  return { mainIdx, riserIdx, speedIdx };
+}
+
+function updateStrangCalc(type) {
+  if (!LR.inp) return;
+  const i = LR.inp;
+  const isS = type === 'saug';
+  const lH = isS ? i.lSH : i.lDH;
+  const lV = isS ? i.lSV : i.lDV;
+  const dir = DIR[type];
+  const mk = t => type + t;
+  const mainIdx  = OVR[mk('Main')]  !== null ? OVR[mk('Main')]  : LR.strang[type].mainIdx;
+  const riserIdx = OVR[mk('Riser')] !== null ? OVR[mk('Riser')] : LR.strang[type].riserIdx;
+  const speedIdx = OVR[mk('Speed')] !== null ? OVR[mk('Speed')] : LR.strang[type].speedIdx;
+  LR.strangCalc[type] = calcStrangOne(type, curMode, i.rk, i.Qe, lH, lV, mainIdx, riserIdx, speedIdx, i.nb, i.ns, i.nsol, dir);
+}
+
+function calculate() {
+  Object.keys(OVR).forEach(k => OVR[k] = null);
+  DSR_ON.saug = false; DSR_ON.druck = false;
+  const rk  = document.getElementById('refrigerant').value;
+  const Q   = parseFloat(document.getElementById('qo').value);
+  const gzf = parseFloat(document.getElementById('gzf').value);
+  const Qe  = Q * gzf;
+  const lSH = parseFloat(document.getElementById('lenSaugH').value)||0;
+  const lSV = parseFloat(document.getElementById('lenSaugV').value)||0;
+  const lDH = parseFloat(document.getElementById('lenDruckH').value)||0;
+  const lDV = parseFloat(document.getElementById('lenDruckV').value)||0;
+  const inp = {
+    rk, Q, gzf, Qe,
+    t0:   parseFloat(document.getElementById('t0').value),
+    tc:   parseFloat(document.getElementById('tc').value),
+    tamb: parseFloat(document.getElementById('tamb').value),
+    rh:   parseFloat(document.getElementById('rh').value),
+    lSH, lSV, lS: Math.max(1, lSH + lSV),
+    lDH, lDV, lD: Math.max(0.5, lDH + lDV),
+    lF:   parseFloat(document.getElementById('lenFl').value),
+    lK:   parseFloat(document.getElementById('lenKond').value),
+    h: lSV, hD: lDV,
+    subcool: parseInt(document.getElementById('subcool').value),
+    nb:   parseInt(document.getElementById('bends').value),
+    ns:   parseInt(document.getElementById('shutoff').value),
+    nsol: parseInt(document.getElementById('solenoid').value),
+  };
+  inp.lFH = inp.lF; inp.lKH = inp.lK;
+  LR.inp  = inp;
+  LR.saug = autoSel('saug',  curMode, rk, Qe, inp.lS, inp.nb, inp.ns, inp.nsol, lSV);
+  LR.druck= autoSel('druck', curMode, rk, Qe, inp.lD, inp.nb, inp.ns, inp.nsol, lDV);
+  LR.fl   = autoSelFL(curMode, rk, Qe, inp.lF, inp.nb, inp.ns, inp.nsol, inp.subcool);
+  LR.kond = autoSel('kond',  curMode, rk, Qe, inp.lK, 2, 0, 0, 0);
+  LR.dsr  = {
+    saug:  calcDSR('saug',  curMode, rk, Qe, inp.lS, inp.nb, inp.ns, inp.nsol, lSV),
+    druck: calcDSR('druck', curMode, rk, Qe, inp.lD, inp.nb, inp.ns, inp.nsol, lDV),
+  };
+  LR.strang = {
+    saug:  autoStrang('saug',  curMode, rk, Qe, lSH, lSV, inp.nb, inp.ns, inp.nsol, DIR.saug),
+    druck: autoStrang('druck', curMode, rk, Qe, lDH, lDV, inp.nb, inp.ns, inp.nsol, DIR.druck),
+  };
+  LR.strangCalc = {};
+  updateStrangCalc('saug');
+  updateStrangCalc('druck');
+  LR.hasCalc = true;
+  document.getElementById('btnXL').style.display = 'block';
+  render();
+}
+
+function isoT(tMed, ta, rh) {
+  const td = dewPt(ta, rh);
+  let s = Math.round((0.033/8 * (ta-tMed)/Math.max(1,ta-td) * 1000) / 5) * 5;
+  s = Math.max(9, Math.min(50, s));
+  if (tMed < -15) s = Math.max(25, s);
+  else if (tMed < 0) s = Math.max(13, s);
+  return s;
+}
+
+// resDSR helper - uses temperature-dependent mu
+function resDSR_fn(type, i) {
+  const d     = LR.dsr[type];
+  const lIdx  = OVR[type+'L'] !== null ? OVR[type+'L'] : d.large.idx;
+  const sIdx  = OVR[type+'S'] !== null ? OVR[type+'S'] : d.small.idx;
+  const lMan  = OVR[type+'L'] !== null && OVR[type+'L'] !== d.large.idx;
+  const sMan  = OVR[type+'S'] !== null && OVR[type+'S'] !== d.small.idx;
+  const lenMap= {saug:i.lS, druck:i.lD};
+  const len   = lenMap[type];
+  const ref2  = RM[i.rk];
+  const t0    = i.t0, tc = i.tc;
+  const tMed  = type==='druck' ? tc : t0;
+  const rho   = ref2.rhoV(tMed);
+  const mu    = ref2.muV(tMed);   // TEMPERATURE-DEPENDENT
+  const hfg   = ref2.hfg(t0);
+  const psat  = ref2.pSat(tMed);
+  const m     = mdotFn(i.Qe, hfg);
+  const dMax  = dpLim(type, len, curMode, i.rk);
+  const hForType = type==='saug' ? (i.lSV||0) : (i.lDV||0);
+  const vl    = vLim(type, curMode, hForType);
+  const pS = PIPES[sIdx], pL = PIPES[lIdx];
+  const aS = area(pS.id), aL = area(pL.id), aSum = aL + aS;
+  const leqS  = len + i.nb*eqBend(pS.od) + i.ns*eqShut(pS.od) + i.nsol*eqSol(pS.od);
+  const vS_alone = m / (rho * aS);
+  const dpS   = dpCalc(m, rho, mu, pS.id, leqS, hfg, tMed);
+  const mL    = m * aL / aSum;
+  const leqL  = len + i.nb*eqBend(pL.od) + i.ns*eqShut(pL.od) + i.nsol*eqSol(pL.od);
+  const vL    = mL / (rho * aL);
+  const dpL   = dpCalc(mL, rho, mu, pL.id, leqL, hfg, tMed);
+  return {
+    small: { p:pS, idx:sIdx, v_alone:vS_alone, dpBar:dpS.dpBar, dpK:dpS.dpK, dMax, vMin:vl.min, vMax:vl.max, lenEq:leqS, rho, m, psat, hfg, tMed, isManual:sMan, autoIdx:d.small.idx },
+    large: { p:pL, idx:lIdx, v_fullload:vL,    dpBar:dpL.dpBar, dpK:dpL.dpK, dMax, vMin:vl.min, vMax:vl.max, lenEq:leqL, rho, m:mL, psat, hfg, tMed, isManual:lMan, autoIdx:d.large.idx },
+    vMinOk: vS_alone>=vl.min, vMaxOk: vL<=vl.max, dpLok: dpL.dpK<=dMax, vl, m
+  };
+}
+
+// RENDER
+function render() {
+  if (!LR.saug) return;
+  const i   = LR.inp;
+  const ref = RM[i.rk];
+  const p0  = ref.pSat(i.t0), pc = ref.pSat(i.tc), td = dewPt(i.tamb, i.rh);
+  const iso = { saug:isoT(i.t0,i.tamb,i.rh), druck:isoT(i.tc,i.tamb,i.rh), fl:isoT(i.t0,i.tamb,i.rh), kond:isoT(i.tc*.6,i.tamb,i.rh) };
+  const hydKPa = ref.rhoL(i.t0)*9.81*(i.lSV||0)/1000;
+  const hydBar = hydKPa/100;
+
+  function res(type) {
+    const lenMap = {saug:i.lS, druck:i.lD, fl:i.lF, kond:i.lK};
+    const hMap   = {saug:i.lSV||0, druck:i.lDV||0, fl:0, kond:0};
+    const idx = OVR[type] !== null ? OVR[type] : LR[type].autoIdx;
+    const r   = calcOne(idx, type, curMode, i.rk, i.Qe, lenMap[type], i.nb, i.ns, i.nsol, hMap[type]);
+    let extra = {};
+    if (type==='fl' && i.subcool) { extra = {dMax:3.8, vMax:1.6}; }
+    return {...r, ...extra, isManual: OVR[type]!==null && OVR[type]!==LR[type].autoIdx, autoIdx:LR[type].autoIdx};
+  }
+  function resDSR(type) { return resDSR_fn(type, i); }
+
+  const cSaug  = res('saug');
+  const cDruck = res('druck');
+  const cFl    = res('fl');
+  const cKond  = res('kond');
+
+  // Fix 5: Effective evaporation temperature after suction-side pressure loss
+  const dpK_saug_total = cSaug.dpK;
+  const t0_eff = i.t0 - dpK_saug_total;
+  const t0_effStr = t0_eff.toFixed(1);
+
+  // Stoffdaten-Info fuer aktuelles Kaeltemittel und Temperaturen
+  const rhoV_t0 = ref.rhoV(i.t0), rhoL_t0 = ref.rhoL(i.t0);
+  const muV_t0  = ref.muV(i.t0),  muL_t0  = ref.muL(i.t0);
+  const hfg_val = ref.hfg(i.t0);
+  const rhoV_tc = ref.rhoV(i.tc), muV_tc  = ref.muV(i.tc);
+
+  const modeTag = curMode==='NK'
+    ? '<span style="background:rgba(0,200,150,.12);color:var(--green);border:1px solid rgba(0,200,150,.3);padding:2px 9px;border-radius:3px;font-size:10px;font-family:\'IBM Plex Mono\',monospace;font-weight:600;">NK</span>'
+    : '<span style="background:rgba(54,169,225,.12);color:var(--blue);border:1px solid rgba(54,169,225,.3);padding:2px 9px;border-radius:3px;font-size:10px;font-family:\'IBM Plex Mono\',monospace;font-weight:600;">TK</span>';
+
+  let H = '';
+
+  // DRUCKE + STOFFDATEN
+  H += '<div class="card">'
+    + '<div class="card-title">&#9889; Betriebsdaten &mdash; ' + ref.name + ' ' + modeTag + '</div>'
+    + '<div class="pres-row">'
+    + '<div class="pres-card"><div class="pres-lbl">Verdampfungsdruck p&#8320;</div><div class="pres-val" style="color:var(--blue)">' + p0.toFixed(2) + ' <span style="font-size:11px;color:var(--muted)">bar</span></div><div class="pres-sub">t&#8320; = ' + i.t0 + '&deg;C</div></div>'
+    + '<div class="pres-card"><div class="pres-lbl">Kondensationsdruck pc</div><div class="pres-val" style="color:var(--orange)">' + pc.toFixed(2) + ' <span style="font-size:11px;color:var(--muted)">bar</span></div><div class="pres-sub">tc = ' + i.tc + '&deg;C</div></div>'
+    + '<div class="pres-card"><div class="pres-lbl">Druckverh&auml;ltnis &pi;</div><div class="pres-val">' + (pc/p0).toFixed(2) + '</div><div class="pres-sub">pc / p&#8320;</div></div>'
+    + '<div class="pres-card"><div class="pres-lbl">Max. Betriebsdruck</div><div class="pres-val" style="color:' + (ref.maxBar>50?'var(--red)':'var(--text)') + '">' + ref.maxBar + ' <span style="font-size:11px;color:var(--muted)">bar</span></div><div class="pres-sub">' + ref.mat + '</div></div>'
+    + '</div>';
+  // Interpolierte Stoffdaten anzeigen
+  H += '<div class="tealbox" style="font-size:10px;line-height:1.9;margin-top:10px;">'
+    + '<b>&#128202; Interpolierte Stoffdaten (REFPROP-Tabellen)</b><br>'
+    + 'Saugg. t&#8320;=' + i.t0 + '&deg;C: '
+    + '&#961;\'\'=' + rhoV_t0.toFixed(1) + ' kg/m&sup3; &nbsp;|&nbsp; '
+    + '&#961;\'=' + rhoL_t0.toFixed(0) + ' kg/m&sup3; &nbsp;|&nbsp; '
+    + 'h<sub>fg</sub>=' + hfg_val.toFixed(0) + ' kJ/kg &nbsp;|&nbsp; '
+    + '&mu;V=' + (muV_t0*1e5).toFixed(2) + '&times;10&#8315;&sup5; Pa&middot;s &nbsp;|&nbsp; '
+    + '&mu;L=' + (muL_t0*1e5).toFixed(2) + '&times;10&#8315;&sup5; Pa&middot;s<br>'
+    + 'Druckltg. tc=' + i.tc + '&deg;C: '
+    + '&#961;\'\'=' + rhoV_tc.toFixed(1) + ' kg/m&sup3; &nbsp;|&nbsp; '
+    + '&mu;V=' + (muV_tc*1e5).toFixed(2) + '&times;10&#8315;&sup5; Pa&middot;s'
+    + '</div>';
+  // Fix 5: Show effective evaporation temperature
+  const t0_effColor = t0_eff < i.t0 - 2 ? 'var(--orange)' : 'var(--green)';
+  H += '<div style="margin-top:8px;padding:8px 11px;background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:5px;font-size:11px;font-family:\'IBM Plex Mono\',monospace;line-height:1.8;">'
+    + '<b>&#8680; Effektive Verdampfungstemperatur t&#8320;,eff</b><br>'
+    + '&Delta;p_SL = ' + dpK_saug_total.toFixed(3) + ' K &rarr; '
+    + '<span style="color:' + t0_effColor + ';font-weight:600;">t&#8320;,eff = ' + t0_effStr + ' &deg;C</span>'
+    + ' <span style="color:var(--muted);font-size:9px;">(Eingestelltes t&#8320; = ' + i.t0 + ' &deg;C)</span>'
+    + '</div>';
+  if (ref.note) H += '<div class="infobox">' + ref.note + '</div>';
+  if (ref.A2L)  H += '<div class="warnbox">&#9888; A2L: EN 378 F&uuml;llmengengrenzen &middot; Leckageerkennung &middot; Sicherheitsabstand zu Z&uuml;ndquellen</div>';
+  H += '</div>';
+
+  // ROHRE
+  H += '<div class="card"><div class="card-title">&#128297; Rohrdimensionierung</div>';
+
+  // SL pipe row (Fix 3+4: embed renderSplit inside loop, Fix 4: SL first)
+  ['saug'].forEach(type => {
+    const r      = cSaug;
+    const dOn    = DSR_ON[type];
+    const badge  = 'b-saug';
+    const short  = 'SL';
+    const label  = 'Saugleitung (SL)';
+    const ovrKey = type;
+    const curIdx = OVR[ovrKey]!==null ? OVR[ovrKey] : LR[type].autoIdx;
+    const isMan  = OVR[ovrKey]!==null && OVR[ovrKey]!==LR[type].autoIdx;
+    const vMinR  = r.vMin;
+    const needsDSR = r.v < vMinR && vMinR > 0;
+    const lH = i.lSH;
+    const lV = i.lSV;
+    const dirParts = [];
+    if (lH > 0) dirParts.push('&#8594; ' + lH + ' m');
+    if (lV > 0) dirParts.push('&#8593; ' + lV + ' m');
+    const dirLabel = dirParts.join(' &middot; ');
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge ' + badge + '">' + short + '</span>'
+      + '<div class="dimblk"><div class="dm">' + r.p.od + ' mm <span class="u">OD</span></div>'
+      + '<div class="ds">WT ' + r.p.wt + ' mm &middot; ID ' + r.p.id + ' mm &middot; <span style="color:var(--muted)">' + label + '</span>'
+      + (dirLabel ? ' <span style="color:#36A9E1;font-size:9px;">' + dirLabel + '</span>' : '') + '</div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel' + (isMan?' manual':'') + '" onchange="setPipe(\''+ovrKey+'\',this.value)">' + odOpts + '</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+ovrKey+'\')">A</button>' : '')
+      + '</div></div>'
+      + velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
+
+    if (LR.hasCalc) {
+      const dsrTitle = 'Double Suction Riser';
+      H += '<div class="dsr-box"><div class="dsr-header">'
+        + '<span class="dsr-title">&#8645; ' + dsrTitle + '</span>'
+        + '<label class="dsr-toggle"><input type="checkbox" '+(dOn?'checked':'')+' onchange="toggleDSR(\''+type+'\')"><span class="dsr-toggle-lbl">Doppel-Steigleitung aktivieren</span></label>'
+        + '<button class="dsr-schbtn" onclick="showSchema(\''+type+'\')">&#128208; Schema</button>'
+        + '</div>';
+      if (!dOn) {
+        if (needsDSR) {
+          H += '<div class="warnbox" style="margin-top:9px;">&#9888; v = '+r.v.toFixed(2)+' m/s &lt; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung bei Teillast nicht gesichert!<br>&rarr; <b>Doppel-Steigleitung empfohlen.</b></div>';
+        } else {
+          const margin = (((r.v-vMinR)/vMinR)*100).toFixed(0);
+          H += '<div class="tealbox" style="margin-top:9px;">&#8505; v = '+r.v.toFixed(2)+' m/s &ge; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung gesichert (+'+margin+'%).</div>';
+        }
+      } else {
+        const d = resDSR(type);
+        const lIdx = d.large.idx, sIdx = d.small.idx;
+        const odOptsS = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===sIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].small.idx?' \u2713':'')+'</option>').join('');
+        const odOptsL = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===lIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].large.idx?' \u2713':'')+'</option>').join('');
+        H += '<div class="dsr-pipes">'
+          + '<div class="dsr-pipe small"><div class="dsr-pipe-lbl">&#11041; SPEED RISER &mdash; kleines Rohr (Teillast / &Ouml;lr&uuml;ckf&uuml;hrung)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.small.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.small.p.wt+' mm &middot; ID '+d.small.p.id+' mm</div></div>'
+          + pill2(d.small.v_alone >= d.small.vMin, d.small.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.small.isManual?' manual':'')+'" onchange="setPipe(\''+type+'S\',this.value)">'+odOptsS+'</select>'
+          + (d.small.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'S\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_small(d.small) + dpBar(d.small)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--teal);font-size:10px;">&larr; Teillast: volles &#7745; allein durch dieses Rohr &rarr; v_min erreichen!</div></div>'
+          + '<div class="dsr-pipe large"><div class="dsr-pipe-lbl">&#11041; MAIN RISER &mdash; gro&szlig;es Rohr (Vollast / Druckverlust)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.large.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.large.p.wt+' mm &middot; ID '+d.large.p.id+' mm</div></div>'
+          + pill2(d.large.v_fullload <= d.large.vMax && d.dpLok, d.large.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.large.isManual?' manual':'')+'" onchange="setPipe(\''+type+'L\',this.value)">'+odOptsL+'</select>'
+          + (d.large.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'L\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_large(d.large) + dpBar(d.large)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--blue);font-size:10px;">&larr; Vollast: &#7745; proportional Querschnitt &middot; v &le; v_max &middot; &Delta;p ok</div></div></div>';
+        if (d.vMinOk && d.vMaxOk && d.dpLok) {
+          H += '<div class="tealbox" style="margin-top:8px;font-size:11px;">&#10003; DSR korrekt dimensioniert:<br>Speed Riser '+d.small.p.od+' mm: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &ge; v_min '+d.small.vMin+' m/s &#10003;<br>Main Riser '+d.large.p.od+' mm: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &le; v_max '+d.large.vMax+' m/s &#10003; &middot; &Delta;p = '+d.large.dpK.toFixed(3)+' K &le; '+d.large.dMax.toFixed(2)+' K &#10003;</div>';
+        } else {
+          H += '<div class="warnbox" style="margin-top:8px;font-size:11px;">';
+          if (!d.vMinOk) H += '&#9888; Speed Riser: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &lt; v_min ('+d.small.vMin+' m/s) &mdash; kleineres Rohr!<br>';
+          if (!d.vMaxOk) H += '&#9888; Main Riser: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &gt; v_max<br>';
+          if (!d.dpLok)  H += '&#9888; Main Riser: &Delta;p = '+d.large.dpK.toFixed(3)+' K &gt; &Delta;p_max ('+d.large.dMax.toFixed(2)+' K)<br>';
+          H += '</div>';
+        }
+        H += '<div class="infobox" style="font-size:10px;margin-top:6px;line-height:1.7;">&#8505; <b>Funktion:</b> Am Fu&szlig; der Steigleitung sitzt ein U-Bogen (Falle). Das <span style="color:var(--teal)">kleine Rohr (Speed Riser)</span> startet von der <b>Sohle</b> des U-Bogens. Das <span style="color:var(--blue)">gro&szlig;e Rohr (Main Riser)</span> startet vom <b>Scheitelpunkt</b>.<br><b>Teillast:</b> &Ouml;l f&uuml;llt U-Bogen &rarr; sperrt Main Riser &rarr; volles &#7745; durch Speed Riser &rarr; v &ge; v_min &#10003;<br><b>Vollast:</b> Gasdruck &uuml;berwindet &Ouml;l &rarr; beide Rohre aktiv &rarr; v &le; v_max &#10003;</div>';
+      }
+      H += '</div>';
+    }
+    H += renderSplit(type);
+    H += '</div>';
+  });
+
+  // FL pipe row (Fix 4: FL second)
+  {
+    const type = 'fl', badge = 'b-fl', short = 'FL', label = 'Fl&uuml;ssigkeitsleitung (FL)';
+    const r = cFl;
+    const curIdx = OVR[type]!==null ? OVR[type] : LR[type].autoIdx;
+    const isMan  = OVR[type]!==null && OVR[type]!==LR[type].autoIdx;
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge '+badge+'">'+short+'</span>'
+      + '<div class="dimblk"><div class="dm">'+r.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+r.p.wt+' mm &middot; ID '+r.p.id+' mm &middot; <span style="color:var(--muted)">'+label+'</span></div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel'+(isMan?' manual':'')+'" onchange="setPipe(\''+type+'\',this.value)">'+odOpts+'</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+type+'\')">A</button>' : '')
+      + '</div></div>';
+    H += velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
+    H += '</div>';
+  }
+
+  // DL pipe row (Fix 3+4: embed renderSplit inside loop, Fix 4: DL third)
+  ['druck'].forEach(type => {
+    const r      = cDruck;
+    const dOn    = DSR_ON[type];
+    const badge  = 'b-druck';
+    const short  = 'DL';
+    const label  = 'Druckleitung (DL)';
+    const ovrKey = type;
+    const curIdx = OVR[ovrKey]!==null ? OVR[ovrKey] : LR[type].autoIdx;
+    const isMan  = OVR[ovrKey]!==null && OVR[ovrKey]!==LR[type].autoIdx;
+    const vMinR  = r.vMin;
+    const needsDSR = r.v < vMinR && vMinR > 0;
+    const lH = i.lDH;
+    const lV = i.lDV;
+    const dirParts = [];
+    if (lH > 0) dirParts.push('&#8594; ' + lH + ' m');
+    if (lV > 0) dirParts.push('&#8593; ' + lV + ' m');
+    const dirLabel = dirParts.join(' &middot; ');
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge ' + badge + '">' + short + '</span>'
+      + '<div class="dimblk"><div class="dm">' + r.p.od + ' mm <span class="u">OD</span></div>'
+      + '<div class="ds">WT ' + r.p.wt + ' mm &middot; ID ' + r.p.id + ' mm &middot; <span style="color:var(--muted)">' + label + '</span>'
+      + (dirLabel ? ' <span style="color:#36A9E1;font-size:9px;">' + dirLabel + '</span>' : '') + '</div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel' + (isMan?' manual':'') + '" onchange="setPipe(\''+ovrKey+'\',this.value)">' + odOpts + '</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+ovrKey+'\')">A</button>' : '')
+      + '</div></div>'
+      + velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
+
+    if (LR.hasCalc) {
+      const dsrTitle = 'Double HP Riser';
+      H += '<div class="dsr-box"><div class="dsr-header">'
+        + '<span class="dsr-title">&#8645; ' + dsrTitle + '</span>'
+        + '<label class="dsr-toggle"><input type="checkbox" '+(dOn?'checked':'')+' onchange="toggleDSR(\''+type+'\')"><span class="dsr-toggle-lbl">Doppel-Steigleitung aktivieren</span></label>'
+        + '<button class="dsr-schbtn" onclick="showSchema(\''+type+'\')">&#128208; Schema</button>'
+        + '</div>';
+      if (!dOn) {
+        if (needsDSR) {
+          H += '<div class="warnbox" style="margin-top:9px;">&#9888; v = '+r.v.toFixed(2)+' m/s &lt; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung bei Teillast nicht gesichert!<br>&rarr; <b>Doppel-Steigleitung empfohlen.</b></div>';
+        } else {
+          const margin = (((r.v-vMinR)/vMinR)*100).toFixed(0);
+          H += '<div class="tealbox" style="margin-top:9px;">&#8505; v = '+r.v.toFixed(2)+' m/s &ge; v_min ('+vMinR+' m/s) &mdash; &Ouml;lr&uuml;ckf&uuml;hrung gesichert (+'+margin+'%).</div>';
+        }
+      } else {
+        const d = resDSR(type);
+        const lIdx = d.large.idx, sIdx = d.small.idx;
+        const odOptsS = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===sIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].small.idx?' \u2713':'')+'</option>').join('');
+        const odOptsL = PIPES.map((p,ii) => '<option value="'+ii+'"'+(ii===lIdx?' selected':'')+'>'+p.od+' mm'+(ii===LR.dsr[type].large.idx?' \u2713':'')+'</option>').join('');
+        H += '<div class="dsr-pipes">'
+          + '<div class="dsr-pipe small"><div class="dsr-pipe-lbl">&#11041; SPEED RISER &mdash; kleines Rohr (Teillast / &Ouml;lr&uuml;ckf&uuml;hrung)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.small.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.small.p.wt+' mm &middot; ID '+d.small.p.id+' mm</div></div>'
+          + pill2(d.small.v_alone >= d.small.vMin, d.small.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.small.isManual?' manual':'')+'" onchange="setPipe(\''+type+'S\',this.value)">'+odOptsS+'</select>'
+          + (d.small.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'S\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_small(d.small) + dpBar(d.small)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--teal);font-size:10px;">&larr; Teillast: volles &#7745; allein durch dieses Rohr &rarr; v_min erreichen!</div></div>'
+          + '<div class="dsr-pipe large"><div class="dsr-pipe-lbl">&#11041; MAIN RISER &mdash; gro&szlig;es Rohr (Vollast / Druckverlust)</div>'
+          + '<div class="dsr-phead"><div class="dimblk"><div class="dm">'+d.large.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+d.large.p.wt+' mm &middot; ID '+d.large.p.id+' mm</div></div>'
+          + pill2(d.large.v_fullload <= d.large.vMax && d.dpLok, d.large.isManual)
+          + '<div class="ctrlrow"><select class="odsel'+(d.large.isManual?' manual':'')+'" onchange="setPipe(\''+type+'L\',this.value)">'+odOptsL+'</select>'
+          + (d.large.isManual ? '<button class="breset" onclick="resetPipe(\''+type+'L\')">A</button>' : '')
+          + '</div></div>'
+          + velBarDSR_large(d.large) + dpBar(d.large)
+          + '<div class="dpwftr" style="margin-top:5px;color:var(--blue);font-size:10px;">&larr; Vollast: &#7745; proportional Querschnitt &middot; v &le; v_max &middot; &Delta;p ok</div></div></div>';
+        if (d.vMinOk && d.vMaxOk && d.dpLok) {
+          H += '<div class="tealbox" style="margin-top:8px;font-size:11px;">&#10003; DSR korrekt dimensioniert:<br>Speed Riser '+d.small.p.od+' mm: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &ge; v_min '+d.small.vMin+' m/s &#10003;<br>Main Riser '+d.large.p.od+' mm: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &le; v_max '+d.large.vMax+' m/s &#10003; &middot; &Delta;p = '+d.large.dpK.toFixed(3)+' K &le; '+d.large.dMax.toFixed(2)+' K &#10003;</div>';
+        } else {
+          H += '<div class="warnbox" style="margin-top:8px;font-size:11px;">';
+          if (!d.vMinOk) H += '&#9888; Speed Riser: v_Teillast = '+d.small.v_alone.toFixed(2)+' m/s &lt; v_min ('+d.small.vMin+' m/s) &mdash; kleineres Rohr!<br>';
+          if (!d.vMaxOk) H += '&#9888; Main Riser: v_Vollast = '+d.large.v_fullload.toFixed(2)+' m/s &gt; v_max<br>';
+          if (!d.dpLok)  H += '&#9888; Main Riser: &Delta;p = '+d.large.dpK.toFixed(3)+' K &gt; &Delta;p_max ('+d.large.dMax.toFixed(2)+' K)<br>';
+          H += '</div>';
+        }
+        H += '<div class="infobox" style="font-size:10px;margin-top:6px;line-height:1.7;">&#8505; <b>Funktion:</b> Am Fu&szlig; der Steigleitung sitzt ein U-Bogen (Falle). Das <span style="color:var(--teal)">kleine Rohr (Speed Riser)</span> startet von der <b>Sohle</b> des U-Bogens. Das <span style="color:var(--blue)">gro&szlig;e Rohr (Main Riser)</span> startet vom <b>Scheitelpunkt</b>.<br><b>Teillast:</b> &Ouml;l f&uuml;llt U-Bogen &rarr; sperrt Main Riser &rarr; volles &#7745; durch Speed Riser &rarr; v &ge; v_min &#10003;<br><b>Vollast:</b> Gasdruck &uuml;berwindet &Ouml;l &rarr; beide Rohre aktiv &rarr; v &le; v_max &#10003;</div>';
+      }
+      H += '</div>';
+    }
+    H += renderSplit(type);
+    H += '</div>';
+  });
+
+  // KL pipe row (Fix 4: KL last)
+  {
+    const type = 'kond', badge = 'b-kond', short = 'KL', label = 'Kondensatleitung (KL)';
+    const r = cKond;
+    const curIdx = OVR[type]!==null ? OVR[type] : LR[type].autoIdx;
+    const isMan  = OVR[type]!==null && OVR[type]!==LR[type].autoIdx;
+    const odOpts = PIPES.map((p,idx2) => '<option value="'+idx2+'"'+(idx2===curIdx?' selected':'')+'>'+p.od+' mm'+(idx2===LR[type].autoIdx?' \u2713':'')+'</option>').join('');
+    H += '<div class="pipe-row"><div class="prhead">'
+      + '<span class="ptbadge '+badge+'">'+short+'</span>'
+      + '<div class="dimblk"><div class="dm">'+r.p.od+' mm <span class="u">OD</span></div><div class="ds">WT '+r.p.wt+' mm &middot; ID '+r.p.id+' mm &middot; <span style="color:var(--muted)">'+label+'</span></div></div>'
+      + pill(r, isMan)
+      + '<div class="ctrlrow"><select class="odsel'+(isMan?' manual':'')+'" onchange="setPipe(\''+type+'\',this.value)">'+odOpts+'</select>'
+      + (isMan ? '<button class="breset" onclick="resetPipe(\''+type+'\')">A</button>' : '')
+      + '</div></div>';
+    const dOD = cDruck.p.od, ok = r.p.od >= dOD;
+    H += '<div style="font-size:11px;color:var(--muted);margin-top:6px;font-family:\'IBM Plex Mono\',monospace;line-height:1.8;">Kanalisationsfluss &middot; Gef&auml;lle &ge; 1% &middot; Gasausgleich<br>KL &ge; DL ('+dOD+' mm OD) '+(ok?'<span style="color:var(--green)">&#10003;</span>':'<span style="color:var(--red)">&#10007; Zu klein!</span>')+'</div>';
+    H += '</div>';
+  }
+  H += '</div>';
+
+  // ISO
+  H += '<div class="card"><div class="card-title">&#127777; Isolierung (Armaflex &middot; &lambda; = 0,033 W/mK)</div>'
+    + '<div style="font-size:10px;color:var(--muted);margin-bottom:10px;font-family:\'IBM Plex Mono\',monospace;">Taupunkt: <span style="color:var(--yellow)">'+td.toFixed(1)+'&deg;C</span> bei '+i.tamb+'&deg;C / '+i.rh+'% r.F.</div>'
+    + '<div class="iso-row">'
+    + '<div class="iso-card"><div class="iso-lbl">Saugleitung</div><div class="iso-val">'+iso.saug+'<span style="font-size:11px;color:var(--muted)"> mm</span></div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px;">diffusionsdicht!</div></div>'
+    + '<div class="iso-card"><div class="iso-lbl">Druckleitung</div><div class="iso-val">'+iso.druck+'<span style="font-size:11px;color:var(--muted)"> mm</span></div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px;">wenn kalt/feucht</div></div>'
+    + '<div class="iso-card"><div class="iso-lbl">Fl&uuml;ssigkeitsltg.</div><div class="iso-val">'+iso.fl+'<span style="font-size:11px;color:var(--muted)"> mm</span></div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px;">Unterk&uuml;hlung</div></div>'
+    + '<div class="iso-card"><div class="iso-lbl">Kondensatltg.</div><div class="iso-val">'+iso.kond+'<span style="font-size:11px;color:var(--muted)"> mm</span></div><div style="font-size:9px;color:var(--muted);text-align:center;margin-top:3px;">Schwitzwasser</div></div>'
+    + '</div></div>';
+
+  // NACHWEIS TABELLE
+  H += '<div class="card"><div class="card-title">&#128203; Gesamtnachweis</div><div style="overflow-x:auto;"><table class="sum-table">'
+    + '<thead><tr><th>Leitung</th><th>Typ</th><th>OD</th><th>ID</th><th>v [m/s]</th><th>v_min</th><th>v_max</th><th>&Delta;p [K]</th><th>&Delta;p [bar]</th><th>&Delta;p_max</th><th>p_Sat</th><th>L_&auml;q</th><th>Iso</th><th>Status</th></tr></thead><tbody>';
+  function trow(lbl, type, rv, pSv, isoV, sub) {
+    const isK = type==='kond';
+    const vc  = rv.v > rv.vMax ? 'c-err' : (rv.vMin>0 && rv.v<rv.vMin) ? 'c-warn' : 'c-ok';
+    const dc  = rv.dpK <= rv.dMax ? 'c-ok' : rv.dpK <= rv.dMax*1.25 ? 'c-warn' : 'c-err';
+    const sc  = rv.isManual ? 'c-warn' : rv.status==='ok' ? 'c-ok' : rv.status==='warn' ? 'c-warn' : 'c-err';
+    const st  = rv.isManual ? '&#9998; Man.' : rv.status==='ok' ? '&#10003; OK' : rv.status==='warn' ? '&#9888;' : '&#10007;';
+    const pref = sub ? '<span style="color:var(--muted)">&boxur; </span>' : '';
+    return '<tr><td>'+pref+lbl+'</td><td>'+type.toUpperCase()+'</td><td><b>'+rv.p.od+'</b></td><td>'+rv.p.id+'</td>'
+      + '<td class="'+(isK?'':vc)+'">'+(isK?'&mdash;':rv.v.toFixed(3))+'</td>'
+      + '<td>'+(rv.vMin>0?rv.vMin:'&mdash;')+'</td><td>'+(rv.vMax<90?rv.vMax:'&mdash;')+'</td>'
+      + '<td class="'+(isK?'':dc)+'">'+(isK?'&mdash;':rv.dpK.toFixed(4))+'</td>'
+      + '<td class="'+(isK?'':dc)+'">'+(isK?'&mdash;':rv.dpBar.toFixed(5))+'</td>'
+      + '<td>'+(isK?'&mdash;':rv.dMax.toFixed(2))+'</td>'
+      + '<td>'+pSv.toFixed(2)+'</td><td>'+rv.lenEq.toFixed(2)+'</td><td>'+isoV+'</td>'
+      + '<td class="'+sc+'">'+st+'</td></tr>';
+  }
+  H += trow('Saugleitung', 'saug', cSaug, p0, iso.saug, false);
+  if (DSR_ON.saug) {
+    const d = resDSR('saug');
+    H += trow('Speed Riser (klein)', 'saug', {...d.small, v:d.small.v_alone, status:d.small.v_alone>=d.small.vMin?'ok':'warn', viol:[], isManual:d.small.isManual}, p0, iso.saug, true);
+    H += trow('Main Riser (gro&szlig;)', 'saug', {...d.large, v:d.large.v_fullload, status:d.large.v_fullload<=d.large.vMax&&d.dpLok?'ok':'warn', viol:[], isManual:d.large.isManual}, p0, iso.saug, true);
+  }
+  H += trow('Druckleitung', 'druck', cDruck, pc, iso.druck, false);
+  if (DSR_ON.druck) {
+    const d = resDSR('druck');
+    H += trow('Speed Riser (klein)', 'druck', {...d.small, v:d.small.v_alone, status:d.small.v_alone>=d.small.vMin?'ok':'warn', viol:[], isManual:d.small.isManual}, pc, iso.druck, true);
+    H += trow('Main Riser (gro&szlig;)', 'druck', {...d.large, v:d.large.v_fullload, status:d.large.v_fullload<=d.large.vMax&&d.dpLok?'ok':'warn', viol:[], isManual:d.large.isManual}, pc, iso.druck, true);
+  }
+  H += trow('Fl&uuml;ssigkeitsleitung', 'fl', cFl, p0, iso.fl, false);
+  H += trow('Kondensatleitung', 'kond', cKond, pc, iso.kond, false);
+  H += '</tbody></table></div>';
+  if (i.h > 0) H += '<div class="warnbox">&#8679; Steigleitung '+i.h+' m &rarr; Hydrostatischer &Delta;p: <b>'+hydKPa.toFixed(1)+' kPa = '+hydBar.toFixed(4)+' bar</b> (Fl&uuml;ssigkeitsltg.)</div>';
+  H += '</div>';
+
+  document.getElementById('resultArea').innerHTML = H;
+}
+
+// SPLIT-STRANG UI
+function setStrangPipe(type, seg, val) {
+  if (!LR.inp) return;
+  const key = type + seg;
+  const autoIdx = LR.strang[type][seg.toLowerCase() + 'Idx'];
+  const idx = parseInt(val);
+  OVR[key] = (idx === autoIdx) ? null : idx;
+  updateStrangCalc(type);
+  render();
+}
+
+function renderSplit(type) {
+  if (!LR.hasCalc || !LR.strangCalc[type]) return '';
+  const i  = LR.inp;
+  const sc = LR.strangCalc[type];
+  const st = LR.strang[type];
+  const isS = type === 'saug';
+  const lV = isS ? i.lSV : i.lDV;
+  const lH = isS ? i.lSH : i.lDH;
+  const dir = DIR[type];
+  const color = isS ? 'var(--green)' : 'var(--orange)';
+  const label = isS ? 'SL &mdash; Saugleitung' : 'DL &mdash; Druckleitung';
+  const dirIcon = dir === 'up' ? '&#8593;' : '&#8595;';
+  const mk = seg => type + seg;
+  const curMain  = OVR[mk('Main')]  !== null ? OVR[mk('Main')]  : st.mainIdx;
+  const curRiser = OVR[mk('Riser')] !== null ? OVR[mk('Riser')] : st.riserIdx;
+  const curSpeed = OVR[mk('Speed')] !== null ? OVR[mk('Speed')] : st.speedIdx;
+  const isManMain  = OVR[mk('Main')]  !== null && OVR[mk('Main')]  !== st.mainIdx;
+  const isManRiser = OVR[mk('Riser')] !== null && OVR[mk('Riser')] !== st.riserIdx;
+  const isManSpeed = OVR[mk('Speed')] !== null && OVR[mk('Speed')] !== st.speedIdx;
+
+  function odSel(seg, cur, autoI, isMan) {
+    const key2 = mk(seg);
+    const opts = PIPES.map((p, ii) => '<option value="'+ii+'"'+(ii===cur?' selected':'')+'>'+p.od+' mm'+(ii===autoI?' \u2713':'')+'</option>').join('');
+    return '<select class="odsel'+(isMan?' manual':'')+'" onchange="setStrangPipe(\''+type+'\',\''+seg+'\',this.value)">'+opts+'</select>'
+      + (isMan ? ' <button class="breset" onclick="setStrangPipe(\''+type+'\',\''+seg+'\','+autoI+')">A</button>' : '');
+  }
+
+  function vc(v, vMin, vMax) { return v > vMax ? 'var(--red)' : (vMin > 0 && v < vMin) ? 'var(--orange)' : 'var(--green)'; }
+
+  function miniVBar(v, vMin, vMax, label2) {
+    const sc2 = vMax * 1.25;
+    const pct = Math.min(100, v / sc2 * 100);
+    const mp  = vMin > 0 ? Math.min(100, vMin / sc2 * 100) : 0;
+    const xp  = Math.min(100, vMax / sc2 * 100);
+    const col = vc(v, vMin, vMax);
+    return '<div style="margin:6px 0 2px;">'
+      + '<div class="vbhdr"><span style="font-size:9px;color:var(--muted)">'+label2+'</span>'
+      + '<span style="color:'+col+';font-weight:600;font-family:\'IBM Plex Mono\',monospace;font-size:11px;">'+v.toFixed(2)+' m/s</span></div>'
+      + '<div class="vbtrack">'
+      + (mp > 0 ? '<div class="vbmin" style="left:'+mp+'%"></div>' : '')
+      + '<div class="vbmax" style="left:'+xp+'%"></div>'
+      + '<div class="vbfill" style="width:'+pct+'%;background:'+col+';"></div>'
+      + '</div></div>';
+  }
+
+  // Mini topology SVG
+  const BG2  = _lightTheme ? '#e8f4fb' : '#0d1320';
+  const MUT2 = _lightTheme ? '#3a6888' : '#4a5a7a';
+  const PC2  = isS ? '#36A9E1' : '#f5a623';
+  const topoSVG = `<svg width="100%" height="82" viewBox="0 0 480 82" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="display:block;border-radius:5px;margin-bottom:12px;" aria-label="Rohrtopologie">
+    <rect width="480" height="82" fill="${BG2}" rx="5"/>
+    <!-- Hauptleitung (horiz) -->
+    <rect x="12" y="34" width="130" height="13" fill="${PC2}" fill-opacity="0.18" rx="2"/>
+    <line x1="12" y1="34" x2="142" y2="34" stroke="${PC2}" stroke-width="1.5"/>
+    <line x1="12" y1="47" x2="142" y2="47" stroke="${PC2}" stroke-width="1.5"/>
+    <polygon points="129,30 143,40 129,50" fill="${PC2}" opacity="0.8"/>
+    <text x="77" y="28" text-anchor="middle" fill="${PC2}" font-size="8" font-family="IBM Plex Mono,monospace" font-weight="600">HAUPTLEITUNG</text>
+    <text x="77" y="62" text-anchor="middle" fill="${MUT2}" font-size="7" font-family="IBM Plex Mono,monospace">${lH.toFixed(1)} m horiz.</text>
+    <!-- Junction arrow -->
+    <line x1="143" y1="40" x2="168" y2="40" stroke="${MUT2}" stroke-width="1.5"/>
+    <!-- Steigleitung (upper branch) -->
+    <line x1="168" y1="40" x2="168" y2="16" stroke="#36A9E1" stroke-width="1.5"/>
+    <rect x="168" y="10" width="148" height="13" fill="#36A9E1" fill-opacity="0.15" rx="2"/>
+    <line x1="168" y1="10" x2="316" y2="10" stroke="#36A9E1" stroke-width="1.5"/>
+    <line x1="168" y1="23" x2="316" y2="23" stroke="#36A9E1" stroke-width="1.5"/>
+    <polygon points="303,7 317,16 303,26" fill="#36A9E1" opacity="0.9"/>
+    <text x="242" y="7" text-anchor="middle" fill="#36A9E1" font-size="8" font-family="IBM Plex Mono,monospace" font-weight="600">${dirIcon} STEIGLEITUNG / MAIN RISER</text>
+    <text x="242" y="34" text-anchor="middle" fill="${MUT2}" font-size="7" font-family="IBM Plex Mono,monospace">${lV.toFixed(1)} m ${dir==='up'?'aufw\u00e4rts':'abw\u00e4rts'}</text>
+    <!-- Junction dot -->
+    <circle cx="168" cy="40" r="3.5" fill="${MUT2}"/>
+    <!-- Speed Riser (lower branch) -->
+    <line x1="168" y1="40" x2="168" y2="59" stroke="#2dd4bf" stroke-width="1.5"/>
+    <rect x="168" y="52" width="148" height="13" fill="#2dd4bf" fill-opacity="0.12" rx="2"/>
+    <line x1="168" y1="52" x2="316" y2="52" stroke="#2dd4bf" stroke-width="1.5"/>
+    <line x1="168" y1="65" x2="316" y2="65" stroke="#2dd4bf" stroke-width="1.5"/>
+    <polygon points="303,49 317,58 303,68" fill="#2dd4bf" opacity="0.9"/>
+    <text x="242" y="48" text-anchor="middle" fill="#2dd4bf" font-size="8" font-family="IBM Plex Mono,monospace" font-weight="600">${dirIcon} SPEED RISER (Teillast / \u00d6l)</text>
+    <text x="242" y="76" text-anchor="middle" fill="#2dd4bf" font-size="7" font-family="IBM Plex Mono,monospace">v \u2265 v_min \u2192 \u00d6lr\u00fcckf\u00fchrung gesichert</text>
+    <!-- Speed Riser gooseneck hint -->
+    <text x="330" y="59" fill="#f0d060" font-size="7" font-family="IBM Plex Mono,monospace">&#8635; \u00d6lheber</text>
+    <text x="330" y="70" fill="#f0d060" font-size="7" font-family="IBM Plex Mono,monospace">je 2,5\u20134 m</text>
+  </svg>`;
+
+  let H = '<div class="split-section">';
+  H += '<div class="split-title">&#8961; SPLIT-STRANG &mdash; '+label+' &nbsp;<span style="color:'+color+';font-size:11px;">'+dirIcon+' '+(dir==='up'?'aufw&auml;rts':'abw&auml;rts')+'</span></div>';
+  H += topoSVG;
+  H += '<div class="split-pipes">';
+  // Hauptleitung
+  H += '<div class="split-pipe sp-main"><div class="split-pipe-lbl">&#8594; Hauptltg. horiz.</div>'
+    + '<div class="split-od">'+sc.pMain.od+' mm <span style="font-size:10px;color:var(--muted)">OD</span></div>'
+    + '<div style="font-size:9px;color:var(--muted);margin-bottom:6px;">ID '+sc.pMain.id+' mm &middot; '+lH.toFixed(1)+' m</div>'
+    + odSel('Main', curMain, st.mainIdx, isManMain)
+    + (lH > 0 ? miniVBar(sc.vMain, sc.vMinH, sc.vMaxG, 'v Hauptltg.') : '<div style="font-size:9px;color:var(--muted);margin-top:6px;">L&auml;nge = 0 m</div>')
+    + '</div>';
+  // Steigleitung
+  H += '<div class="split-pipe sp-riser"><div class="split-pipe-lbl">'+dirIcon+' Steigleitung</div>'
+    + '<div class="split-od">'+sc.pRiser.od+' mm <span style="font-size:10px;color:var(--muted)">OD</span></div>'
+    + '<div style="font-size:9px;color:var(--muted);margin-bottom:6px;">ID '+sc.pRiser.id+' mm &middot; '+lV.toFixed(1)+' m</div>'
+    + odSel('Riser', curRiser, st.riserIdx, isManRiser)
+    + (lV > 0 ? miniVBar(sc.vRiserFull, 0, sc.vMaxG, 'v Riser Vollast') : '<div style="font-size:9px;color:var(--muted);margin-top:6px;">L&auml;nge = 0 m</div>')
+    + '</div>';
+  // Speed Riser
+  H += '<div class="split-pipe sp-speed"><div class="split-pipe-lbl">&#8635; Speed Riser</div>'
+    + '<div class="split-od">'+sc.pSpeed.od+' mm <span style="font-size:10px;color:var(--muted)">OD</span></div>'
+    + '<div style="font-size:9px;color:var(--muted);margin-bottom:6px;">ID '+sc.pSpeed.id+' mm &middot; '+lV.toFixed(1)+' m</div>'
+    + odSel('Speed', curSpeed, st.speedIdx, isManSpeed);
+  if (lV > 0 && dir === 'up') {
+    H += miniVBar(sc.vSpeedAlone, sc.vMinV, sc.vMaxG, 'v Speed (Teillast)');
+    H += '<div style="font-size:9px;margin-top:3px;color:'+(sc.vSpeedOelOK?'var(--teal)':'var(--orange))') + ';">'+(sc.vSpeedOelOK ? '&#10003; &Ouml;l-v_min &ge; '+sc.vMinV+' m/s' : '&#10007; v &lt; v_min '+sc.vMinV+' m/s')+'</div>';
+  } else if (lV > 0) {
+    H += miniVBar(sc.vSpeedAlone, 0, sc.vMaxG, 'v Speed');
+  } else {
+    H += '<div style="font-size:9px;color:var(--muted);margin-top:6px;">Keine Steigleitung</div>';
+  }
+  H += '</div></div>'; // split-pipes
+
+  // TEILLAST SLIDER
+  if (lV > 0) {
+    const sliderId = 'tlSlider_' + type;
+    H += '<div class="tl-slider-wrap">'
+      + '<div class="tl-hdr"><span class="tl-lbl">&#9889; TEILLAST-SIMULATION &mdash; &Ouml;lr&uuml;cktransport</span>'
+      + '<span class="tl-val" id="tlVal_'+type+'">100 %</span></div>'
+      + '<input type="range" id="'+sliderId+'" min="10" max="100" step="5" value="100" oninput="updateSlider(\''+type+'\')">'
+      + '<div class="tl-grid" id="tlGrid_'+type+'">'
+      + renderSliderGrid(type, 1.0, sc)
+      + '</div>'
+      + '<div class="tl-total"><span class="tl-total-lbl">Gesamt-&Delta;p (Vollast)</span>'
+      + '<span style="font-family:\'IBM Plex Mono\',monospace;font-size:13px;font-weight:600;color:'+(sc.dpTotalFull<=sc.dMax?'var(--green)':'var(--red)')+';">'
+      + sc.dpTotalFull.toFixed(3)+' K <span style="font-size:9px;color:var(--muted)">/ '+sc.dMax.toFixed(2)+' K max</span></span></div></div>';
+  }
+  H += '</div>';
+  return H;
+}
+
+function renderSliderGrid(type, load, sc) {
+  const i    = LR.inp;
+  const m    = sc.m * load;
+  const rho  = sc.rho;
+  const aVert  = sc.aRiser + sc.aSpeed;
+  const mFull  = sc.m;
+  const vMinV  = sc.vMinV;
+  const loadCrit = vMinV > 0 ? Math.min(1.0, vMinV * rho * sc.aSpeed / mFull) : 0;
+  const speedOnly = load <= loadCrit + 0.05;
+  let vR = 0, vS = 0, dpVertK = 0;
+  const ref = RM[i.rk];
+  const tMed = type==='druck' ? i.tc : i.t0;
+  const mu  = ref.muV(tMed);   // TEMPERATURE-DEPENDENT
+  const hfg = ref.hfg(i.t0);
+  const lV  = type === 'saug' ? i.lSV : i.lDV;
+  if (speedOnly || aVert === 0) {
+    vS = sc.aSpeed > 0 ? m / (rho * sc.aSpeed) : 0;
+    dpVertK = dpCalc(m, rho, mu, sc.pSpeed.id, lV, hfg, tMed).dpK;
+  } else {
+    const mR = m * sc.aRiser / aVert;
+    const mS = m * sc.aSpeed / aVert;
+    vR = sc.aRiser > 0 ? mR / (rho * sc.aRiser) : 0;
+    vS = sc.aSpeed > 0 ? mS / (rho * sc.aSpeed) : 0;
+    dpVertK = dpCalc(mR, rho, mu, sc.pRiser.id, lV, hfg, tMed).dpK;
+  }
+  const lH     = type === 'saug' ? i.lSH : i.lDH;
+  const dpMainK = lH > 0 ? dpCalc(m, rho, mu, sc.pMain.id, lH, hfg, tMed).dpK : 0;
+  const dpTotal = dpMainK + dpVertK;
+  const vcfn = (v, vMin, vMax) => v > vMax ? 'var(--red)' : (vMin > 0 && v < vMin) ? 'var(--orange)' : 'var(--green)';
+  const vMaxG = sc.vMaxG, vMinH = sc.vMinH, vMinV2 = sc.vMinV;
+  // Fix 6: Riser velocity at current load
+  const mR_full = speedOnly ? 0 : (sc.aRiser > 0 && (sc.aRiser + sc.aSpeed) > 0 ? m * sc.aRiser / (sc.aRiser + sc.aSpeed) : 0);
+  const vRiser = (sc.aRiser > 0 && !speedOnly) ? mR_full / (rho * sc.aRiser) : 0;
+  let H = '';
+  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8594; Hauptltg.</div><div class="tl-cell-val" style="color:'+vcfn((sc.aMain>0?m/(rho*sc.aMain):0),vMinH,vMaxG)+'">'+(sc.aMain>0?(m/(rho*sc.aMain)).toFixed(2):'0.00')+' m/s</div></div>';
+  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8593; Steigleitung</div><div class="tl-cell-val" style="color:'+vcfn(vRiser,0,vMaxG)+'">'+vRiser.toFixed(2)+' m/s</div></div>';
+  H += '<div class="tl-cell"><div class="tl-cell-lbl">&#8635; Speed Riser</div><div class="tl-cell-val" style="color:'+vcfn(vS,speedOnly?vMinV2:0,vMaxG)+'">'+vS.toFixed(2)+' m/s'+(speedOnly && vMinV2 > 0 ? ' <span style="font-size:9px;color:'+vcfn(vS,vMinV2,vMaxG)+';">'+(vS>=vMinV2?'&#10003;':'&#10007;')+'</span>' : '')+'</div></div>';
+  H += '<div class="tl-cell" style="grid-column:1/-1;border-color:rgba(54,169,225,.3);"><div class="tl-cell-lbl">Gesamt &Delta;p Strang</div><div class="tl-cell-val" style="color:'+(dpTotal<=sc.dMax?'var(--green)':'var(--red)')+'">'+dpTotal.toFixed(3)+' K <span style="font-size:9px;color:var(--muted)">/ '+sc.dMax.toFixed(2)+' K</span></div></div>';
+  return H;
+}
+
+function updateSlider(type) {
+  const slider = document.getElementById('tlSlider_' + type);
+  const valEl  = document.getElementById('tlVal_' + type);
+  const gridEl = document.getElementById('tlGrid_' + type);
+  if (!slider || !LR.strangCalc || !LR.strangCalc[type]) return;
+  const load = parseInt(slider.value) / 100;
+  valEl.textContent = slider.value + ' %';
+  gridEl.innerHTML = renderSliderGrid(type, load, LR.strangCalc[type]);
+}
+
+// PILL HELPERS
+function pill(r, isManual) {
+  if (isManual) return '<span class="sp sp-man">&#9998; MAN.</span>';
+  if (r.status==='ok')   return '<span class="sp sp-ok">&#10003; OK</span>';
+  if (r.status==='warn') return '<span class="sp sp-warn">&#9888; PR&Uuml;FEN</span>';
+  return '<span class="sp sp-err">&#10007; KRIT.</span>';
+}
+function pill2(ok, isManual) {
+  if (isManual) return '<span class="sp sp-man">&#9998; MAN.</span>';
+  return ok ? '<span class="sp sp-ok">&#10003; OK</span>' : '<span class="sp sp-warn">&#9888; PR&Uuml;FEN</span>';
+}
+function velBar(r) {
+  const sc = r.vMax * 1.25, pct = Math.min(100, r.v/sc*100);
+  const mp = r.vMin>0 ? Math.min(100, r.vMin/sc*100) : 0;
+  const xp = Math.min(100, r.vMax/sc*100);
+  const col = r.v>r.vMax ? 'var(--red)' : (r.vMin>0&&r.v<r.vMin) ? 'var(--orange)' : 'var(--green)';
+  return '<div style="margin-top:9px;">'
+    + '<div class="vbhdr"><span>Str&ouml;mungsgeschwindigkeit</span><span style="color:'+col+';font-weight:600;">'+r.v.toFixed(3)+' m/s</span></div>'
+    + '<div class="vbtrack">'+(mp>0?'<div class="vbmin" style="left:'+mp+'%"></div>':'')
+    + '<div class="vbmax" style="left:'+xp+'%"></div>'
+    + '<div class="vbfill" style="width:'+pct+'%;background:'+col+';"></div></div>'
+    + '<div class="vbftr"><span>'+(r.vMin>0?'v_min '+r.vMin+' m/s (&Ouml;l)':'&mdash;')+'</span><span>&#7745; = '+r.m.toFixed(5)+' kg/s &middot; &#961; = '+r.rho.toFixed(1)+' kg/m&sup3;</span><span>v_max '+r.vMax+' m/s</span></div></div>';
+}
+function velBarDSR_small(rs) {
+  const v = rs.v_alone;
+  const sc2 = rs.vMax * 1.25, pct = Math.min(100, v/sc2*100);
+  const mp = rs.vMin>0 ? Math.min(100, rs.vMin/sc2*100) : 0;
+  const xp = Math.min(100, rs.vMax/sc2*100);
+  const col = v < rs.vMin ? 'var(--orange)' : 'var(--teal)';
+  return '<div style="margin-top:9px;">'
+    + '<div class="vbhdr"><span>v Teillast (volles &#7745; allein)</span><span style="color:'+col+';font-weight:600;">'+v.toFixed(3)+' m/s</span></div>'
+    + '<div class="vbtrack">'+(mp>0?'<div class="vbmin" style="left:'+mp+'%"></div>':'')
+    + '<div class="vbmax" style="left:'+xp+'%"></div>'
+    + '<div class="vbfill" style="width:'+pct+'%;background:'+col+';"></div></div>'
+    + '<div class="vbftr"><span style="color:'+col+';font-weight:600;">v_min '+rs.vMin+' m/s '+(v>=rs.vMin?'&#10003; &mdash; &Ouml;lr&uuml;ck gesichert':'&#10007; &mdash; kleiner w&auml;hlen!')+'</span><span>&#7745; = '+rs.m.toFixed(5)+' kg/s</span><span>v_max '+rs.vMax+' m/s</span></div></div>';
+}
+function velBarDSR_large(rl) {
+  const v = rl.v_fullload;
+  const sc2 = rl.vMax * 1.25, pct = Math.min(100, v/sc2*100);
+  const xp = Math.min(100, rl.vMax/sc2*100);
+  const col = v > rl.vMax ? 'var(--red)' : 'var(--blue)';
+  return '<div style="margin-top:9px;">'
+    + '<div class="vbhdr"><span>v Vollast (&#7745; prop. Querschnitt)</span><span style="color:'+col+';font-weight:600;">'+v.toFixed(3)+' m/s</span></div>'
+    + '<div class="vbtrack"><div class="vbmax" style="left:'+xp+'%"></div><div class="vbfill" style="width:'+pct+'%;background:'+col+';"></div></div>'
+    + '<div class="vbftr"><span>kein v_min (&Ouml;lfalle)</span><span>&#7745; = '+rl.m.toFixed(5)+' kg/s</span><span>v_max '+rl.vMax+' m/s</span></div></div>';
+}
+function dpBar(r) {
+  const sc2 = r.dMax * 1.6, pct = Math.min(100, r.dpK/sc2*100), lp = Math.min(100, r.dMax/sc2*100);
+  const col = r.dpK<=r.dMax ? 'var(--green)' : r.dpK<=r.dMax*1.25 ? 'var(--orange)' : 'var(--red)';
+  return '<div>'
+    + '<div class="dpwhdr"><span>Druckverlust</span><span style="color:'+col+';font-weight:600;">&Delta;p = '+r.dpK.toFixed(4)+' K / '+r.dpBar.toFixed(5)+' bar</span><span>max '+r.dMax.toFixed(2)+' K</span></div>'
+    + '<div class="dpwtrack"><div class="dpwlim" style="left:'+lp+'%"></div><div class="dpwfill" style="width:'+pct+'%;background:'+col+';"></div></div>'
+    + '<div class="dpwftr">L_&auml;q = '+r.lenEq.toFixed(2)+' m &middot; p_Sat = '+r.psat.toFixed(2)+' bar &middot; h_fg = '+r.hfg.toFixed(0)+' kJ/kg</div></div>';
+}
+function violBox(r) {
+  return '<div class="'+(r.status==='err'?'errbox':'warnbox')+'" style="font-size:10px;">'+r.viol.map(v=>'&#9888; '+v).join('<br>')+'</div>';
+}
+
+// THEME TOGGLE
+let _lightTheme = false;
+function toggleTheme() {
+  _lightTheme = !_lightTheme;
+  document.body.classList.toggle('light', _lightTheme);
+  document.getElementById('themeBtn').innerHTML = _lightTheme ? '&#9790;' : '&#9788;';
+}
+
+// SCHEMA — SVG-Rohrschemata
+function showSchema(type) {
+  const isS  = type === 'saug';
+  const lbl  = isS ? 'Saugleitung' : 'Druckleitung';
+  const PC   = isS ? '#36A9E1' : '#f5a623';
+  const SC   = '#2dd4bf';
+  const YC   = '#f0d060';
+  const BG   = _lightTheme ? '#daedf8' : '#08111e';
+  const TXT  = _lightTheme ? '#0d2840' : '#c8d4e8';
+  const MUT  = _lightTheme ? '#3a6888' : '#4a5a7a';
+  document.getElementById('modalTitle').textContent = 'Double Suction Riser \u2014 ' + lbl + ' \u2014 Prinzipschema';
+
+  // Get pipe sizes from results if available
+  let mOD='??', sOD='??', mID='??', sID='??', mainOD='??';
+  if (LR.hasCalc && LR.strangCalc && LR.strangCalc[type]) {
+    const sc = LR.strangCalc[type];
+    mOD  = sc.pRiser.od + ' mm';  mID  = sc.pRiser.id + ' mm';
+    sOD  = sc.pSpeed.od + ' mm';  sID  = sc.pSpeed.id + ' mm';
+  }
+  if (LR.hasCalc && LR.dsr && LR.dsr[type]) {
+    mainOD = LR.dsr[type].large.p.od + ' mm';
+  }
+
+  // === SVG 1: Double Suction Riser Prinzip ===
+  const W=520, H=560;
+  const mX=160, sX=280; // center X of Main Riser and Speed Riser
+  const mW=44,  sW=26;  // pipe widths
+  const topY=62, botY=428;
+  const gY1=195, gY2=330; // gooseneck Y positions
+  const gR=22;            // gooseneck radius
+
+  let sv = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;font-family:'IBM Plex Mono',monospace;border-radius:8px;">`;
+  sv += `<rect width="${W}" height="${H}" fill="${BG}" rx="8"/>`;
+
+  // Title bar
+  sv += `<text x="${W/2}" y="20" text-anchor="middle" fill="${SC}" font-size="11" font-weight="600" letter-spacing="1">DOUBLE SUCTION RISER \u2014 PRINZIPSCHEMA</text>`;
+  sv += `<text x="${W/2}" y="34" text-anchor="middle" fill="${MUT}" font-size="9">ASHRAE Refrigeration Handbook \u00b7 EN 378 \u00b7 Danfoss App.Guide</text>`;
+
+  // === Top connection (Verdampfer) ===
+  const joinX1 = mX - mW/2, joinX2 = sX + sW/2;
+  sv += `<rect x="${joinX1}" y="${topY}" width="${joinX2-joinX1}" height="13" fill="${MUT}" fill-opacity="0.18" rx="2"/>`;
+  sv += `<line x1="${joinX1}" y1="${topY}" x2="${joinX2}" y2="${topY}" stroke="${MUT}" stroke-width="1.5"/>`;
+  sv += `<line x1="${joinX1}" y1="${topY+13}" x2="${joinX2}" y2="${topY+13}" stroke="${MUT}" stroke-width="1.5"/>`;
+  // Arrow left to Verdampfer
+  sv += `<line x1="${joinX1}" y1="${topY+6}" x2="55" y2="${topY+6}" stroke="${MUT}" stroke-width="2"/>`;
+  sv += `<polygon points="62,${topY+3} 52,${topY+6} 62,${topY+9}" fill="${MUT}"/>`;
+  sv += `<text x="48" y="${topY+2}" text-anchor="end" fill="${MUT}" font-size="8">zum</text>`;
+  sv += `<text x="48" y="${topY+14}" text-anchor="end" fill="${MUT}" font-size="8">Verdampfer</text>`;
+
+  // === Main Riser (big, left pipe) ===
+  sv += `<rect x="${mX-mW/2}" y="${topY+13}" width="${mW}" height="${botY-(topY+13)}" fill="${PC}" fill-opacity="0.11" rx="2"/>`;
+  sv += `<line x1="${mX-mW/2}" y1="${topY+13}" x2="${mX-mW/2}" y2="${botY}" stroke="${PC}" stroke-width="2"/>`;
+  sv += `<line x1="${mX+mW/2}" y1="${topY+13}" x2="${mX+mW/2}" y2="${botY}" stroke="${PC}" stroke-width="2"/>`;
+  // Flow arrows on Main Riser (upward)
+  sv += `<polygon points="${mX-4},${240} ${mX},${228} ${mX+4},${240}" fill="${PC}" opacity="0.8"/>`;
+  sv += `<polygon points="${mX-4},${360} ${mX},${348} ${mX+4},${360}" fill="${PC}" opacity="0.6"/>`;
+
+  // === Speed Riser (small, right pipe) — with gooseneck oil traps ===
+  // Segment 1: topY+13 → gY1
+  sv += `<rect x="${sX-sW/2}" y="${topY+13}" width="${sW}" height="${gY1-(topY+13)}" fill="${SC}" fill-opacity="0.09"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${topY+13}" x2="${sX-sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<line x1="${sX+sW/2}" y1="${topY+13}" x2="${sX+sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.5"/>`;
+
+  // Gooseneck 1 (Ölheber) — outer loop going right
+  sv += `<path d="M ${sX-sW/2},${gY1} Q ${sX-sW/2-gR},${gY1} ${sX-sW/2-gR},${gY1+gR} Q ${sX-sW/2-gR},${gY1+2*gR} ${sX-sW/2},${gY1+2*gR}" fill="none" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<path d="M ${sX+sW/2},${gY1} Q ${sX+sW/2+gR},${gY1} ${sX+sW/2+gR},${gY1+gR} Q ${sX+sW/2+gR},${gY1+2*gR} ${sX+sW/2},${gY1+2*gR}" fill="none" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<rect x="${sX-sW/2-gR}" y="${gY1}" width="${sW+2*gR}" height="${2*gR}" fill="${SC}" fill-opacity="0.08" rx="${gR}"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY1}" x2="${sX+sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY1+2*gR}" x2="${sX+sW/2}" y2="${gY1+2*gR}" stroke="${SC}" stroke-width="1.5"/>`;
+
+  // Segment 2: gY1+2*gR → gY2
+  sv += `<rect x="${sX-sW/2}" y="${gY1+2*gR}" width="${sW}" height="${gY2-(gY1+2*gR)}" fill="${SC}" fill-opacity="0.09"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY1+2*gR}" x2="${sX-sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<line x1="${sX+sW/2}" y1="${gY1+2*gR}" x2="${sX+sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.5"/>`;
+
+  // Gooseneck 2
+  sv += `<path d="M ${sX-sW/2},${gY2} Q ${sX-sW/2-gR},${gY2} ${sX-sW/2-gR},${gY2+gR} Q ${sX-sW/2-gR},${gY2+2*gR} ${sX-sW/2},${gY2+2*gR}" fill="none" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<path d="M ${sX+sW/2},${gY2} Q ${sX+sW/2+gR},${gY2} ${sX+sW/2+gR},${gY2+gR} Q ${sX+sW/2+gR},${gY2+2*gR} ${sX+sW/2},${gY2+2*gR}" fill="none" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<rect x="${sX-sW/2-gR}" y="${gY2}" width="${sW+2*gR}" height="${2*gR}" fill="${SC}" fill-opacity="0.08" rx="${gR}"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY2}" x2="${sX+sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY2+2*gR}" x2="${sX+sW/2}" y2="${gY2+2*gR}" stroke="${SC}" stroke-width="1.5"/>`;
+
+  // Segment 3: gY2+2*gR → botY
+  sv += `<rect x="${sX-sW/2}" y="${gY2+2*gR}" width="${sW}" height="${botY-(gY2+2*gR)}" fill="${SC}" fill-opacity="0.09"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${gY2+2*gR}" x2="${sX-sW/2}" y2="${botY}" stroke="${SC}" stroke-width="1.5"/>`;
+  sv += `<line x1="${sX+sW/2}" y1="${gY2+2*gR}" x2="${sX+sW/2}" y2="${botY}" stroke="${SC}" stroke-width="1.5"/>`;
+
+  // === U-BOGEN at bottom ===
+  const ubY = botY, ubH = 38;
+  const ubMidX = (mX + sX) / 2;
+  sv += `<path d="M ${mX-mW/2},${ubY} L ${mX-mW/2},${ubY+ubH} Q ${ubMidX},${ubY+ubH+18} ${sX+sW/2},${ubY+ubH} L ${sX+sW/2},${ubY}" fill="${YC}" fill-opacity="0.1" stroke="${YC}" stroke-width="2.5"/>`;
+  sv += `<path d="M ${mX+mW/2},${ubY} L ${mX+mW/2},${ubY+ubH-10} Q ${ubMidX},${ubY+ubH+6} ${sX-sW/2},${ubY+ubH-10} L ${sX-sW/2},${ubY}" fill="none" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,3"/>`;
+  sv += `<text x="${ubMidX}" y="${ubY+ubH+34}" text-anchor="middle" fill="${YC}" font-size="9" font-weight="600">U-BOGEN (&#214;L-FALLE)</text>`;
+
+  // U-Bogen annotation lines
+  sv += `<line x1="${mX}" y1="${ubY+ubH}" x2="68" y2="${ubY+ubH+10}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="65" y="${ubY+ubH+4}" text-anchor="end" fill="${YC}" font-size="8">Main Riser</text>`;
+  sv += `<text x="65" y="${ubY+ubH+16}" text-anchor="end" fill="${YC}" font-size="8">Scheitelpunkt</text>`;
+  sv += `<line x1="${sX}" y1="${ubY+ubH+12}" x2="${W-68}" y2="${ubY+ubH+10}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="${W-62}" y="${ubY+ubH+4}" fill="${YC}" font-size="8">Speed Riser</text>`;
+  sv += `<text x="${W-62}" y="${ubY+ubH+16}" fill="${YC}" font-size="8">Sohle / Anlauf</text>`;
+
+  // === Hauptleitung (horizontal with slope) ===
+  const hlY = ubY + ubH + 48;
+  sv += `<rect x="38" y="${hlY}" width="380" height="13" fill="${PC}" fill-opacity="0.18" rx="2"/>`;
+  sv += `<line x1="38" y1="${hlY}" x2="418" y2="${hlY-4}" stroke="${PC}" stroke-width="2"/>`;
+  sv += `<line x1="38" y1="${hlY+13}" x2="418" y2="${hlY+9}" stroke="${PC}" stroke-width="2"/>`;
+  // Flow arrow
+  const arrX = 220;
+  sv += `<polygon points="${arrX-8},${hlY+2} ${arrX+8},${hlY+2} ${arrX+8},${hlY+11} ${arrX-8},${hlY+11}" fill="none"/>`;
+  sv += `<polygon points="${arrX},${hlY} ${arrX+12},${hlY+6} ${arrX},${hlY+13}" fill="${PC}" opacity="0.75"/>`;
+  sv += `<text x="${W/2}" y="${hlY+26}" text-anchor="middle" fill="${MUT}" font-size="9">\u2190\u2500\u2500\u2500 Gef\u00e4lle min. 1% \u2500\u2500\u2500\u2192</text>`;
+
+  // === Labels ===
+  // Main Riser label (left of pipe)
+  const midY = (topY + botY) / 2;
+  sv += `<text x="${mX-mW/2-8}" y="${midY-12}" text-anchor="end" fill="${PC}" font-size="10" font-weight="600">MAIN</text>`;
+  sv += `<text x="${mX-mW/2-8}" y="${midY+2}" text-anchor="end" fill="${PC}" font-size="10" font-weight="600">RISER</text>`;
+  sv += `<text x="${mX-mW/2-8}" y="${midY+16}" text-anchor="end" fill="${MUT}" font-size="8">gro\u00dfes Rohr</text>`;
+  sv += `<text x="${mX-mW/2-8}" y="${midY+28}" text-anchor="end" fill="${MUT}" font-size="8">Vollast</text>`;
+  sv += `<text x="${mX-mW/2-8}" y="${midY+40}" text-anchor="end" fill="${PC}" font-size="9" font-weight="600">\u00d8 ${mOD}</text>`;
+  sv += `<text x="${mX-mW/2-8}" y="${midY+52}" text-anchor="end" fill="${MUT}" font-size="8">ID ${mID}</text>`;
+
+  // Speed Riser label (right of pipe)
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY-12}" fill="${SC}" font-size="10" font-weight="600">SPEED</text>`;
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY+2}" fill="${SC}" font-size="10" font-weight="600">RISER</text>`;
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY+16}" fill="${MUT}" font-size="8">kleines Rohr</text>`;
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY+28}" fill="${MUT}" font-size="8">Teillast / \u00d6l</text>`;
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY+40}" fill="${SC}" font-size="9" font-weight="600">\u00d8 ${sOD}</text>`;
+  sv += `<text x="${sX+sW/2+gR+8}" y="${midY+52}" fill="${MUT}" font-size="8">ID ${sID}</text>`;
+
+  // Gooseneck "max 2.5-4m" annotations
+  const ann1X = sX + sW/2 + gR + 8;
+  sv += `<line x1="${sX+sW/2}" y1="${topY+13}" x2="${ann1X}" y2="${gY1-10}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<line x1="${sX+sW/2}" y1="${gY1+2*gR}" x2="${ann1X}" y2="${gY1-10}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="${ann1X+4}" y="${gY1-18}" fill="${YC}" font-size="8" font-weight="600">max.</text>`;
+  sv += `<text x="${ann1X+4}" y="${gY1-7}" fill="${YC}" font-size="8">2,5\u20134 m</text>`;
+
+  // Teillast / Vollast info boxes
+  sv += `<rect x="6" y="${botY-72}" width="72" height="56" fill="${SC}" fill-opacity="0.08" rx="4" stroke="${SC}" stroke-width="1"/>`;
+  sv += `<text x="42" y="${botY-58}" text-anchor="middle" fill="${SC}" font-size="9" font-weight="600">TEILLAST</text>`;
+  sv += `<text x="42" y="${botY-46}" text-anchor="middle" fill="${TXT}" font-size="7">\u00d6l sperrt Main</text>`;
+  sv += `<text x="42" y="${botY-36}" text-anchor="middle" fill="${TXT}" font-size="7">Speed allein</text>`;
+  sv += `<text x="42" y="${botY-24}" text-anchor="middle" fill="${SC}" font-size="8">v \u2265 v_min \u2713</text>`;
+
+  sv += `<rect x="${W-80}" y="${botY-72}" width="74" height="56" fill="${PC}" fill-opacity="0.08" rx="4" stroke="${PC}" stroke-width="1"/>`;
+  sv += `<text x="${W-43}" y="${botY-58}" text-anchor="middle" fill="${PC}" font-size="9" font-weight="600">VOLLAST</text>`;
+  sv += `<text x="${W-43}" y="${botY-46}" text-anchor="middle" fill="${TXT}" font-size="7">beide aktiv</text>`;
+  sv += `<text x="${W-43}" y="${botY-36}" text-anchor="middle" fill="${TXT}" font-size="7">prop. Querschnitt</text>`;
+  sv += `<text x="${W-43}" y="${botY-24}" text-anchor="middle" fill="${PC}" font-size="8">v \u2264 v_max \u2713</text>`;
+
+  sv += `</svg>`;
+
+  // === SVG 2: Speed Riser Einzelsegment (nach Skizze 2) ===
+  const W2=280, H2=320;
+  let sv2 = `<svg width="${W2}" height="${H2}" viewBox="0 0 ${W2} ${H2}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;font-family:'IBM Plex Mono',monospace;border-radius:8px;">`;
+  sv2 += `<rect width="${W2}" height="${H2}" fill="${BG}" rx="8"/>`;
+  sv2 += `<text x="${W2/2}" y="18" text-anchor="middle" fill="${SC}" font-size="10" font-weight="600">SPEED RISER \u2014 Einzelsegment</text>`;
+
+  // U-form: upper connection (left) going down, loop at bottom, back up (right)
+  const ux=100, uy1=35, uy2=250, uw=60, ulR=30;
+  // Outer pipe silhouette (as in sketch 2 — two parallel rounded forms)
+  sv2 += `<path d="M ${ux},${uy1} L ${ux},${uy2} Q ${ux},${uy2+ulR} ${ux+uw/2},${uy2+ulR} Q ${ux+uw},${uy2+ulR} ${ux+uw},${uy2} L ${ux+uw},${uy1}" fill="${SC}" fill-opacity="0.09" stroke="${SC}" stroke-width="2" stroke-linejoin="round"/>`;
+  // Inner pipe (narrower, shows wall thickness)
+  const iOff=10;
+  sv2 += `<path d="M ${ux+iOff},${uy1+22} L ${ux+iOff},${uy2-2} Q ${ux+iOff},${uy2+ulR-14} ${ux+uw/2},${uy2+ulR-14} Q ${ux+uw-iOff},${uy2+ulR-14} ${ux+uw-iOff},${uy2-2} L ${ux+uw-iOff},${uy1+22}" fill="none" stroke="${SC}" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>`;
+  // Upper connection - horizontal pipe from left
+  sv2 += `<rect x="20" y="${uy1-6}" width="${ux+4}" height="12" fill="${PC}" fill-opacity="0.18" rx="2"/>`;
+  sv2 += `<line x1="20" y1="${uy1-6}" x2="${ux+4}" y2="${uy1-6}" stroke="${PC}" stroke-width="1.5"/>`;
+  sv2 += `<line x1="20" y1="${uy1+6}" x2="${ux+4}" y2="${uy1+6}" stroke="${PC}" stroke-width="1.5"/>`;
+  // Flow arrow on upper
+  sv2 += `<polygon points="50,${uy1-6} 62,${uy1} 50,${uy1+6}" fill="${PC}" opacity="0.8"/>`;
+  sv2 += `<text x="8" y="${uy1-10}" fill="${PC}" font-size="8">Hauptleitung</text>`;
+  sv2 += `<text x="8" y="${uy1+18}" fill="${MUT}" font-size="7">Gef\u00e4lle \u2265 1%</text>`;
+  // Lower connection
+  sv2 += `<rect x="20" y="${uy2+ulR-6}" width="${ux+4}" height="12" fill="${PC}" fill-opacity="0.18" rx="2"/>`;
+  sv2 += `<line x1="20" y1="${uy2+ulR-6}" x2="${ux+4}" y2="${uy2+ulR-6}" stroke="${PC}" stroke-width="1.5"/>`;
+  sv2 += `<line x1="20" y1="${uy2+ulR+6}" x2="${ux+4}" y2="${uy2+ulR+6}" stroke="${PC}" stroke-width="1.5"/>`;
+  // Flow arrow on lower (←)
+  sv2 += `<polygon points="55,${uy2+ulR-6} 42,${uy2+ulR} 55,${uy2+ulR+6}" fill="${PC}" opacity="0.8"/>`;
+  sv2 += `<text x="8" y="${uy2+ulR+20}" fill="${PC}" font-size="8">Hauptleitung</text>`;
+  sv2 += `<text x="8" y="${uy2+ulR+32}" fill="${MUT}" font-size="7">Gef\u00e4lle \u2265 1%</text>`;
+  // Vertical arrows (flow going up in Speed Riser)
+  sv2 += `<polygon points="${ux+uw/2-4},${140} ${ux+uw/2},${128} ${ux+uw/2+4},${140}" fill="${SC}" opacity="0.8"/>`;
+  sv2 += `<polygon points="${ux+uw/2-4},${190} ${ux+uw/2},${178} ${ux+uw/2+4},${190}" fill="${SC}" opacity="0.6"/>`;
+  // Segment height annotation
+  sv2 += `<line x1="${ux+uw+5}" y1="${uy1}" x2="${ux+uw+18}" y2="${uy1}" stroke="${YC}" stroke-width="1"/>`;
+  sv2 += `<line x1="${ux+uw+5}" y1="${uy2}" x2="${ux+uw+18}" y2="${uy2}" stroke="${YC}" stroke-width="1"/>`;
+  sv2 += `<line x1="${ux+uw+12}" y1="${uy1}" x2="${ux+uw+12}" y2="${uy2}" stroke="${YC}" stroke-width="1"/>`;
+  sv2 += `<text x="${ux+uw+22}" y="${(uy1+uy2)/2-6}" fill="${YC}" font-size="8">max.</text>`;
+  sv2 += `<text x="${ux+uw+22}" y="${(uy1+uy2)/2+6}" fill="${YC}" font-size="8">2,5\u20134 m</text>`;
+  sv2 += `<text x="${ux+uw+22}" y="${(uy1+uy2)/2+18}" fill="${YC}" font-size="8">je Segment</text>`;
+  // Speed Riser label
+  sv2 += `<text x="${ux+uw/2}" y="${(uy1+uy2)/2+4}" text-anchor="middle" fill="${SC}" font-size="9" font-weight="600">\u00d8 ${sOD}</text>`;
+  sv2 += `</svg>`;
+
+  const noteStyle = `margin-top:12px;padding:12px;background:rgba(45,212,191,0.07);border:1px solid rgba(45,212,191,0.22);border-radius:6px;font-size:10px;line-height:1.85;color:${TXT};font-family:'IBM Plex Mono',monospace;`;
+  document.getElementById('modalContent').innerHTML =
+    `<div class="diag-grid">`
+    + `<div class="diag-card full" style="padding:10px;">${sv}</div>`
+    + `<div class="diag-card" style="padding:10px;">${sv2}</div>`
+    + `<div class="diag-card" style="padding:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.9;color:${TXT};">`
+    + `<div class="diag-card-title">Funktionsprinzip</div>`
+    + `<b style="color:${YC}">&#9632; U-Bogen (&#214;l-Falle):</b><br>`
+    + `&nbsp;&nbsp;<span style="color:${PC}">Main Riser</span> startet am <b>Scheitelpunkt</b><br>`
+    + `&nbsp;&nbsp;<span style="color:${SC}">Speed Riser</span> startet an der <b>Sohle</b><br><br>`
+    + `<b style="color:${SC}">TEILLAST:</b><br>`
+    + `&nbsp;&nbsp;&#214;l f&#252;llt U-Bogen &rarr; Main gesperrt<br>`
+    + `&nbsp;&nbsp;Volles &#7745; durch Speed Riser<br>`
+    + `&nbsp;&nbsp;v &ge; v_min &rarr; &#214;lr&#252;ckf&#252;hrung &#10003;<br><br>`
+    + `<b style="color:${PC}">VOLLAST:</b><br>`
+    + `&nbsp;&nbsp;Gasdruck &#252;berwindet &#214;lpfropfen<br>`
+    + `&nbsp;&nbsp;Beide Rohre aktiv<br>`
+    + `&nbsp;&nbsp;v &le; v_max, &Delta;p &le; &Delta;p_max &#10003;<br><br>`
+    + `<b style="color:${YC}">&#214;LHEBER (Gooseneck):</b><br>`
+    + `&nbsp;&nbsp;Speed Riser: je <b>2,5&ndash;4 m</b> ein Heber<br>`
+    + `&nbsp;&nbsp;Oberes Ende: Abreisb&#246;gen &rarr; T-St&#252;ck<br>`
+    + `&nbsp;&nbsp;v_min SL/NK: <b>7,6 m/s</b><br>`
+    + `&nbsp;&nbsp;v_min DL: <b>5,0 m/s</b>`
+    + `</div></div>`;
+
+  document.getElementById('modal').style.display = 'flex';
+}
+
+// LANGUAGE (Fix 8: I18N dictionary)
+let LANG = 'de';
+const I18N = {
+  de: { tabNK:'Normalk\u00fchlungNK', tabTK:'Tiefk\u00fchlung TK', cardParams:'\u2699 Betriebsparameter', cardLengths:'\ud83d\udcd4 Leitungsl\u00e4ngen & Verlegung', lblRefrig:'K\u00e4ltemittel', lblT0:'Verdampfung t\u2080 (\u00b0C)', lblTc:'Kondensation tc (\u00b0C)', lblQ0:'K\u00e4lteleistung Q\u2080 (kW)', btnCalc:'\u25b6 BERECHNUNG STARTEN' },
+  en: { tabNK:'Normal Cooling NC', tabTK:'Deep Freeze DX', cardParams:'\u2699 System Parameters', cardLengths:'\ud83d\udcd4 Pipe Lengths & Routing', lblRefrig:'Refrigerant', lblT0:'Evaporating t\u2080 (\u00b0C)', lblTc:'Condensing tc (\u00b0C)', lblQ0:'Cooling Capacity Q\u2080 (kW)', btnCalc:'\u25b6 START CALCULATION' }
+};
+function T(key) { return (I18N[LANG] && I18N[LANG][key]) ? I18N[LANG][key] : key; }
+function setLang(lang, btn) {
+  LANG = lang;
+  document.getElementById('langDE').classList.toggle('active', lang === 'de');
+  document.getElementById('langEN').classList.toggle('active', lang === 'en');
+  // Apply translations to elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (I18N[lang] && I18N[lang][key]) el.textContent = I18N[lang][key];
+  });
+  if (LR.hasCalc) render();
+}
+
+// EXCEL EXPORT
+function exportXLSX() {
+  if (!LR.hasCalc || !LR.inp) return;
+  const i   = LR.inp;
+  const ref = RM[i.rk];
+  const p0  = ref.pSat(i.t0), pc = ref.pSat(i.tc);
+  const iso = { saug:isoT(i.t0,i.tamb,i.rh), druck:isoT(i.tc,i.tamb,i.rh), fl:isoT(i.t0,i.tamb,i.rh), kond:isoT(i.tc*.6,i.tamb,i.rh) };
+  function res(type) {
+    const lenMap = {saug:i.lS, druck:i.lD, fl:i.lF, kond:i.lK};
+    const hMap   = {saug:i.lSV||0, druck:i.lDV||0, fl:0, kond:0};
+    const idx = OVR[type] !== null ? OVR[type] : LR[type].autoIdx;
+    return calcOne(idx, type, curMode, i.rk, i.Qe, lenMap[type], i.nb, i.ns, i.nsol, hMap[type]);
+  }
+  const cSaug = res('saug'), cDruck = res('druck'), cFl = res('fl'), cKond = res('kond');
+  const wb = XLSX.utils.book_new();
+  const inpRows = [
+    ['\u00b0coolROHR v6.3 \u2014 Berechnungsprotokoll (REFPROP-Stoffdaten)', '', ''],
+    ['Datum', new Date().toLocaleDateString('de-AT'), ''],
+    ['', '', ''],
+    ['EINGABEPARAMETER', '', ''],
+    ['Parameter', 'Wert', 'Einheit'],
+    ['K\u00e4ltemittel', i.rk, '\u2014'],
+    ['Betriebsart', curMode, '\u2014'],
+    ['Verdampfungstemperatur t\u2080', i.t0, '\u00b0C'],
+    ['Kondensationstemperatur tc', i.tc, '\u00b0C'],
+    ['Umgebungstemperatur', i.tamb, '\u00b0C'],
+    ['Relative Feuchte', i.rh, '%'],
+    ['K\u00e4lteleistung Q\u2080', i.Q, 'kW'],
+    ['GZF', i.gzf, '\u2014'],
+    ['Effektive Leistung Qe', i.Qe.toFixed(2), 'kW'],
+    ['', '', ''],
+    ['Saugleitung horiz.', i.lSH, 'm'],
+    ['Saugleitung Steigleitung', i.lSV, 'm'],
+    ['Druckleitung horiz.', i.lDH, 'm'],
+    ['Druckleitung Steigleitung', i.lDV, 'm'],
+    ['Fl\u00fcssigkeitsleitung', i.lF, 'm'],
+    ['Kondensatleitung', i.lK, 'm'],
+    ['', '', ''],
+    ['Verdampfungsdruck p\u2080 (interpol.)', p0.toFixed(3), 'bar'],
+    ['Kondensationsdruck pc (interpol.)', pc.toFixed(3), 'bar'],
+    ['Dampfdichte @t\u2080 (interpol.)', ref.rhoV(i.t0).toFixed(2), 'kg/m\u00b3'],
+    ['Fl\u00fcssdichte @t\u2080 (interpol.)', ref.rhoL(i.t0).toFixed(1), 'kg/m\u00b3'],
+    ['h_fg @t\u2080 (interpol.)', ref.hfg(i.t0).toFixed(1), 'kJ/kg'],
+    ['\u03bcV @t\u2080 (interpol.)', (ref.muV(i.t0)*1e5).toFixed(3), '\u00d710\u207b\u2075 Pa\u00b7s'],
+    ['\u03bcL @t\u2080 (interpol.)', (ref.muL(i.t0)*1e5).toFixed(3), '\u00d710\u207b\u2075 Pa\u00b7s'],
+    ['Massenstrom \u1e41', cSaug.m.toFixed(5), 'kg/s'],
+  ];
+  // Fix 10: Add effective evaporation temperature
+  const dpK_saug_total_xl = cSaug.dpK;
+  const t0_effXL = (i.t0 - dpK_saug_total_xl).toFixed(1);
+  inpRows.push(['Effektive Verdampfungstemperatur t\u2080,eff', t0_effXL, '\u00b0C']);
+  inpRows.push(['Druckverlust Saugleitung gesamt \u0394p', dpK_saug_total_xl.toFixed(3), 'K']);
+  const wsInp = XLSX.utils.aoa_to_sheet(inpRows);
+  wsInp['!cols'] = [{wch:38},{wch:16},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, wsInp, 'Eingaben');
+  const hdr = ['Leitung','OD (mm)','ID (mm)','WT (mm)','L\u00e4nge \u00e4q (m)','v (m/s)','v_min','v_max','\u0394p (K)','\u0394p (bar)','\u0394p_max (K)','p_Sat (bar)','Iso (mm)','Status'];
+  function pipeRow(label, r, pSat, isoVal) {
+    const st = r.isManual ? 'Manuell' : r.status==='ok' ? 'OK' : r.status==='warn' ? 'Pr\u00fcfen' : 'Kritisch';
+    return [label, r.p.od, r.p.id, r.p.wt, r.lenEq.toFixed(2), r.v.toFixed(3), r.vMin||'', r.vMax<90?r.vMax:'', r.dpK.toFixed(4), r.dpBar.toFixed(5), r.dMax.toFixed(2), pSat.toFixed(2), isoVal, st];
+  }
+  const pipeRows = [hdr, pipeRow('Saugleitung (SL)', cSaug, p0, iso.saug), pipeRow('Druckleitung (DL)', cDruck, pc, iso.druck), pipeRow('Fl\u00fcssigkeitsleitung (FL)', cFl, p0, iso.fl), pipeRow('Kondensatleitung (KL)', cKond, pc, iso.kond)];
+  // Fix 7: Add split strang data
+  ['saug','druck'].forEach(st => {
+    if (LR.strangCalc && LR.strangCalc[st]) {
+      const sc = LR.strangCalc[st];
+      const lbl = st === 'saug' ? 'SL' : 'DL';
+      pipeRows.push([lbl+' Hauptleitung', sc.pMain.od, sc.pMain.id, sc.pMain.wt, '-', sc.vMain.toFixed(3), sc.vMinH||'', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+      pipeRows.push([lbl+' Steigleitung (Riser)', sc.pRiser.od, sc.pRiser.id, sc.pRiser.wt, '-', sc.vRiserFull.toFixed(3), '-', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+      pipeRows.push([lbl+' Speed Riser', sc.pSpeed.od, sc.pSpeed.id, sc.pSpeed.wt, '-', sc.vSpeedAlone.toFixed(3), sc.vMinV||'', sc.vMaxG, '-', '-', sc.dMax.toFixed(2), '-', '-', 'Split']);
+    }
+  });
+  const wsPipe = XLSX.utils.aoa_to_sheet(pipeRows);
+  wsPipe['!cols'] = [{wch:24},{wch:8},{wch:8},{wch:8},{wch:14},{wch:10},{wch:8},{wch:8},{wch:10},{wch:12},{wch:12},{wch:10},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, wsPipe, 'Rohrdimensionierung');
+  const fname = 'coolROHR_' + i.rk + '_' + i.Q + 'kW_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  XLSX.writeFile(wb, fname);
+}
+</script>
+</body>
+</html>
