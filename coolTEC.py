@@ -157,6 +157,17 @@ res1.metric("KÄLTEBEDARF", f"{q_bedarf:.0f} W", f"{q_bedarf/1000:.2f} kW")
 res2.metric("LAUFZEIT", f"{laufzeit} h/d", f"Raum: {raum_bez}")
 res3.metric("ENERGIE / TAG", f"{(q_sum_24h*24)/1000:.1f} kWh", f"Ware: {m_ware:.0f} kg")
 
+if st.button("💾 Im Verlauf speichern"):
+    if "verlauf_heute" not in st.session_state:
+        st.session_state.verlauf_heute = []
+    st.session_state.verlauf_heute.append({
+        "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+        "modul": "coolTEC",
+        "bezeichnung": f"{kunde} | {raum_bez}",
+        "ergebnis": f"Kältebedarf: {q_bedarf/1000:.2f} kW"
+    })
+    st.success("✅ Im Verlauf gespeichert.")
+
 # --- DIAGRAMM ---
 col_table, col_chart = st.columns([1.2, 1])
 detail_df = pd.DataFrame({"Komponente": ["Wände", "Decke", "Boden", "Ware", "Zuschlag"], "Last": [q_wand, q_decke, q_boden, q_ware_24h, q_sum_24h * 0.15]})

@@ -145,14 +145,6 @@ def main():
     # --- INHALT LADEN ---
     selected_file = menu_options[tool_wahl]
 
-    # Modulwechsel im Verlauf aufzeichnen
-    if tool_wahl != "°Übersicht":
-        uhrzeit = datetime.now().strftime("%H:%M Uhr")
-        eintrag = f"{uhrzeit} — {tool_wahl}"
-        # Nur aufzeichnen, wenn nicht bereits zuletzt eingetragen
-        if not st.session_state.verlauf_heute or st.session_state.verlauf_heute[-1] != eintrag:
-            st.session_state.verlauf_heute.append(eintrag)
-
     if tool_wahl == "°Übersicht":
         st.info("### System-Status: Bereit\nWählen Sie oben ein Modul aus, um die Berechnung zu starten.")
         st.write("Dies ist die zentrale Steuereinheit für alle Coolsulting-Berechnungsmodule.")
@@ -161,12 +153,19 @@ def main():
         st.markdown("---")
         st.markdown("### 📋 Verlauf von heute")
         datum_heute = datetime.now().strftime("%d.%m.%Y")
-        if st.session_state.verlauf_heute:
-            st.caption(f"Genutzte Module am {datum_heute}:")
-            for eintrag in reversed(st.session_state.verlauf_heute):
-                st.markdown(f"- {eintrag}")
+        eintraege = st.session_state.verlauf_heute
+        if eintraege:
+            st.caption(f"Gespeicherte Berechnungen am {datum_heute} ({len(eintraege)} Einträge):")
+            for e in reversed(eintraege):
+                if isinstance(e, dict):
+                    st.markdown(
+                        f"**{e['uhrzeit']}** &nbsp;|&nbsp; `{e['modul']}` &nbsp;|&nbsp; "
+                        f"{e['bezeichnung']} &nbsp;→&nbsp; **{e['ergebnis']}**"
+                    )
+                else:
+                    st.markdown(f"- {e}")
         else:
-            st.caption(f"Noch keine Module am {datum_heute} geöffnet.")
+            st.caption(f"Noch keine Berechnungen am {datum_heute} gespeichert.")
 
     elif selected_file:
         run_app(selected_file)

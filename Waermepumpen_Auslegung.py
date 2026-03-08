@@ -393,6 +393,15 @@ def main():
         load_building_real = load_building_base * sperr_faktor
         total_kw = load_building_real + load_ww_base
         sperr_aufschlag = load_building_real - load_building_base
+
+        if "verlauf_heute" not in st.session_state:
+            st.session_state.verlauf_heute = []
+        st.session_state.verlauf_heute.append({
+            "uhrzeit": datetime.now().strftime("%H:%M Uhr"),
+            "modul": "Heizlast WP",
+            "bezeichnung": projekt if projekt else "Unbenannt",
+            "ergebnis": f"Heizlast: {total_kw:.2f} kW"
+        })
         
         infos, warnings, critical = [], [], []
         if flaeche > 300 and hat_ww: infos.append("ℹ️ <b>Gewerbe-Hinweis:</b> WW-Bedarf prüfen.")
