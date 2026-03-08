@@ -136,6 +136,7 @@ def main():
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
+        "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py"
     }
 
