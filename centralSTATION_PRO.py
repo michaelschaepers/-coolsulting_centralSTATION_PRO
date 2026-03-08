@@ -56,9 +56,13 @@ def main():
     TEXT_GRAY = "#3C3C3B"   # Dunkelgrau
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
-    
+
     VERSION = "4.7.1"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
+
+    # --- VERLAUF INITIALISIEREN ---
+    if "verlauf_heute" not in st.session_state:
+        st.session_state.verlauf_heute = []
 
     # --- CSS STYLING ---
     font_base64 = get_font_as_base64(FONT_FILE)
@@ -141,9 +145,29 @@ def main():
     # --- INHALT LADEN ---
     selected_file = menu_options[tool_wahl]
 
+    # Modulwechsel im Verlauf aufzeichnen
+    if tool_wahl != "°Übersicht":
+        uhrzeit = datetime.now().strftime("%H:%M Uhr")
+        eintrag = f"{uhrzeit} — {tool_wahl}"
+        # Nur aufzeichnen, wenn nicht bereits zuletzt eingetragen
+        if not st.session_state.verlauf_heute or st.session_state.verlauf_heute[-1] != eintrag:
+            st.session_state.verlauf_heute.append(eintrag)
+
     if tool_wahl == "°Übersicht":
         st.info("### System-Status: Bereit\nWählen Sie oben ein Modul aus, um die Berechnung zu starten.")
         st.write("Dies ist die zentrale Steuereinheit für alle Coolsulting-Berechnungsmodule.")
+
+        # --- VERLAUF VON HEUTE ---
+        st.markdown("---")
+        st.markdown("### 📋 Verlauf von heute")
+        datum_heute = datetime.now().strftime("%d.%m.%Y")
+        if st.session_state.verlauf_heute:
+            st.caption(f"Genutzte Module am {datum_heute}:")
+            for eintrag in reversed(st.session_state.verlauf_heute):
+                st.markdown(f"- {eintrag}")
+        else:
+            st.caption(f"Noch keine Module am {datum_heute} geöffnet.")
+
     elif selected_file:
         run_app(selected_file)
 
