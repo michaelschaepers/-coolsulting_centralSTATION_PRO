@@ -1477,168 +1477,169 @@ function showSchema(type) {
     mainOD = LR.dsr[type].large.p.od + ' mm';
   }
 
-  // === SVG 1: Double Riser Prinzip (nach DuPont Piping Handbook) ===
-  // Layout: Main Riser (links, groß) + Speed Riser (rechts, klein)
+  // === SVG 1: Double Riser Prinzip (nach ASHRAE Fig.15 / DuPont Piping Handbook) ===
+  // Layout: Speed Riser (LINKS, klein, außen) + Main Riser (RECHTS, groß, innen)
   // Sammelbogen am Fuß: Speed Riser taucht bis zur MITTE-UNTEN (Sohle) ein
-  // Hauptleitung kommt von links (Verdampfer/Verdichter) unten ein
-  const W=520, H=530;
-  const mX=168, mW=42;   // Main Riser center + width
-  const sX=295, sW=24;   // Speed Riser center + width
-  const topY=58;         // Obere Verbindung
-  const gY1=178, gY2=268, gR=20; // Ölheber-Positionen am Speed Riser
-  const rBotY=340;       // Unterkante der senkrechten Leitungen / Oberkante Sammelbogen (= Scheitelpunkt Main Riser)
-  const sohleY=430;      // SOHLE = tiefster Punkt Sammelbogen (Speed Riser Einlass)
-  const sbArcBot=460;    // Unteres Ende der Sammelbogen-Kurve
-  const supplyY=476;     // Hauptleitung horizontal
-  const ubL=mX-mW/2-14; // Linke Außenwand Sammelbogen = 102
-  const ubR=sX+sW/2+14; // Rechte Außenwand Sammelbogen = 321
-  const sbCtrX=Math.round((mX+sX)/2); // Mitte Sammelbogen = 231
+  // Ölheber am Speed Riser gehen nach LINKS (außen) — nach ASHRAE Fig.15
+  const W=540, H=530;
+  const sX=182, sW=22;   // Speed Riser LINKS, klein
+  const mX=336, mW=44;   // Main Riser RECHTS, groß
+  const topY=58;
+  const gY1=176, gY2=265, gR=22; // Ölheber am Speed Riser
+  const rBotY=340;       // Scheitelpunkt (Main Riser Einlass oben / Sammelbogen Kante)
+  const sohleY=425;      // SOHLE = tiefster Punkt (Speed Riser Einlass mittig-unten)
+  const sbArcBot=455;    // Unteres Ende der Sammelbogen-Außenkurve
+  const ubL=sX-sW/2-10; // Linke Außenwand = 161
+  const ubR=mX+mW/2+10; // Rechte Außenwand = 368
+  const sbCtrX=Math.round((sX+mX)/2); // Mitte Sammelbogen = 259
+  const gL_outer=sX-sW/2-2*gR; // Linke Außenkante Ölheber-Loop
 
   let sv = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;font-family:'IBM Plex Mono',monospace;border-radius:8px;">`;
   sv += `<rect width="${W}" height="${H}" fill="${BG}" rx="8"/>`;
 
   // Titel
   sv += `<text x="${W/2}" y="20" text-anchor="middle" fill="${SC}" font-size="11" font-weight="600" letter-spacing="1">DOUBLE RISER \u2014 PRINZIPSCHEMA</text>`;
-  sv += `<text x="${W/2}" y="33" text-anchor="middle" fill="${MUT}" font-size="9">DuPont Piping Handbook \u00b7 ASHRAE \u00b7 EN 378</text>`;
+  sv += `<text x="${W/2}" y="33" text-anchor="middle" fill="${MUT}" font-size="9">ASHRAE Fig.15 \u00b7 DuPont Piping Handbook \u00b7 EN 378</text>`;
 
-  // === Obere Verbindung (beide Steigleitungen → gemeinsame Leitung) ===
-  const joinX1=mX-mW/2, joinX2=sX+sW/2;
+  // === Obere Verbindung → Verdichter ===
+  const joinX1=sX-sW/2, joinX2=mX+mW/2;
   sv += `<rect x="${joinX1}" y="${topY}" width="${joinX2-joinX1}" height="13" fill="${PC}" fill-opacity="0.2" rx="2"/>`;
   sv += `<line x1="${joinX1}" y1="${topY}" x2="${joinX2}" y2="${topY}" stroke="${PC}" stroke-width="2"/>`;
   sv += `<line x1="${joinX1}" y1="${topY+13}" x2="${joinX2}" y2="${topY+13}" stroke="${PC}" stroke-width="2"/>`;
-  // Pfeil rechts → Verdichter
-  sv += `<line x1="${joinX2}" y1="${topY+6}" x2="${W-50}" y2="${topY+6}" stroke="${PC}" stroke-width="2"/>`;
-  sv += `<polygon points="${W-44},${topY+3} ${W-32},${topY+6} ${W-44},${topY+9}" fill="${PC}"/>`;
-  sv += `<text x="${W-28}" y="${topY+4}" fill="${PC}" font-size="8">zum</text>`;
-  sv += `<text x="${W-28}" y="${topY+15}" fill="${PC}" font-size="8">Verdichter</text>`;
-  // Pfeil links ← Verdampfer
-  sv += `<line x1="${joinX1}" y1="${topY+6}" x2="52" y2="${topY+6}" stroke="${MUT}" stroke-width="1.5"/>`;
-  sv += `<polygon points="58,${topY+3} 48,${topY+6} 58,${topY+9}" fill="${MUT}"/>`;
-  sv += `<text x="45" y="${topY+4}" text-anchor="end" fill="${MUT}" font-size="8">vom</text>`;
-  sv += `<text x="45" y="${topY+15}" text-anchor="end" fill="${MUT}" font-size="8">Verdampfer</text>`;
+  sv += `<line x1="${joinX2}" y1="${topY+6}" x2="${W-46}" y2="${topY+6}" stroke="${PC}" stroke-width="2"/>`;
+  sv += `<polygon points="${W-40},${topY+3} ${W-28},${topY+6} ${W-40},${topY+9}" fill="${PC}"/>`;
+  sv += `<text x="${W-24}" y="${topY+4}" fill="${PC}" font-size="8">zum</text>`;
+  sv += `<text x="${W-24}" y="${topY+15}" fill="${PC}" font-size="8">Verdichter</text>`;
 
-  // === MAIN RISER (links, großes Rohr): gerades Segment topY+13 → rBotY ===
-  sv += `<rect x="${mX-mW/2}" y="${topY+13}" width="${mW}" height="${rBotY-topY-13}" fill="${PC}" fill-opacity="0.12"/>`;
-  sv += `<line x1="${mX-mW/2}" y1="${topY+13}" x2="${mX-mW/2}" y2="${rBotY}" stroke="${PC}" stroke-width="2.5"/>`;
-  sv += `<line x1="${mX+mW/2}" y1="${topY+13}" x2="${mX+mW/2}" y2="${rBotY}" stroke="${PC}" stroke-width="2.5"/>`;
-  // Strömungspfeile aufwärts
-  sv += `<polygon points="${mX-5},${215} ${mX},${202} ${mX+5},${215}" fill="${PC}" opacity="0.85"/>`;
-  sv += `<polygon points="${mX-5},${305} ${mX},${292} ${mX+5},${305}" fill="${PC}" opacity="0.6"/>`;
+  // === Optionaler Invertierter Trap oben am Speed Riser (nach ASHRAE Fig.15) ===
+  // "Small diameter pipe inverted trap not required if pipe is properly sloped"
+  const invTY=topY+13, invH=18;
+  sv += `<rect x="${sX-sW/2}" y="${invTY}" width="${sW}" height="${invH}" fill="${SC}" fill-opacity="0.2" rx="2" stroke="${SC}" stroke-width="1" stroke-dasharray="4,2"/>`;
+  sv += `<line x1="${sX-sW/2-40}" y1="${invTY+invH/2}" x2="${sX-sW/2-4}" y2="${invTY+invH/2}" stroke="${SC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="${sX-sW/2-43}" y="${invTY+3}" text-anchor="end" fill="${SC}" font-size="7">Inv. Trap</text>`;
+  sv += `<text x="${sX-sW/2-43}" y="${invTY+14}" text-anchor="end" fill="${SC}" font-size="7">(optional)</text>`;
 
-  // === SPEED RISER (rechts, kleines Rohr) mit Ölhebern ===
-  // Segment 1: topY+13 → gY1
-  sv += `<rect x="${sX-sW/2}" y="${topY+13}" width="${sW}" height="${gY1-topY-13}" fill="${SC}" fill-opacity="0.1"/>`;
-  sv += `<line x1="${sX-sW/2}" y1="${topY+13}" x2="${sX-sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.8"/>`;
-  sv += `<line x1="${sX+sW/2}" y1="${topY+13}" x2="${sX+sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.8"/>`;
-  // Ölheber 1 (Bogen nach rechts, sichtbar)
-  sv += `<path d="M ${sX-sW/2},${gY1} a${gR},${gR} 0 0,0 0,${2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
-  sv += `<path d="M ${sX+sW/2},${gY1} a${gR+sW},${gR+sW} 0 0,1 0,${2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  // === SPEED RISER (LINKS, klein) mit Ölhebern nach LINKS ===
+  const sRisTopY=invTY+invH;
+  // Segment 1: sRisTopY → gY1
+  sv += `<rect x="${sX-sW/2}" y="${sRisTopY}" width="${sW}" height="${gY1-sRisTopY}" fill="${SC}" fill-opacity="0.1"/>`;
+  sv += `<line x1="${sX-sW/2}" y1="${sRisTopY}" x2="${sX-sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<line x1="${sX+sW/2}" y1="${sRisTopY}" x2="${sX+sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.8"/>`;
+  // Ölheber 1 (Bogen nach LINKS — außen)
+  sv += `<path d="M ${sX-sW/2},${gY1} Q ${gL_outer},${gY1} ${gL_outer},${gY1+gR} Q ${gL_outer},${gY1+2*gR} ${sX-sW/2},${gY1+2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX+sW/2},${gY1} Q ${sX-sW/2},${gY1} ${sX-sW/2},${gY1+gR} Q ${sX-sW/2},${gY1+2*gR} ${sX+sW/2},${gY1+2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX-sW/2},${gY1} Q ${gL_outer},${gY1} ${gL_outer},${gY1+gR} Q ${gL_outer},${gY1+2*gR} ${sX-sW/2},${gY1+2*gR} L ${sX+sW/2},${gY1+2*gR} Q ${sX-sW/2},${gY1+2*gR} ${sX-sW/2},${gY1+gR} Q ${sX-sW/2},${gY1} ${sX+sW/2},${gY1} Z" fill="${SC}" fill-opacity="0.08"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY1}" x2="${sX+sW/2}" y2="${gY1}" stroke="${SC}" stroke-width="1.8"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY1+2*gR}" x2="${sX+sW/2}" y2="${gY1+2*gR}" stroke="${SC}" stroke-width="1.8"/>`;
-  // Segment 2: gY1+2gR → gY2
+  // Segment 2
   sv += `<rect x="${sX-sW/2}" y="${gY1+2*gR}" width="${sW}" height="${gY2-gY1-2*gR}" fill="${SC}" fill-opacity="0.1"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY1+2*gR}" x2="${sX-sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.8"/>`;
   sv += `<line x1="${sX+sW/2}" y1="${gY1+2*gR}" x2="${sX+sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.8"/>`;
   // Ölheber 2
-  sv += `<path d="M ${sX-sW/2},${gY2} a${gR},${gR} 0 0,0 0,${2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
-  sv += `<path d="M ${sX+sW/2},${gY2} a${gR+sW},${gR+sW} 0 0,1 0,${2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX-sW/2},${gY2} Q ${gL_outer},${gY2} ${gL_outer},${gY2+gR} Q ${gL_outer},${gY2+2*gR} ${sX-sW/2},${gY2+2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX+sW/2},${gY2} Q ${sX-sW/2},${gY2} ${sX-sW/2},${gY2+gR} Q ${sX-sW/2},${gY2+2*gR} ${sX+sW/2},${gY2+2*gR}" fill="none" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX-sW/2},${gY2} Q ${gL_outer},${gY2} ${gL_outer},${gY2+gR} Q ${gL_outer},${gY2+2*gR} ${sX-sW/2},${gY2+2*gR} L ${sX+sW/2},${gY2+2*gR} Q ${sX-sW/2},${gY2+2*gR} ${sX-sW/2},${gY2+gR} Q ${sX-sW/2},${gY2} ${sX+sW/2},${gY2} Z" fill="${SC}" fill-opacity="0.08"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY2}" x2="${sX+sW/2}" y2="${gY2}" stroke="${SC}" stroke-width="1.8"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY2+2*gR}" x2="${sX+sW/2}" y2="${gY2+2*gR}" stroke="${SC}" stroke-width="1.8"/>`;
   // Segment 3: gY2+2gR → rBotY
   sv += `<rect x="${sX-sW/2}" y="${gY2+2*gR}" width="${sW}" height="${rBotY-gY2-2*gR}" fill="${SC}" fill-opacity="0.1"/>`;
   sv += `<line x1="${sX-sW/2}" y1="${gY2+2*gR}" x2="${sX-sW/2}" y2="${rBotY}" stroke="${SC}" stroke-width="1.8"/>`;
   sv += `<line x1="${sX+sW/2}" y1="${gY2+2*gR}" x2="${sX+sW/2}" y2="${rBotY}" stroke="${SC}" stroke-width="1.8"/>`;
-  // Speed Riser TAUCHT in Sammelbogen bis zur SOHLE (Mitte-Unten):
-  // Kurve: von (sX, rBotY) bogenförmig nach links-unten bis (sbCtrX, sohleY)
-  sv += `<path d="M ${sX-sW/2},${rBotY} C ${sX-sW/2},${sohleY-20} ${sbCtrX-sW/2+10},${sohleY} ${sbCtrX-sW/2},${sohleY}" fill="${SC}" fill-opacity="0.1" stroke="${SC}" stroke-width="1.8"/>`;
-  sv += `<path d="M ${sX+sW/2},${rBotY} C ${sX+sW/2},${sohleY} ${sbCtrX+sW/2+15},${sohleY+2} ${sbCtrX+sW/2},${sohleY}" fill="${SC}" fill-opacity="0.1" stroke="${SC}" stroke-width="1.8"/>`;
-  // Sohle-Kappe (flaches Ende des Speed Riser unten-mitte)
-  sv += `<line x1="${sbCtrX-sW/2}" y1="${sohleY}" x2="${sbCtrX+sW/2}" y2="${sohleY}" stroke="${SC}" stroke-width="2"/>`;
-  // Strömungspfeil im Speed Riser
+  // Strömungspfeil ↑
   sv += `<polygon points="${sX-4},${230} ${sX},${217} ${sX+4},${230}" fill="${SC}" opacity="0.8"/>`;
+  // Speed Riser taucht RECHTS in Sammelbogen zur SOHLE (sbCtrX, sohleY)
+  sv += `<path d="M ${sX-sW/2},${rBotY} C ${sX-sW/2},${sohleY} ${sbCtrX-sW/2-10},${sohleY} ${sbCtrX-sW/2},${sohleY}" fill="${SC}" fill-opacity="0.1" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<path d="M ${sX+sW/2},${rBotY} C ${sX+sW/2},${sohleY+10} ${sbCtrX+sW/2-8},${sohleY+2} ${sbCtrX+sW/2},${sohleY}" fill="${SC}" fill-opacity="0.1" stroke="${SC}" stroke-width="1.8"/>`;
+  sv += `<line x1="${sbCtrX-sW/2}" y1="${sohleY}" x2="${sbCtrX+sW/2}" y2="${sohleY}" stroke="${SC}" stroke-width="2.2"/>`;
 
-  // === SAMMELBOGEN (P-Trap, Öl-Falle) ===
-  // Äußere U-Form: von (ubL, rBotY) runter, Bogen, hoch bis (ubR, rBotY)
+  // === MAIN RISER (RECHTS, groß): topY+13 → rBotY ===
+  sv += `<rect x="${mX-mW/2}" y="${topY+13}" width="${mW}" height="${rBotY-topY-13}" fill="${PC}" fill-opacity="0.12"/>`;
+  sv += `<line x1="${mX-mW/2}" y1="${topY+13}" x2="${mX-mW/2}" y2="${rBotY}" stroke="${PC}" stroke-width="2.5"/>`;
+  sv += `<line x1="${mX+mW/2}" y1="${topY+13}" x2="${mX+mW/2}" y2="${rBotY}" stroke="${PC}" stroke-width="2.5"/>`;
+  sv += `<polygon points="${mX-5},${215} ${mX},${202} ${mX+5},${215}" fill="${PC}" opacity="0.85"/>`;
+  sv += `<polygon points="${mX-5},${310} ${mX},${297} ${mX+5},${310}" fill="${PC}" opacity="0.6"/>`;
+
+  // === SAMMELBOGEN (P-Trap) — "Minimize Trap Volume" ===
   sv += `<path d="M ${ubL},${rBotY} L ${ubL},${sbArcBot-22} Q ${sbCtrX},${sbArcBot} ${ubR},${sbArcBot-22} L ${ubR},${rBotY}" stroke="${YC}" stroke-width="2.5" fill="${YC}" fill-opacity="0.07"/>`;
-  // Innere Wand (gestrichelt): von Main Riser rechte Kante (mX+mW/2) bogenförmig zum Speed Riser linke Kante (sX-sW/2)
-  sv += `<path d="M ${mX+mW/2},${rBotY} L ${mX+mW/2},${sohleY-10} Q ${sbCtrX},${sohleY+10} ${sX-sW/2},${sohleY-10} L ${sX-sW/2},${rBotY}" stroke="${YC}" stroke-width="1.2" fill="none" stroke-dasharray="5,3" opacity="0.7"/>`;
-  // Sammelbogen Beschriftung
-  sv += `<text x="${sbCtrX}" y="${rBotY-10}" text-anchor="middle" fill="${YC}" font-size="9" font-weight="600">SAMMELBOGEN (P-Trap)</text>`;
+  sv += `<path d="M ${sX+sW/2},${rBotY} L ${sX+sW/2},${sohleY-12} Q ${sbCtrX},${sohleY+12} ${mX-mW/2},${sohleY-12} L ${mX-mW/2},${rBotY}" stroke="${YC}" stroke-width="1.2" fill="none" stroke-dasharray="5,3" opacity="0.7"/>`;
+  sv += `<text x="${sbCtrX}" y="${rBotY-11}" text-anchor="middle" fill="${YC}" font-size="9" font-weight="600">SAMMELBOGEN</text>`;
+  sv += `<text x="${sbCtrX}" y="${rBotY-1}" text-anchor="middle" fill="${YC}" font-size="8">Volumen minimieren!</text>`;
 
-  // === ÖL-FÜLLUNG (Teillastvisualisierung) ===
-  // Öl sammelt sich in der linken Kammer bis auf Höhe des Main-Riser-Einlasses
-  const oilTopY = rBotY + 18;  // Ölspiegel = Scheitelpunkt Main Riser
-  // Linke Kammer gefüllt (zwischen ubL und mX+mW/2, zwischen oilTopY und Sohle)
-  sv += `<path d="M ${ubL+3},${oilTopY} L ${ubL+3},${sbArcBot-24} Q ${mX},${sbArcBot-8} ${mX+mW/2-2},${sohleY-8} L ${mX+mW/2-2},${oilTopY} Z" fill="rgba(240,190,80,0.22)"/>`;
-  // Rechte Kammer gefüllt (zwischen sX+sW/2 und ubR, zwischen oilTopY und Sohle)
-  sv += `<path d="M ${sbCtrX+sW/2+2},${sohleY-8} Q ${sX},${sbArcBot-12} ${ubR-3},${sbArcBot-24} L ${ubR-3},${oilTopY} L ${sbCtrX+sW/2+2},${oilTopY} Z" fill="rgba(240,190,80,0.22)"/>`;
+  // === ÖL-FÜLLUNG (Teillast: Sohle bis Scheitelpunkt) ===
+  const oilTopY=rBotY+16;
+  // Linke Kammer (Speed Riser Seite, zwischen ubL und sX-sW/2)
+  sv += `<path d="M ${ubL+3},${oilTopY} L ${ubL+3},${sbArcBot-25} Q ${Math.round((ubL+sX)/2)},${sbArcBot-5} ${sX-sW/2-2},${sohleY-6} L ${sX-sW/2-2},${oilTopY} Z" fill="rgba(240,190,80,0.22)"/>`;
+  // Rechte Kammer (Main Riser Seite, zwischen sbCtrX+sW/2 und ubR)
+  sv += `<path d="M ${sbCtrX+sW/2+2},${sohleY-6} Q ${Math.round((mX+ubR)/2)},${sbArcBot-8} ${ubR-3},${sbArcBot-25} L ${ubR-3},${oilTopY} L ${sbCtrX+sW/2+2},${oilTopY} Z" fill="rgba(240,190,80,0.22)"/>`;
+  // Mittelkammer (zwischen sX+sW/2 und sbCtrX-sW/2, unterhalb Scheitelpunkt)
+  sv += `<rect x="${sX+sW/2+2}" y="${oilTopY}" width="${mX-mW/2-sX-sW/2-4}" height="${Math.round((sohleY-oilTopY)*0.5)}" fill="rgba(240,190,80,0.15)"/>`;
   // Ölspiegel-Linie
-  sv += `<line x1="${ubL+3}" y1="${oilTopY}" x2="${mX-mW/2-2}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
-  sv += `<line x1="${mX+mW/2+2}" y1="${oilTopY}" x2="${sX-sW/2-2}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
-  sv += `<line x1="${sX+sW/2+2}" y1="${oilTopY}" x2="${ubR-3}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
-  // Ölspiegel Annotation
-  sv += `<text x="${ubL-5}" y="${oilTopY+3}" text-anchor="end" fill="${YC}" font-size="8" font-weight="600">\u00d6l-Spiegel</text>`;
-  sv += `<text x="${ubL-5}" y="${oilTopY+14}" text-anchor="end" fill="${YC}" font-size="7">(Teillast)</text>`;
+  sv += `<line x1="${ubL+3}" y1="${oilTopY}" x2="${sX-sW/2-2}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
+  sv += `<line x1="${sX+sW/2+2}" y1="${oilTopY}" x2="${mX-mW/2-2}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
+  sv += `<line x1="${mX+mW/2+2}" y1="${oilTopY}" x2="${ubR-3}" y2="${oilTopY}" stroke="${YC}" stroke-width="1.5" stroke-dasharray="4,2"/>`;
+  sv += `<text x="${ubL-4}" y="${oilTopY+3}" text-anchor="end" fill="${YC}" font-size="8" font-weight="600">\u00d6l-Spiegel</text>`;
+  sv += `<text x="${ubL-4}" y="${oilTopY+13}" text-anchor="end" fill="${YC}" font-size="7">(Teillast)</text>`;
 
-  // Scheitelpunkt Main Riser Markierung
-  sv += `<polygon points="${mX-mW/2-3},${rBotY} ${mX-mW/2-3},${rBotY+16} ${mX-mW/2+8},${rBotY+8}" fill="${YC}" opacity="0.7"/>`;
-  sv += `<text x="${mX-mW/2-6}" y="${rBotY+26}" text-anchor="end" fill="${YC}" font-size="8">Scheitel-</text>`;
-  sv += `<text x="${mX-mW/2-6}" y="${rBotY+37}" text-anchor="end" fill="${YC}" font-size="8">punkt</text>`;
+  // Scheitelpunkt Markierung (rechts, Main Riser)
+  sv += `<polygon points="${mX+mW/2+3},${rBotY} ${mX+mW/2+3},${rBotY+16} ${mX+mW/2+14},${rBotY+8}" fill="${YC}" opacity="0.8"/>`;
+  sv += `<text x="${mX+mW/2+18}" y="${rBotY+5}" fill="${YC}" font-size="8">Scheitel-</text>`;
+  sv += `<text x="${mX+mW/2+18}" y="${rBotY+16}" fill="${YC}" font-size="8">punkt</text>`;
 
-  // SOHLE Markierung (Speed Riser Einlass mittig-unten)
+  // SOHLE (Speed Riser Einlass, mittig-unten)
   sv += `<circle cx="${sbCtrX}" cy="${sohleY}" r="5" fill="${SC}" fill-opacity="0.9"/>`;
-  sv += `<line x1="${sbCtrX}" y1="${sohleY+5}" x2="${sbCtrX+50}" y2="${sohleY+30}" stroke="${SC}" stroke-width="1" stroke-dasharray="3,2"/>`;
-  sv += `<text x="${sbCtrX+53}" y="${sohleY+24}" fill="${SC}" font-size="8" font-weight="600">SOHLE</text>`;
-  sv += `<text x="${sbCtrX+53}" y="${sohleY+35}" fill="${SC}" font-size="7">Speed Riser</text>`;
-  sv += `<text x="${sbCtrX+53}" y="${sohleY+45}" fill="${SC}" font-size="7">Einlass</text>`;
+  sv += `<line x1="${sbCtrX}" y1="${sohleY+5}" x2="${sbCtrX}" y2="${sohleY+32}" stroke="${SC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="${sbCtrX}" y="${sohleY+44}" text-anchor="middle" fill="${SC}" font-size="8" font-weight="600">SOHLE</text>`;
+  sv += `<text x="${sbCtrX}" y="${sohleY+54}" text-anchor="middle" fill="${SC}" font-size="7">Speed Riser Einlass</text>`;
 
-  // === HAUPTLEITUNG (horizontal, Gefälle ≥ 1%, von links) ===
-  const hlY=supplyY;
-  sv += `<line x1="30" y1="${hlY-7}" x2="${ubL}" y2="${hlY-11}" stroke="${PC}" stroke-width="2"/>`;
-  sv += `<line x1="30" y1="${hlY+5}" x2="${ubL}" y2="${hlY+1}" stroke="${PC}" stroke-width="2"/>`;
-  sv += `<rect x="30" y="${hlY-7}" width="${ubL-30}" height="12" fill="${PC}" fill-opacity="0.15" rx="2"/>`;
-  sv += `<polygon points="60,${hlY-7} 72,${hlY-3} 60,${hlY+5}" fill="${PC}" opacity="0.8"/>`;
-  sv += `<text x="26" y="${hlY-11}" text-anchor="end" fill="${PC}" font-size="8">Hauptltg.</text>`;
-  sv += `<text x="26" y="${hlY+1}" text-anchor="end" fill="${PC}" font-size="8">\u2265 1% Gef.</text>`;
-  // Verbindung Hauptleitung → Sammelbogen (linke Außenwand)
-  sv += `<line x1="${ubL}" y1="${hlY-4}" x2="${ubL}" y2="${sbArcBot-22}" stroke="${PC}" stroke-width="2"/>`;
+  // === HAUPTLEITUNG (von links, mit Gefälle = Slope in direction of flow) ===
+  const hlY=sbArcBot+12;
+  sv += `<line x1="22" y1="${hlY+6}" x2="${ubL}" y2="${hlY}" stroke="${PC}" stroke-width="2"/>`;
+  sv += `<line x1="22" y1="${hlY+18}" x2="${ubL}" y2="${hlY+12}" stroke="${PC}" stroke-width="2"/>`;
+  sv += `<rect x="22" y="${hlY+6}" width="${ubL-22}" height="12" fill="${PC}" fill-opacity="0.15" rx="2"/>`;
+  sv += `<polygon points="48,${hlY+4} 62,${hlY+9} 48,${hlY+17}" fill="${PC}" opacity="0.8"/>`;
+  sv += `<text x="18" y="${hlY+9}" text-anchor="end" fill="${PC}" font-size="8">Hauptltg.</text>`;
+  sv += `<text x="18" y="${hlY+20}" text-anchor="end" fill="${YC}" font-size="7">Gef\u00e4lle \u2192</text>`;
+  sv += `<line x1="${ubL}" y1="${hlY+6}" x2="${ubL}" y2="${sbArcBot-22}" stroke="${PC}" stroke-width="2"/>`;
+  // "Slope in direction of flow" Annotation (wie ASHRAE Fig.15)
+  sv += `<text x="${Math.round((22+ubL)/2)}" y="${hlY+32}" text-anchor="middle" fill="${MUT}" font-size="7">Gef\u00e4lle in Str\u00f6mungsrichtung</text>`;
 
-  // === LABELS Steigleitungen ===
+  // === LABELS Speed Riser (links außen) ===
   const midY=Math.round((topY+rBotY)/2);
-  // Main Riser links
-  sv += `<text x="${mX-mW/2-8}" y="${midY-14}" text-anchor="end" fill="${PC}" font-size="10" font-weight="600">MAIN</text>`;
-  sv += `<text x="${mX-mW/2-8}" y="${midY}" text-anchor="end" fill="${PC}" font-size="10" font-weight="600">RISER</text>`;
-  sv += `<text x="${mX-mW/2-8}" y="${midY+14}" text-anchor="end" fill="${MUT}" font-size="8">gro\u00dfes Rohr</text>`;
-  sv += `<text x="${mX-mW/2-8}" y="${midY+26}" text-anchor="end" fill="${MUT}" font-size="8">Vollast</text>`;
-  sv += `<text x="${mX-mW/2-8}" y="${midY+40}" text-anchor="end" fill="${PC}" font-size="9" font-weight="600">\u00d8 ${mOD}</text>`;
-  sv += `<text x="${mX-mW/2-8}" y="${midY+52}" text-anchor="end" fill="${MUT}" font-size="8">ID ${mID}</text>`;
-  // Speed Riser rechts
-  const srLX=sX+sW/2+gR+10;
-  sv += `<text x="${srLX}" y="${midY-14}" fill="${SC}" font-size="10" font-weight="600">SPEED</text>`;
-  sv += `<text x="${srLX}" y="${midY}" fill="${SC}" font-size="10" font-weight="600">RISER</text>`;
-  sv += `<text x="${srLX}" y="${midY+14}" fill="${MUT}" font-size="8">kleines Rohr</text>`;
-  sv += `<text x="${srLX}" y="${midY+26}" fill="${MUT}" font-size="8">Teillast/\u00d6l</text>`;
-  sv += `<text x="${srLX}" y="${midY+40}" fill="${SC}" font-size="9" font-weight="600">\u00d8 ${sOD}</text>`;
-  sv += `<text x="${srLX}" y="${midY+52}" fill="${MUT}" font-size="8">ID ${sID}</text>`;
-  // Ölheber Annotation
-  sv += `<line x1="${sX+sW/2}" y1="${gY1}" x2="${srLX+50}" y2="${gY1-15}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
-  sv += `<text x="${srLX+53}" y="${gY1-22}" fill="${YC}" font-size="8" font-weight="600">\u00d6lheber</text>`;
-  sv += `<text x="${srLX+53}" y="${gY1-11}" fill="${YC}" font-size="7">je 2,5\u20134 m</text>`;
+  const sLX=gL_outer-6; // Label rechts von Ölheber-Außenkante
+  sv += `<text x="${sLX}" y="${midY-14}" text-anchor="end" fill="${SC}" font-size="10" font-weight="600">SPEED</text>`;
+  sv += `<text x="${sLX}" y="${midY}" text-anchor="end" fill="${SC}" font-size="10" font-weight="600">RISER</text>`;
+  sv += `<text x="${sLX}" y="${midY+14}" text-anchor="end" fill="${MUT}" font-size="8">kleines Rohr</text>`;
+  sv += `<text x="${sLX}" y="${midY+26}" text-anchor="end" fill="${MUT}" font-size="8">Teillast / \u00d6l</text>`;
+  sv += `<text x="${sLX}" y="${midY+40}" text-anchor="end" fill="${SC}" font-size="9" font-weight="600">\u00d8 ${sOD}</text>`;
+  sv += `<text x="${sLX}" y="${midY+52}" text-anchor="end" fill="${MUT}" font-size="8">ID ${sID}</text>`;
+  // Ölheber Annotation links
+  sv += `<line x1="${gL_outer}" y1="${gY1+gR}" x2="${sLX-2}" y2="${gY1-18}" stroke="${YC}" stroke-width="1" stroke-dasharray="3,2"/>`;
+  sv += `<text x="${sLX-4}" y="${gY1-26}" text-anchor="end" fill="${YC}" font-size="8" font-weight="600">\u00d6lheber</text>`;
+  sv += `<text x="${sLX-4}" y="${gY1-14}" text-anchor="end" fill="${YC}" font-size="7">je 2,5\u20134 m</text>`;
+
+  // === LABELS Main Riser (rechts außen) ===
+  const mRX=mX+mW/2+10;
+  sv += `<text x="${mRX}" y="${midY-14}" fill="${PC}" font-size="10" font-weight="600">MAIN</text>`;
+  sv += `<text x="${mRX}" y="${midY}" fill="${PC}" font-size="10" font-weight="600">RISER</text>`;
+  sv += `<text x="${mRX}" y="${midY+14}" fill="${MUT}" font-size="8">gro\u00dfes Rohr</text>`;
+  sv += `<text x="${mRX}" y="${midY+26}" fill="${MUT}" font-size="8">Vollast</text>`;
+  sv += `<text x="${mRX}" y="${midY+40}" fill="${PC}" font-size="9" font-weight="600">\u00d8 ${mOD}</text>`;
+  sv += `<text x="${mRX}" y="${midY+52}" fill="${MUT}" font-size="8">ID ${mID}</text>`;
 
   // === Info-Boxen TEILLAST / VOLLAST ===
-  sv += `<rect x="6" y="${rBotY-78}" width="76" height="64" fill="${SC}" fill-opacity="0.09" rx="4" stroke="${SC}" stroke-width="1"/>`;
-  sv += `<text x="44" y="${rBotY-64}" text-anchor="middle" fill="${SC}" font-size="9" font-weight="600">TEILLAST</text>`;
-  sv += `<text x="44" y="${rBotY-52}" text-anchor="middle" fill="${TXT}" font-size="7">\u00d6l sperrt Main</text>`;
-  sv += `<text x="44" y="${rBotY-40}" text-anchor="middle" fill="${TXT}" font-size="7">Speed allein aktiv</text>`;
-  sv += `<text x="44" y="${rBotY-28}" text-anchor="middle" fill="${SC}" font-size="8">v \u2265 v_min \u2713</text>`;
-  sv += `<text x="44" y="${rBotY-17}" text-anchor="middle" fill="${YC}" font-size="7">\u2265 1500 ft/min</text>`;
+  sv += `<rect x="${sX+sW/2+4}" y="${topY+2}" width="82" height="66" fill="${SC}" fill-opacity="0.09" rx="4" stroke="${SC}" stroke-width="1"/>`;
+  sv += `<text x="${sX+sW/2+45}" y="${topY+16}" text-anchor="middle" fill="${SC}" font-size="9" font-weight="600">TEILLAST</text>`;
+  sv += `<text x="${sX+sW/2+45}" y="${topY+29}" text-anchor="middle" fill="${TXT}" font-size="7">\u00d6l sperrt Main Riser</text>`;
+  sv += `<text x="${sX+sW/2+45}" y="${topY+41}" text-anchor="middle" fill="${TXT}" font-size="7">Speed allein \u2192 Sohle</text>`;
+  sv += `<text x="${sX+sW/2+45}" y="${topY+53}" text-anchor="middle" fill="${SC}" font-size="8">v \u2265 7,6 m/s \u2713</text>`;
+  sv += `<text x="${sX+sW/2+45}" y="${topY+63}" text-anchor="middle" fill="${YC}" font-size="7">(1500 ft/min)</text>`;
 
-  sv += `<rect x="${W-84}" y="${rBotY-78}" width="78" height="64" fill="${PC}" fill-opacity="0.09" rx="4" stroke="${PC}" stroke-width="1"/>`;
-  sv += `<text x="${W-45}" y="${rBotY-64}" text-anchor="middle" fill="${PC}" font-size="9" font-weight="600">VOLLAST</text>`;
-  sv += `<text x="${W-45}" y="${rBotY-52}" text-anchor="middle" fill="${TXT}" font-size="7">beide Riser aktiv</text>`;
-  sv += `<text x="${W-45}" y="${rBotY-40}" text-anchor="middle" fill="${TXT}" font-size="7">prop. Querschnitt</text>`;
-  sv += `<text x="${W-45}" y="${rBotY-28}" text-anchor="middle" fill="${PC}" font-size="8">v \u2264 v_max \u2713</text>`;
-  sv += `<text x="${W-45}" y="${rBotY-17}" text-anchor="middle" fill="${PC}" font-size="7">\u2264 p_max \u2713</text>`;
+  sv += `<rect x="${mX-mW/2-86}" y="${topY+2}" width="82" height="66" fill="${PC}" fill-opacity="0.09" rx="4" stroke="${PC}" stroke-width="1"/>`;
+  sv += `<text x="${mX-mW/2-45}" y="${topY+16}" text-anchor="middle" fill="${PC}" font-size="9" font-weight="600">VOLLAST</text>`;
+  sv += `<text x="${mX-mW/2-45}" y="${topY+29}" text-anchor="middle" fill="${TXT}" font-size="7">beide Riser aktiv</text>`;
+  sv += `<text x="${mX-mW/2-45}" y="${topY+41}" text-anchor="middle" fill="${TXT}" font-size="7">prop. Querschnitt</text>`;
+  sv += `<text x="${mX-mW/2-45}" y="${topY+53}" text-anchor="middle" fill="${PC}" font-size="8">v \u2264 v_max \u2713</text>`;
+  sv += `<text x="${mX-mW/2-45}" y="${topY+63}" text-anchor="middle" fill="${PC}" font-size="7">\u03a3A = A_Hauptltg.</text>`;
 
   sv += `</svg>`;
 
@@ -1704,30 +1705,120 @@ function showSchema(type) {
   sv2 += `<text x="${spX}" y="${seg2BotY+14}" text-anchor="middle" fill="${MUT}" font-size="8">\u2193 zum Sammelbogen (Sohle)</text>`;
   sv2 += `</svg>`;
 
-  const noteStyle = `margin-top:12px;padding:12px;background:rgba(45,212,191,0.07);border:1px solid rgba(45,212,191,0.22);border-radius:6px;font-size:10px;line-height:1.85;color:${TXT};font-family:'IBM Plex Mono',monospace;`;
+  // === SVG 3: Reduzierstück-Vergleich (ASHRAE Fig.13 traditionell vs Fig.14 bevorzugt) ===
+  const W3=285, H3=340;
+  let sv3 = `<svg width="${W3}" height="${H3}" viewBox="0 0 ${W3} ${H3}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:0 auto;font-family:'IBM Plex Mono',monospace;border-radius:8px;">`;
+  sv3 += `<rect width="${W3}" height="${H3}" fill="${BG}" rx="8"/>`;
+  sv3 += `<text x="${W3/2}" y="16" text-anchor="middle" fill="${MUT}" font-size="10" font-weight="600">ROHR\u00dcBERGANG HORIZONTAL \u2192 RISER</text>`;
+  // Trennlinie Mitte
+  sv3 += `<line x1="${W3/2}" y1="22" x2="${W3/2}" y2="${H3-8}" stroke="${MUT}" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>`;
+
+  // --- LINKS: Traditionell (Fig.13) ---
+  sv3 += `<text x="${W3/4}" y="34" text-anchor="middle" fill="${MUT}" font-size="8" font-weight="600">Fig.13 TRADITIONELL</text>`;
+  // Horizontale Leitung (groß)
+  sv3 += `<rect x="8" y="46" width="88" height="14" fill="${PC}" fill-opacity="0.15" rx="2"/>`;
+  sv3 += `<line x1="8" y1="46" x2="96" y2="46" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<line x1="8" y1="60" x2="96" y2="60" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<polygon points="30,46 42,53 30,60" fill="${PC}" opacity="0.8"/>`;
+  sv3 += `<text x="50" y="43" text-anchor="middle" fill="${MUT}" font-size="7">groß</text>`;
+  // 90°-Bogen X
+  sv3 += `<path d="M 96,46 Q 106,46 106,56" fill="none" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<path d="M 96,60 Q 112,60 112,74" fill="none" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<rect x="96" y="46" width="16" height="14" fill="${PC}" fill-opacity="0.08"/>`;
+  sv3 += `<text x="100" y="44" fill="${YC}" font-size="8" font-weight="600">X</text>`;
+  // Vertikales Reduzierstück Z
+  sv3 += `<rect x="106" y="56" width="6" height="22" fill="${PC}" fill-opacity="0.2" rx="1"/>`;
+  sv3 += `<line x1="106" y1="56" x2="106" y2="78" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<line x1="112" y1="74" x2="112" y2="78" stroke="${PC}" stroke-width="2"/>`;
+  // Reduzierung Z (Trichter)
+  sv3 += `<path d="M 106,78 L 104,88 L 110,88 L 112,78 Z" fill="${PC}" fill-opacity="0.3" stroke="${PC}" stroke-width="1.5"/>`;
+  sv3 += `<text x="116" y="86" fill="${YC}" font-size="8" font-weight="600">Z</text>`;
+  sv3 += `<text x="114" y="96" fill="${MUT}" font-size="7">Reduz.</text>`;
+  sv3 += `<text x="114" y="105" fill="${MUT}" font-size="7">vertikal</text>`;
+  // Riser klein nach oben
+  sv3 += `<rect x="104" y="40" width="6" height="52" fill="${SC}" fill-opacity="0.1"/>`;
+  sv3 += `<line x1="104" y1="88" x2="104" y2="40" stroke="${SC}" stroke-width="1.8"/>`;
+  sv3 += `<line x1="110" y1="88" x2="110" y2="40" stroke="${SC}" stroke-width="1.8"/>`;
+  sv3 += `<polygon points="104,55 107,44 110,55" fill="${SC}" opacity="0.8"/>`;
+  // Ölsumpf (Problem!)
+  sv3 += `<path d="M 106,78 L 104,90 L 112,90 L 110,78" fill="rgba(240,190,80,0.35)"/>`;
+  sv3 += `<text x="107" y="115" text-anchor="middle" fill="${YC}" font-size="7" font-weight="600">\u00d6l-Sumpf!</text>`;
+  sv3 += `<text x="107" y="125" text-anchor="middle" fill="${MUT}" font-size="6">90°-Bögen + vert.</text>`;
+  sv3 += `<text x="107" y="133" text-anchor="middle" fill="${MUT}" font-size="6">Reduzierung</text>`;
+  sv3 += `<text x="${W3/4}" y="148" text-anchor="middle" fill="var(--orange)" font-size="8">&#9888; \u00d6l sammelt sich</text>`;
+
+  // --- RECHTS: Bevorzugt (Fig.14) ---
+  sv3 += `<text x="${W3*3/4}" y="34" text-anchor="middle" fill="${SC}" font-size="8" font-weight="600">Fig.14 BEVORZUGT</text>`;
+  const rx=148; // Startx rechte Seite
+  // Horizontale Leitung (groß)
+  sv3 += `<rect x="${rx}" y="46" width="88" height="14" fill="${PC}" fill-opacity="0.15" rx="2"/>`;
+  sv3 += `<line x1="${rx}" y1="46" x2="${rx+88}" y2="46" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<line x1="${rx}" y1="60" x2="${rx+88}" y2="60" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<polygon points="${rx+22},46 ${rx+34},53 ${rx+22},60" fill="${PC}" opacity="0.8"/>`;
+  sv3 += `<text x="${rx+44}" y="43" text-anchor="middle" fill="${MUT}" font-size="7">groß</text>`;
+  // Exzenter-Reduzierung X (in horizontaler Leitung)
+  sv3 += `<path d="M ${rx+88},46 L ${rx+96},50 L ${rx+96},60 L ${rx+88},60 Z" fill="${PC}" fill-opacity="0.4" stroke="${PC}" stroke-width="1.5"/>`;
+  sv3 += `<text x="${rx+100}" y="44" fill="${YC}" font-size="8" font-weight="600">X</text>`;
+  sv3 += `<text x="${rx+84}" y="72" text-anchor="middle" fill="${MUT}" font-size="6">Exz.-Reduz.</text>`;
+  sv3 += `<text x="${rx+84}" y="80" text-anchor="middle" fill="${SC}" font-size="6">kein Sumpf &#10003;</text>`;
+  // 45°-Bogen Y
+  sv3 += `<path d="M ${rx+96},50 Q ${rx+108},50 ${rx+110},62" fill="none" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<path d="M ${rx+96},60 Q ${rx+106},60 ${rx+110},70" fill="none" stroke="${PC}" stroke-width="2"/>`;
+  sv3 += `<text x="${rx+100}" y="58" fill="${YC}" font-size="8" font-weight="600">Y</text>`;
+  sv3 += `<text x="${rx+98}" y="92" text-anchor="middle" fill="${MUT}" font-size="6">45°-Bogen</text>`;
+  // Riser klein nach oben
+  const rrX=rx+106;
+  sv3 += `<rect x="${rrX}" y="40" width="8" height="44" fill="${SC}" fill-opacity="0.1"/>`;
+  sv3 += `<line x1="${rrX}" y1="84" x2="${rrX}" y2="40" stroke="${SC}" stroke-width="1.8"/>`;
+  sv3 += `<line x1="${rrX+8}" y1="84" x2="${rrX+8}" y2="40" stroke="${SC}" stroke-width="1.8"/>`;
+  sv3 += `<polygon points="${rrX},56 ${rrX+4},44 ${rrX+8},56" fill="${SC}" opacity="0.8"/>`;
+  sv3 += `<text x="${rrX+4}" y="100" text-anchor="middle" fill="${SC}" font-size="7">Riser</text>`;
+  sv3 += `<text x="${W3*3/4}" y="148" text-anchor="middle" fill="${SC}" font-size="8">&#10003; kein \u00d6l-Sumpf</text>`;
+
+  // --- Gemeinsame Legende ---
+  sv3 += `<line x1="8" y1="162" x2="${W3-8}" y2="162" stroke="${MUT}" stroke-width="0.5" opacity="0.3"/>`;
+  sv3 += `<text x="${W3/2}" y="176" text-anchor="middle" fill="${YC}" font-size="9" font-weight="600">Exzenter-Reduzierstück (bevorzugt)</text>`;
+  sv3 += `<text x="${W3/2}" y="190" text-anchor="middle" fill="${TXT}" font-size="8">Flache Seite UNTEN &rarr; kein \u00d6l-Sumpf</text>`;
+  sv3 += `<text x="${W3/2}" y="204" text-anchor="middle" fill="${MUT}" font-size="7">Ersetzt 90\u00b0-B\u00f6gen (X,Y) + vertikale Reduzierung (Z)</text>`;
+  sv3 += `<line x1="8" y1="212" x2="${W3-8}" y2="212" stroke="${MUT}" stroke-width="0.5" opacity="0.3"/>`;
+  sv3 += `<text x="${W3/2}" y="225" text-anchor="middle" fill="${MUT}" font-size="8" font-weight="600">Typische Rohrleitungs-Geschwindigkeiten</text>`;
+  sv3 += `<text x="${W3/2}" y="238" text-anchor="middle" fill="${TXT}" font-size="8">Saugleitung: 900\u20134000 ft/min (4,6\u201320 m/s)</text>`;
+  sv3 += `<text x="${W3/2}" y="250" text-anchor="middle" fill="${TXT}" font-size="8">Druckleitung: 2000\u20133500 ft/min (10\u201318 m/s)</text>`;
+  sv3 += `<text x="${W3/2}" y="262" text-anchor="middle" fill="${TXT}" font-size="8">&#214;lr\u00fcckf\u00fchrung vertikal: \u2265 7,6 m/s (1500 ft/min)</text>`;
+  sv3 += `<text x="${W3/2}" y="274" text-anchor="middle" fill="${TXT}" font-size="8">&#214;lr\u00fcckf\u00fchrung horizontal: \u2265 3,8 m/s (750 ft/min)</text>`;
+  sv3 += `<line x1="8" y1="282" x2="${W3-8}" y2="282" stroke="${MUT}" stroke-width="0.5" opacity="0.3"/>`;
+  sv3 += `<text x="${W3/2}" y="294" text-anchor="middle" fill="${MUT}" font-size="7">Quelle: ASHRAE Refrigeration Handbook</text>`;
+  sv3 += `<text x="${W3/2}" y="305" text-anchor="middle" fill="${MUT}" font-size="7">DuPont Suva Piping Handbook \u00b7 EN 378</text>`;
+  sv3 += `</svg>`;
+
   document.getElementById('modalContent').innerHTML =
     `<div class="diag-grid">`
     + `<div class="diag-card full" style="padding:10px;">${sv}</div>`
     + `<div class="diag-card" style="padding:10px;">${sv2}</div>`
+    + `<div class="diag-card" style="padding:10px;">${sv3}</div>`
     + `<div class="diag-card" style="padding:14px;font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.9;color:${TXT};">`
-    + `<div class="diag-card-title">Funktionsprinzip</div>`
+    + `<div class="diag-card-title">Funktionsprinzip (ASHRAE Fig.15)</div>`
+    + `<b style="color:${SC}">Speed Riser: LINKS / Au\u00dfen</b><br>`
+    + `<b style="color:${PC}">Main Riser: RECHTS / Innen</b><br><br>`
     + `<b style="color:${YC}">&#9632; SAMMELBOGEN (P-Trap):</b><br>`
+    + `&nbsp;&nbsp;<span style="color:${SC}">Speed Riser</span> &rarr; taucht zur <b>Sohle</b><br>`
     + `&nbsp;&nbsp;<span style="color:${PC}">Main Riser</span> &rarr; Einlass am <b>Scheitelpunkt</b><br>`
-    + `&nbsp;&nbsp;<span style="color:${SC}">Speed Riser</span> &rarr; taucht bis zur <b>Sohle</b><br>`
-    + `&nbsp;&nbsp;P-Trap-Gr&#246;&szlig;e = Hauptleitungsgr&#246;&szlig;e<br><br>`
-    + `<b style="color:${SC}">TEILLAST (v &lt; v_min im Main Riser):</b><br>`
-    + `&nbsp;&nbsp;1. &#214;l fl&auml;uft zur&#252;ck &rarr; f&#252;llt Sohle<br>`
-    + `&nbsp;&nbsp;2. &#214;l-Spiegel steigt bis Scheitelpunkt<br>`
+    + `&nbsp;&nbsp;P-Trap = Hauptleitungsgr\u00f6\u00dfe<br>`
+    + `&nbsp;&nbsp;<b style="color:var(--orange)">Volumen minimieren!</b><br><br>`
+    + `<b style="color:${SC}">TEILLAST (v &lt; v_min):</b><br>`
+    + `&nbsp;&nbsp;1. \u00d6l flie\u00dft zur\u00fcck &rarr; f\u00fcllt Sohle<br>`
+    + `&nbsp;&nbsp;2. \u00d6l-Spiegel steigt bis Scheitelpunkt<br>`
     + `&nbsp;&nbsp;3. Main Riser gesperrt &#10003;<br>`
-    + `&nbsp;&nbsp;4. Volles &#7745; durch Speed Riser<br>`
-    + `&nbsp;&nbsp;5. v &ge; 7,6 m/s &rarr; &#214;lr&#252;ckf&#252;hrung &#10003;<br><br>`
+    + `&nbsp;&nbsp;4. Volles \u1e41 durch Speed Riser<br>`
+    + `&nbsp;&nbsp;5. v \u2265 7,6 m/s &rarr; \u00d6lr\u00fcckf\u00fchrung &#10003;<br><br>`
     + `<b style="color:${PC}">VOLLAST:</b><br>`
-    + `&nbsp;&nbsp;Gasdruck &uuml;berwindet &#214;lpfropfen<br>`
-    + `&nbsp;&nbsp;Beide Riser aktiv &rarr; v &le; v_max &#10003;<br><br>`
-    + `<b style="color:${YC}">&#214;LHEBER (Gooseneck):</b><br>`
-    + `&nbsp;&nbsp;Speed Riser: je <b>2,5&ndash;4 m</b> ein Heber<br>`
-    + `&nbsp;&nbsp;&#214;l sammelt sich &rarr; Pfropfen &rarr; mitgerissen<br>`
-    + `&nbsp;&nbsp;v_min SL/NK: <b>7,6 m/s</b> (1500&nbsp;ft/min)<br>`
+    + `&nbsp;&nbsp;Gasdruck \u00fcberwindet \u00d6lpfropfen<br>`
+    + `&nbsp;&nbsp;Beide Riser aktiv &rarr; v \u2264 v_max &#10003;<br>`
+    + `&nbsp;&nbsp;\u03a3A = A_Hauptleitung &#10003;<br><br>`
+    + `<b style="color:${YC}">\u00d6LHEBER (Gooseneck):</b><br>`
+    + `&nbsp;&nbsp;je <b>2,5&ndash;4 m</b> ein Heber links<br>`
+    + `&nbsp;&nbsp;Inv. Trap oben optional (bei Gef\u00e4lle)<br>`
+    + `&nbsp;&nbsp;v_min SL/NK: <b>7,6 m/s</b><br>`
     + `&nbsp;&nbsp;v_min DL: <b>5,0 m/s</b>`
     + `</div></div>`;
 
