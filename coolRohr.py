@@ -19,7 +19,9 @@ except:
     pass
 
 # --- HTML LADEN UND ANZEIGEN ---
-html_path = os.path.join(os.path.dirname(__file__) if "__file__" in dir() else ".", "coolRohr.html")
+# Robuste Pfadauflösung: funktioniert standalone und via exec() in centralSTATION_PRO
+_script_dir = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else os.getcwd()
+html_path = os.path.join(_script_dir, "coolRohr.html")
 
 if os.path.exists(html_path):
     with open(html_path, "r", encoding="utf-8") as f:
