@@ -11,6 +11,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import os
+import base64
 
 # --- SICHERUNG FÜR DASHBOARD ---
 try:
@@ -26,6 +27,14 @@ html_path = os.path.join(_script_dir, "coolRohr.html")
 if os.path.exists(html_path):
     with open(html_path, "r", encoding="utf-8") as f:
         html_content = f.read()
+    # Base64-encode logo and inject into HTML
+    logo_path = os.path.join(_script_dir, "Coolsulting_Logo_ohneHG_blau.png")
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as img_f:
+            logo_b64 = base64.b64encode(img_f.read()).decode("utf-8")
+        html_content = html_content.replace("__LOGO__", logo_b64)
+    else:
+        html_content = html_content.replace("__LOGO__", "")
     components.html(html_content, height=1600, scrolling=True)
 else:
     st.error(f"❌ Datei 'coolRohr.html' nicht gefunden. Bitte sicherstellen, dass die Datei im selben Verzeichnis liegt.")

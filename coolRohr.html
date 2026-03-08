@@ -216,10 +216,13 @@ body.light .placeholder{color:var(--muted);}
     <div id="modalContent"></div>
   </div>
 </div>
-<header>
+<header style="position:relative;">
   <div>
     <div class="logo-main">&#176;coolsulting</div>
     <div class="logo-sub" id="hdrSub">CU-Rohrdimensionierung &middot; K&auml;ltemittelleitungen</div>
+  </div>
+  <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);">
+    <img src="data:image/png;base64,__LOGO__" style="height:38px;display:block;">
   </div>
   <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Hellblau / Dunkel umschalten">&#9788;</button>
@@ -228,7 +231,7 @@ body.light .placeholder{color:var(--muted);}
       <button class="lang-btn" id="langEN" onclick="setLang('en',this)">EN</button>
     </div>
     <button class="btn-xl" id="btnXL" onclick="exportXLSX()" style="display:none;">&#11015; Excel</button>
-    <div class="hbadge">v6.4 &middot; &#176;coolROHR &middot; EN 378 &middot; Lookup-Tabellen</div>
+    <div class="hbadge">v6.5 &middot; &#176;coolROHR &middot; EN 378 &middot; Lookup-Tabellen</div>
   </div>
 </header>
 <div class="container">
@@ -951,8 +954,9 @@ function render() {
       + velBar(r) + dpBar(r) + (r.viol.length ? violBox(r) : '');
 
     if (LR.hasCalc) {
+      const dsrTitle = type==='druck' ? 'Double HP Riser' : 'Double Suction Riser';
       H += '<div class="dsr-box"><div class="dsr-header">'
-        + '<span class="dsr-title">&#8645; Double Suction Riser</span>'
+        + '<span class="dsr-title">&#8645; ' + dsrTitle + '</span>'
         + '<label class="dsr-toggle"><input type="checkbox" '+(dOn?'checked':'')+' onchange="toggleDSR(\''+type+'\')"><span class="dsr-toggle-lbl">Doppel-Steigleitung aktivieren</span></label>'
         + '<button class="dsr-schbtn" onclick="showSchema(\''+type+'\')">&#128208; Schema</button>'
         + '</div>';
