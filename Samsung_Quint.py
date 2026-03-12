@@ -87,13 +87,15 @@ HYDRO_UNITS = {
     },
 }
 
+# DVM Innengeräte – Direktverdampfung (A2A), Kältemittelkreis direkt an ODU
+# KEIN RAC (Monosplit mit eigenem Verdichter) – diese Geräte sind VRF/DVM-kompatibel
 INNENGERAETE = {
-    "RAC Wandgerät 1.5 kW":  {"artikelnr": "AE015HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
-    "RAC Wandgerät 2.2 kW":  {"artikelnr": "AE022HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
-    "RAC Wandgerät 2.8 kW":  {"artikelnr": "AE028HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
-    "RAC Wandgerät 3.6 kW":  {"artikelnr": "AE036HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
-    "RAC Wandgerät 5.6 kW":  {"artikelnr": "AM056DNVDKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
-    "RAC Wandgerät 7.1 kW":  {"artikelnr": "AM071DNVDKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 6.8, "heiz_kw": 7.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
+    "DVM Wandgerät 1.5 kW":  {"artikelnr": "AM015TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
+    "DVM Wandgerät 2.2 kW":  {"artikelnr": "AM022TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
+    "DVM Wandgerät 2.8 kW":  {"artikelnr": "AM028TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
+    "DVM Wandgerät 3.6 kW":  {"artikelnr": "AM036TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
+    "DVM Wandgerät 5.6 kW":  {"artikelnr": "AM056TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
+    "DVM Wandgerät 7.1 kW":  {"artikelnr": "AM071TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 7.1, "heiz_kw": 8.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
     "1-Weg Kassette 1.7 kW": {"artikelnr": "AM017DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 1.7, "heiz_kw": 1.9, "schall_db": "28/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.2 kW": {"artikelnr": "AM022DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "29/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.8 kW": {"artikelnr": "AM028DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "32/28/24", "abmessungen": "970×135×410",  "gewicht_kg": 10.0, "mca_a": 0.29},
@@ -492,7 +494,7 @@ def main():
     # ════════════════════════════════════════════════════════
     # BLOCK 6 – KÄLTESEITE: INNENGERÄTE
     # ════════════════════════════════════════════════════════
-    st.markdown('<div class="sec-header">⑥ Kälteseite: Innengeräte (A2A / RAC)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-header">⑥ Kälteseite: DVM Innengeräte (A2A / Direktverdampfung)</div>', unsafe_allow_html=True)
 
     kat_liste    = sorted(set(v["kategorie"] for v in INNENGERAETE.values()))
     ig_c1, ig_c2, ig_c3, ig_c4, ig_c5 = st.columns([2, 2, 1, 1, 1])
