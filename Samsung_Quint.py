@@ -89,13 +89,15 @@ HYDRO_UNITS = {
 
 # DVM Innengeräte – Direktverdampfung (A2A), Kältemittelkreis direkt an ODU
 # KEIN RAC (Monosplit mit eigenem Verdichter) – diese Geräte sind VRF/DVM-kompatibel
+# exp_ventil_noetig: DVM Wandgerät 1.5–3.6 kW benötigen externe Expansionsventileinheit
+#                    DVM Wandgerät 5.6 + 7.1 kW: integriertes EEV – KEINE externe Einheit nötig
 INNENGERAETE = {
-    "DVM Wandgerät 1.5 kW":  {"artikelnr": "AM015TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
-    "DVM Wandgerät 2.2 kW":  {"artikelnr": "AM022TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
-    "DVM Wandgerät 2.8 kW":  {"artikelnr": "AM028TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
-    "DVM Wandgerät 3.6 kW":  {"artikelnr": "AM036TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
-    "DVM Wandgerät 5.6 kW":  {"artikelnr": "AM056TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
-    "DVM Wandgerät 7.1 kW":  {"artikelnr": "AM071TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 7.1, "heiz_kw": 8.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
+    "DVM Wandgerät 1.5 kW":  {"artikelnr": "AM015TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": True,  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
+    "DVM Wandgerät 2.2 kW":  {"artikelnr": "AM022TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": True,  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
+    "DVM Wandgerät 2.8 kW":  {"artikelnr": "AM028TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": True,  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
+    "DVM Wandgerät 3.6 kW":  {"artikelnr": "AM036TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": True,  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
+    "DVM Wandgerät 5.6 kW":  {"artikelnr": "AM056TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": False, "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
+    "DVM Wandgerät 7.1 kW":  {"artikelnr": "AM071TNYDKG/EU",  "kategorie": "DVM Wandgerät",  "exp_ventil_noetig": False, "kuehl_kw": 7.1, "heiz_kw": 8.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
     "1-Weg Kassette 1.7 kW": {"artikelnr": "AM017DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 1.7, "heiz_kw": 1.9, "schall_db": "28/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.2 kW": {"artikelnr": "AM022DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "29/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.8 kW": {"artikelnr": "AM028DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "32/28/24", "abmessungen": "970×135×410",  "gewicht_kg": 10.0, "mca_a": 0.29},
@@ -115,6 +117,21 @@ KASSETTEN_PANEELE = {
     "Paneel klein  (960mm)":   {"artikelnr": "PC1MWFMANW", "abmessungen": "960×34×420",  "gewicht_kg": 2.6},
     "Paneel mittel (1198mm)":  {"artikelnr": "PC1NWFMANW", "abmessungen": "1198×34×500", "gewicht_kg": 4.3},
     "Paneel groß   (1410mm)":  {"artikelnr": "PC1BWFMANW", "abmessungen": "1410×34×500", "gewicht_kg": 5.0},
+}
+
+# Expansionsventileinheiten – nur für DVM Wandgerät 1.5–3.6 kW erforderlich
+# 5.6 kW und 7.1 kW haben integriertes EEV → keine externe Einheit nötig
+EXPANSIONSVENTILE = {
+    "Expansionsventileinheit 2-fach": {
+        "artikelnr": "MXV-2A20NA",
+        "ports": 2,
+        "beschreibung": "Für 1–2 kleine DVM Innengeräte (bis 3.6 kW) ohne integriertes EEV",
+    },
+    "Expansionsventileinheit 3-fach": {
+        "artikelnr": "MXV-3A30NA",
+        "ports": 3,
+        "beschreibung": "Für bis zu 3 kleine DVM Innengeräte (bis 3.6 kW) ohne integriertes EEV",
+    },
 }
 
 ZUBEHOER_STANDARD = {
@@ -561,19 +578,35 @@ def main():
     else:
         st.info("Noch keine Innengeräte hinzugefügt – oder nicht benötigt (reine Wärmepumpe).")
 
-    # EEV Empfehlung
+    # EEV Empfehlung – nur DVM Wandgerät 1.5–3.6 kW benötigen externe Expansionsventileinheit
     anzahl_ig = sum(ig["menge"] for ig in st.session_state.innengeraete)
-    eev_auto  = max(0, anzahl_ig - 1)
+
+    # Anzahl Geräte MIT EEV-Pflicht (kleine DVM Wand) vs. OHNE (5.6+7.1kW haben integriertes EEV)
+    n_eev_pflichtig = sum(
+        ig["menge"] for ig in st.session_state.innengeraete
+        if INNENGERAETE.get(ig["modell"], {}).get("exp_ventil_noetig", False)
+    )
+    # Optimale Aufteilung: so viele 3er wie möglich, Rest mit 2ern
+    eev_3er_auto = n_eev_pflichtig // 3
+    eev_2er_auto = 1 if (n_eev_pflichtig % 3) > 0 else 0
+    eev_anzahl_auto = eev_3er_auto + eev_2er_auto
+
     eev_col1, eev_col2 = st.columns(2)
     with eev_col1:
-        eev_modus = st.selectbox("Expansionsventilboxen (EEV-Kits)",
+        eev_modus = st.selectbox("Expansionsventileinheiten (EEV)",
             ["Automatisch (vom System ermitteln)", "Manuell festlegen", "Keine"])
     with eev_col2:
         if eev_modus == "Automatisch (vom System ermitteln)":
-            eev_anzahl = eev_auto
-            st.caption(f"💡 Empfehlung: {eev_anzahl} EEV-Kit(s) bei {anzahl_ig} Innengerät(en)")
+            eev_anzahl = eev_anzahl_auto
+            if n_eev_pflichtig == 0:
+                st.caption("✅ Alle gewählten Geräte haben integriertes EEV – keine externe Einheit nötig.")
+            else:
+                parts = []
+                if eev_3er_auto: parts.append(f"{eev_3er_auto}× 3-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 3-fach']['artikelnr']})")
+                if eev_2er_auto: parts.append(f"{eev_2er_auto}× 2-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 2-fach']['artikelnr']})")
+                st.caption(f"💡 {n_eev_pflichtig} Geräte mit EEV-Pflicht → {' + '.join(parts)}")
         elif eev_modus == "Manuell festlegen":
-            eev_anzahl = st.number_input("Anzahl EEV-Kits", 0, 10, eev_auto)
+            eev_anzahl = st.number_input("Anzahl EEV-Einheiten gesamt", 0, 10, eev_anzahl_auto)
         else:
             eev_anzahl = 0
 
