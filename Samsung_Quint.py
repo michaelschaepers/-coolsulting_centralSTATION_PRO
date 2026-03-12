@@ -606,20 +606,30 @@ def main():
             help="Zwischen ODU und dem am höchsten gelegenen Innengerät")
 
     with lt2:
-        strang_a_geraete = st.number_input("Strang A – Anzahl Innengeräte gesamt", 0, 8, min(2, anzahl_ig))
+        topologie = st.radio("Strang-Aufteilung", ["1 Strang (alle Geräte linear)", "2 Stränge (A + B, Y-Abzweig)"],
+            help="1 Strang: alle DVM-Innengeräte an einer Hauptleitung.\n"
+                 "2 Stränge: nach erstem Y-Abzweig getrennte Leitungen links/rechts.")
+        strang_a_geraete = st.number_input("Strang A – Anzahl Innengeräte gesamt", 0, 8,
+            min(anzahl_ig, max(1, anzahl_ig)))
         strang_a_laenge  = st.number_input("Strang A – Leitungslänge (m)", 0, 100, 15)
         strang_a_eev_geraete = st.number_input(
             "Strang A – davon kleine DVM Wand (EEV-pflichtig, 1.5–3.6 kW)", 0, 8,
             min(strang_a_geraete, n_eev_pflichtig),
             help="DVM Wandgerät 1.5–3.6 kW: externe Expansionsventileinheit nötig.\n"
                  "5.6 kW + 7.1 kW: integriertes EEV → hier NICHT zählen.")
-        strang_b_geraete = st.number_input("Strang B – Anzahl Innengeräte gesamt", 0, 8, max(0, anzahl_ig - min(2, anzahl_ig)))
-        strang_b_laenge  = st.number_input("Strang B – Leitungslänge (m)", 0, 100, 10)
-        strang_b_eev_geraete = st.number_input(
-            "Strang B – davon kleine DVM Wand (EEV-pflichtig, 1.5–3.6 kW)", 0, 8,
-            min(strang_b_geraete, max(0, n_eev_pflichtig - strang_a_eev_geraete)),
-            help="DVM Wandgerät 1.5–3.6 kW: externe Expansionsventileinheit nötig.\n"
-                 "5.6 kW + 7.1 kW: integriertes EEV → hier NICHT zählen.")
+        if topologie == "2 Stränge (A + B, Y-Abzweig)":
+            strang_b_geraete = st.number_input("Strang B – Anzahl Innengeräte gesamt", 0, 8,
+                max(0, anzahl_ig - strang_a_geraete))
+            strang_b_laenge  = st.number_input("Strang B – Leitungslänge (m)", 0, 100, 10)
+            strang_b_eev_geraete = st.number_input(
+                "Strang B – davon kleine DVM Wand (EEV-pflichtig, 1.5–3.6 kW)", 0, 8,
+                min(strang_b_geraete, max(0, n_eev_pflichtig - strang_a_eev_geraete)),
+                help="DVM Wandgerät 1.5–3.6 kW: externe Expansionsventileinheit nötig.\n"
+                     "5.6 kW + 7.1 kW: integriertes EEV → hier NICHT zählen.")
+        else:
+            strang_b_geraete = 0
+            strang_b_laenge  = 0
+            strang_b_eev_geraete = 0
 
     with lt3:
         gesamt_laenge = dist_odu_abzweig + max(strang_a_laenge, strang_b_laenge)
