@@ -578,37 +578,16 @@ def main():
     else:
         st.info("Noch keine Innengeräte hinzugefügt – oder nicht benötigt (reine Wärmepumpe).")
 
-    # EEV Empfehlung – nur DVM Wandgerät 1.5–3.6 kW benötigen externe Expansionsventileinheit
+    # EEV-Hinweis: Auswahl und Berechnung erfolgt in Block ⑦ (Leitungstopologie) pro Strang
     anzahl_ig = sum(ig["menge"] for ig in st.session_state.innengeraete)
-
-    # Anzahl Geräte MIT EEV-Pflicht (kleine DVM Wand) vs. OHNE (5.6+7.1kW haben integriertes EEV)
     n_eev_pflichtig = sum(
         ig["menge"] for ig in st.session_state.innengeraete
         if INNENGERAETE.get(ig["modell"], {}).get("exp_ventil_noetig", False)
     )
-    # Optimale Aufteilung: so viele 3er wie möglich, Rest mit 2ern
-    eev_3er_auto = n_eev_pflichtig // 3
-    eev_2er_auto = 1 if (n_eev_pflichtig % 3) > 0 else 0
-    eev_anzahl_auto = eev_3er_auto + eev_2er_auto
-
-    eev_col1, eev_col2 = st.columns(2)
-    with eev_col1:
-        eev_modus = st.selectbox("Expansionsventileinheiten (EEV)",
-            ["Automatisch (vom System ermitteln)", "Manuell festlegen", "Keine"])
-    with eev_col2:
-        if eev_modus == "Automatisch (vom System ermitteln)":
-            eev_anzahl = eev_anzahl_auto
-            if n_eev_pflichtig == 0:
-                st.caption("✅ Alle gewählten Geräte haben integriertes EEV – keine externe Einheit nötig.")
-            else:
-                parts = []
-                if eev_3er_auto: parts.append(f"{eev_3er_auto}× 3-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 3-fach']['artikelnr']})")
-                if eev_2er_auto: parts.append(f"{eev_2er_auto}× 2-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 2-fach']['artikelnr']})")
-                st.caption(f"💡 {n_eev_pflichtig} Geräte mit EEV-Pflicht → {' + '.join(parts)}")
-        elif eev_modus == "Manuell festlegen":
-            eev_anzahl = st.number_input("Anzahl EEV-Einheiten gesamt", 0, 10, eev_anzahl_auto)
-        else:
-            eev_anzahl = 0
+    eev_anzahl = 0  # wird in Block ⑦ pro Strang berechnet und überschrieben
+    if n_eev_pflichtig > 0:
+        info_box(f"ℹ {n_eev_pflichtig} Gerät(e) benötigen externe Expansionsventileinheit → "
+                 f"Zuordnung zu Strang A/B erfolgt in Block ⑦.")
 
     st.markdown("---")
 
@@ -627,10 +606,20 @@ def main():
             help="Zwischen ODU und dem am höchsten gelegenen Innengerät")
 
     with lt2:
-        strang_a_geraete = st.number_input("Strang A – Anzahl Innengeräte", 0, 8, min(2, anzahl_ig))
+        strang_a_geraete = st.number_input("Strang A – Anzahl Innengeräte gesamt", 0, 8, min(2, anzahl_ig))
         strang_a_laenge  = st.number_input("Strang A – Leitungslänge (m)", 0, 100, 15)
-        strang_b_geraete = st.number_input("Strang B – Anzahl Innengeräte", 0, 8, max(0, anzahl_ig - min(2, anzahl_ig)))
+        strang_a_eev_geraete = st.number_input(
+            "Strang A – davon kleine DVM Wand (EEV-pflichtig, 1.5–3.6 kW)", 0, 8,
+            min(strang_a_geraete, n_eev_pflichtig),
+            help="DVM Wandgerät 1.5–3.6 kW: externe Expansionsventileinheit nötig.\n"
+                 "5.6 kW + 7.1 kW: integriertes EEV → hier NICHT zählen.")
+        strang_b_geraete = st.number_input("Strang B – Anzahl Innengeräte gesamt", 0, 8, max(0, anzahl_ig - min(2, anzahl_ig)))
         strang_b_laenge  = st.number_input("Strang B – Leitungslänge (m)", 0, 100, 10)
+        strang_b_eev_geraete = st.number_input(
+            "Strang B – davon kleine DVM Wand (EEV-pflichtig, 1.5–3.6 kW)", 0, 8,
+            min(strang_b_geraete, max(0, n_eev_pflichtig - strang_a_eev_geraete)),
+            help="DVM Wandgerät 1.5–3.6 kW: externe Expansionsventileinheit nötig.\n"
+                 "5.6 kW + 7.1 kW: integriertes EEV → hier NICHT zählen.")
 
     with lt3:
         gesamt_laenge = dist_odu_abzweig + max(strang_a_laenge, strang_b_laenge)
@@ -653,6 +642,34 @@ def main():
             info_box("✗ Äquivalente Leitungslänge überschreitet Samsung-Empfehlung (50 m). Bitte Leitungsführung überprüfen!")
         if not hoehe_ok:
             info_box("⚠ Höhenunterschied > 15 m: Ölhebebögen erforderlich – Anlage bleibt grundsätzlich möglich, aber aufwändiger.")
+
+    # ── EEV pro Strang ────────────────────────────────────────────────
+    def eev_empfehlung(n_klein):
+        """Gibt (anzahl_2er, anzahl_3er, text) für n kleine EEV-pflichtige Geräte zurück."""
+        if n_klein == 0:
+            return 0, 0, "– keine EEV-Einheit nötig –"
+        n3 = n_klein // 3
+        rest = n_klein % 3
+        n2 = 1 if rest > 0 else 0
+        parts = []
+        if n3: parts.append(f"{n3}× 3-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 3-fach']['artikelnr']})")
+        if n2: parts.append(f"{n2}× 2-fach ({EXPANSIONSVENTILE['Expansionsventileinheit 2-fach']['artikelnr']})")
+        return n2, n3, " + ".join(parts)
+
+    eev_a_2er, eev_a_3er, eev_a_txt = eev_empfehlung(strang_a_eev_geraete)
+    eev_b_2er, eev_b_3er, eev_b_txt = eev_empfehlung(strang_b_eev_geraete)
+    eev_anzahl = (eev_a_2er + eev_a_3er) + (eev_b_2er + eev_b_3er)
+
+    if strang_a_eev_geraete > 0 or strang_b_eev_geraete > 0:
+        st.markdown("**Expansionsventileinheiten (EEV) – pro Strang:**")
+        eev_col_a, eev_col_b = st.columns(2)
+        with eev_col_a:
+            st.caption(f"Strang A ({strang_a_eev_geraete} kleine Geräte): **{eev_a_txt}**")
+        with eev_col_b:
+            st.caption(f"Strang B ({strang_b_eev_geraete} kleine Geräte): **{eev_b_txt}**")
+        if (strang_a_eev_geraete + strang_b_eev_geraete) != n_eev_pflichtig:
+            info_box(f"⚠ Zuordnung prüfen: {n_eev_pflichtig} EEV-pflichtige Geräte gesamt, "
+                     f"aber nur {strang_a_eev_geraete + strang_b_eev_geraete} Strängen zugewiesen.")
 
     st.markdown("---")
 
