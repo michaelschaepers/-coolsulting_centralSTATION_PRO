@@ -71,19 +71,19 @@ HYDRO_UNITS = {
         "spannung": "230V / 400V", "mca_a": 18.7,
         "beschreibung": "Standgerät mit integriertem 200L Speicher – 2 Heizkreise",
     },
-    "Wandgerät – 1 Zone": {
-        "artikelnr": "AE160DNYMPK/EU", "zonen": 1, "typ": "Wandgerät",
+    "Hydro Unit – 1 Zone": {
+        "artikelnr": "AE160RXYDGG/EU", "zonen": 1, "typ": "Hydro Unit",
         "speicher_l": 0, "schall_db": 28, "schallleistung_db": 42,
         "abmessungen": "530 × 840 × 350", "gewicht_kg": 43,
         "spannung": "230V / 400V", "mca_a": 18.3,
-        "beschreibung": "Kompakte Wandmontage, externer Speicher nötig – 1 Heizkreis",
+        "beschreibung": "Kompakte Wandmontage ohne integrierten Speicher – 1 Heizkreis",
     },
-    "Wandgerät – 2 Zonen": {
-        "artikelnr": "AE160DNZMPK/EU", "zonen": 2, "typ": "Wandgerät",
+    "Hydro Unit – 2 Zonen": {
+        "artikelnr": "AE200RXYDGG/EU", "zonen": 2, "typ": "Hydro Unit",
         "speicher_l": 0, "schall_db": 30, "schallleistung_db": 44,
         "abmessungen": "530 × 840 × 350", "gewicht_kg": 54,
         "spannung": "230V / 400V", "mca_a": 18.7,
-        "beschreibung": "Kompakte Wandmontage, externer Speicher nötig – 2 Heizkreise",
+        "beschreibung": "Kompakte Wandmontage ohne integrierten Speicher – 2 Heizkreise",
     },
 }
 
@@ -469,8 +469,8 @@ def main():
         hu_wahl = st.selectbox("Hydro Unit wählen", list(HYDRO_UNITS.keys()))
         hu      = HYDRO_UNITS[hu_wahl]
 
-        if hu["typ"] == "Wandgerät" and hat_ww_speicher and ww_speicher_l > 0:
-            info_box(f"ℹ Wandgerät gewählt → externer Warmwasserspeicher {ww_speicher_l}L erforderlich ✓")
+        if hu["typ"] == "Hydro Unit" and hat_ww_speicher and ww_speicher_l > 0:
+            info_box(f"ℹ Hydro Unit gewählt → externer Warmwasserspeicher {ww_speicher_l}L erforderlich ✓")
         elif hu["typ"] == "ClimateHub":
             info_box(f"ℹ ClimateHub: Integrierter {hu['speicher_l']}L Speicher – kein externer WW-Speicher nötig.")
 
@@ -673,7 +673,7 @@ def main():
             val_ok.append(f"✓ Spez. Verbrauch {kwh_m2:.0f} kWh/m²a plausibel für gewählten Dämmstandard.")
 
     # ── Check 2: WW-Speicher Registerfläche vs. ODU-Leistung ──────────
-    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Wandgerät":
+    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Hydro Unit":
         # Formel: Registerfläche [m²] >= ODU_heiz_kW / 4
         min_wt = odu["heiz_kw"] / 4.0
         if ww_wt_flaeche < min_wt:
@@ -876,7 +876,7 @@ def main():
     if hat_puffer and puffer_l > 0:
         add(1, "Hydraulik", f"Pufferspeicher {puffer_l}L ({puffer_einbindung})", "– nach Wahl –")
 
-    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Wandgerät":
+    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Hydro Unit":
         add(1, "Hydraulik", f"Warmwasserspeicher {ww_speicher_l}L", "– nach Wahl –")
 
     if bivalenz_aktiv:
