@@ -1,7 +1,7 @@
 # ============================================================================
 # DATEI: Samsung_Quint.py
-# VERSION: 2.0.0
-# STAND: 12.03.2026
+# VERSION: 2.1.0
+# STAND: 13.03.2026 - 13:00 Uhr
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: Samsung Quint – Discovery → Auslegung → Stückliste
 # ============================================================================
