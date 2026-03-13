@@ -92,6 +92,17 @@ REFRIGERANTS = {
         "h_fg":   [208,  203,  200,  197,  193,  189,  185,  181,  172,  161,  148,  131,  110,  83],
         "mu_v":   [9.0,  9.4,  9.7,  10.0, 10.3, 10.7, 11.1, 11.5, 12.4, 13.4, 14.7, 16.3, 18.5, 21.5],
     },
+    "R32": {
+        "name": "R32 (Samsung EHS/Quint)", "color": "#1565C0",
+        "warning": "A2L-Kältemittel! Zündschutz nach EN 378-1 / EN 60335-2-40 erforderlich. GWP = 675. Typisch in Samsung EHS Quint, Split- und VRF-Anlagen.",
+        "a2l": True, "co2": False,
+        "temps":  [-50,   -40,   -35,   -30,   -25,   -20,   -15,   -10,   0,     10,    20,    30,    40,    50],
+        "p_bar":  [1.69,  2.56,  3.12,  3.73,  4.50,  5.27,  6.22,  7.30,  9.95,  13.22, 17.19, 21.96, 27.60, 34.31],
+        "rho_v":  [9.0,   13.5,  16.5,  19.7,  23.5,  27.9,  33.0,  38.9,  53.5,  72.5,  97.3,  129.0, 170.0, 224.0],
+        "rho_l":  [1199,  1164,  1146,  1128,  1108,  1089,  1069,  1047,  1000,  949,   893,   831,   760,   678],
+        "h_fg":   [392,   380,   374,   367,   360,   352,   344,   335,   316,   294,   269,   239,   203,   158],
+        "mu_v":   [10.5,  10.9,  11.1,  11.4,  11.7,  11.9,  12.2,  12.5,  13.2,  14.0,  15.0,  16.3,  18.0,  20.5],
+    },
     "R449A": {
         "name": "R449A", "color": "#E91E63",
         "warning": "HFO-Blend (R32/R125/R1234yf/R134a) — Sicherheitsklasse A1.",
@@ -1062,7 +1073,7 @@ else:
   <div style='font-size:22px;font-weight:bold;color:{COLOR_GRAY};margin-bottom:10px;'>°coolROHR — Kältemittel-Rohrdimensionierung</div>
   <div style='font-size:14px;color:#666;max-width:500px;margin:0 auto;line-height:1.7;'>
     Eingaben links in der Sidebar ausfüllen, dann <b>⚡ BERECHNEN</b> drücken.<br><br>
-    Unterstützte Kältemittel: R744 (CO₂), R1234yf, R455A, R452A, R513A, R449A<br>
+    Unterstützte Kältemittel: R32, R744 (CO₂), R1234yf, R455A, R452A, R513A, R449A<br>
     Leitungstypen: Saug-, Druck-, Flüssigkeits- und Kondensatleitung<br>
     DSR (Doppelsteigrohr) wird automatisch vorgeschlagen wenn v &lt; v_min
   </div>
