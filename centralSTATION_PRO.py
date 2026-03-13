@@ -1,7 +1,7 @@
 # ============================================================================
 # DATEI: centralSTATION_PRO.py
-# VERSION: 4.7.1
-# STAND: 17.02.2026 - 12:55 Uhr
+# VERSION: 4.8.0
+# STAND: 13.03.2026
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: °central_STATION_PRO - Optimierte Menüstruktur & Reihung
 # ============================================================================
@@ -57,7 +57,7 @@ def main():
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
 
-    VERSION = "4.7.1"
+    VERSION = "4.8.0"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     # --- VERLAUF INITIALISIEREN ---
@@ -131,7 +131,8 @@ def main():
         "°Übersicht": None,
         "°Heizlast WP (Modul 1)": "Waermepumpen_Auslegung.py",
         "°WP Quick-Kalkulator (Quickie)": "WP_Quick_Kalkulator.py",
-        "°coolMATCH (Samsung Kalkulator)": "coolMATCH_v7.py",  # Nach unten verschoben
+        "°coolMATCH (Samsung Kalkulator)": "coolMATCH_v7.py",
+        "°coolQUINT (Samsung Quint Auslegung)": "Samsung_Quint.py",
         "°coolMATH (AC Simulation)": "coolMATH.py",
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
