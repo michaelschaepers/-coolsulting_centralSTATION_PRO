@@ -622,6 +622,93 @@ def main():
     st.markdown("---")
 
     # ════════════════════════════════════════════════════════
+    # BLOCK 7b – ROHRDIMENSIONIERUNG (KÄLTEMITTELSEITE)
+    # ════════════════════════════════════════════════════════
+    st.markdown('<div class="sec-header">⑦b Rohrdimensionierung (Kältemittelseite · R32)</div>', unsafe_allow_html=True)
+
+    def _rohrdim_r32(kw: float) -> tuple:
+        """FL- und GL-Durchmesser für R32 nach angeschlossener Kühlleistung."""
+        for max_kw, fl_mm, fl_zoll, gl_mm, gl_zoll in [
+            ( 3.5, 6.35, '1/4"',  9.52, '3/8"'),
+            ( 5.6, 6.35, '1/4"', 12.70, '1/2"'),
+            ( 9.0, 9.52, '3/8"', 15.88, '5/8"'),
+            (14.5, 9.52, '3/8"', 19.05, '3/4"'),
+        ]:
+            if kw <= max_kw:
+                return fl_mm, fl_zoll, gl_mm, gl_zoll
+        return 9.52, '3/8"', 19.05, '3/4"'
+
+    # Gesamtkühlleistung A2A-Seite (Innengeräte)
+    ig_kuehl_gesamt = sum(ig["kuehl_kw"] * ig["menge"] for ig in st.session_state.innengeraete)
+    haupt_kw_rd = ig_kuehl_gesamt if ig_kuehl_gesamt > 0 else odu["kuehl_kw"]
+
+    # Strang A / B – proportionale Leistungsaufteilung nach Geräteanzahl
+    strang_a_kw_rd = (haupt_kw_rd * strang_a_geraete / anzahl_ig) if anzahl_ig > 0 else 0.0
+    strang_b_kw_rd = (haupt_kw_rd * strang_b_geraete / anzahl_ig) if anzahl_ig > 0 else 0.0
+
+    fl_h, fl_h_z, gl_h, gl_h_z = _rohrdim_r32(haupt_kw_rd)
+    fl_a, fl_a_z, gl_a, gl_a_z = _rohrdim_r32(strang_a_kw_rd) if strang_a_kw_rd > 0 else (6.35, '1/4"',  9.52, '3/8"')
+    fl_b, fl_b_z, gl_b, gl_b_z = _rohrdim_r32(strang_b_kw_rd) if strang_b_kw_rd > 0 else (6.35, '1/4"',  9.52, '3/8"')
+
+    # R32 Nachfüllmenge: Standardladung 7,5 m werkseitig; Zuschlag pro weiteren Meter FL-Leitung
+    _NF_G_M = {6.35: 20, 9.52: 40}  # g/m je FL-Durchmesser
+    _STD_M  = 7.5
+    nf_haupt = max(0.0, dist_odu_abzweig - _STD_M) * _NF_G_M.get(fl_h, 20)
+    nf_a     = max(0.0, strang_a_laenge  - _STD_M) * _NF_G_M.get(fl_a, 20)
+    nf_b     = max(0.0, strang_b_laenge  - _STD_M) * _NF_G_M.get(fl_b, 20)
+    nachfuell_gesamt_g = round(nf_haupt + nf_a + nf_b)
+
+    rd1, rd2, rd3 = st.columns(3)
+    with rd1:
+        spec_box({
+            "Abschnitt":    "Hauptleitung (ODU → Abzweig)",
+            "Kühlleistung": f"{haupt_kw_rd:.1f} kW",
+            "FL-Leitung":   f"Ø {fl_h:.2f} mm  ({fl_h_z})",
+            "GL-Leitung":   f"Ø {gl_h:.2f} mm  ({gl_h_z})",
+            "Länge":        f"{dist_odu_abzweig} m",
+        }, title="Hauptleitung")
+    with rd2:
+        if strang_a_kw_rd > 0:
+            spec_box({
+                "Abschnitt":    f"Strang A  ({strang_a_geraete} IG)",
+                "Kühlleistung": f"≈ {strang_a_kw_rd:.1f} kW",
+                "FL-Leitung":   f"Ø {fl_a:.2f} mm  ({fl_a_z})",
+                "GL-Leitung":   f"Ø {gl_a:.2f} mm  ({gl_a_z})",
+                "Länge":        f"{strang_a_laenge} m",
+            }, title="Strang A")
+        else:
+            st.caption("Strang A: keine Geräte konfiguriert.")
+    with rd3:
+        if strang_b_kw_rd > 0:
+            spec_box({
+                "Abschnitt":    f"Strang B  ({strang_b_geraete} IG)",
+                "Kühlleistung": f"≈ {strang_b_kw_rd:.1f} kW",
+                "FL-Leitung":   f"Ø {fl_b:.2f} mm  ({fl_b_z})",
+                "GL-Leitung":   f"Ø {gl_b:.2f} mm  ({gl_b_z})",
+                "Länge":        f"{strang_b_laenge} m",
+            }, title="Strang B")
+        else:
+            st.caption("Strang B: keine Geräte konfiguriert.")
+
+    nf_c1, nf_c2 = st.columns(2)
+    with nf_c1:
+        spec_box({
+            "Nachfüllmenge Hauptleitung": f"{nf_haupt:.0f} g R32",
+            "Nachfüllmenge Strang A":     f"{nf_a:.0f} g R32",
+            "Nachfüllmenge Strang B":     f"{nf_b:.0f} g R32",
+            "→ Gesamt-Nachfüllmenge":     f"{nachfuell_gesamt_g} g R32",
+        }, title="R32 Kältemittel-Nachfüllmenge (Schätzung)")
+    with nf_c2:
+        info_box(
+            "ℹ Grundladung (werkseitig): bis 7,5 m pro Abschnitt enthalten. "
+            "Zuschlag: Ø 6,35 mm (1/4\") → 20 g/m · Ø 9,52 mm (3/8\") → 40 g/m. "
+            "FL = Flüssigkeitsleitung · GL = Gasleitung (Saugleitung). "
+            "Dimensionen nach Samsung R32-Installationsrichtlinien."
+        )
+
+    st.markdown("---")
+
+    # ════════════════════════════════════════════════════════
     # BLOCK 8 – ZUBEHÖR
     # ════════════════════════════════════════════════════════
     st.markdown('<div class="sec-header">⑧ Zubehör &amp; Optionen</div>', unsafe_allow_html=True)
@@ -760,6 +847,14 @@ def main():
             f"→ Getrennte Temperaturregelung für FBH/HK nicht möglich!")
     elif len(waerme_system) > 1 and hu["zonen"] == 2:
         val_ok.append("✓ 2-Zonen Hydro Unit korrekt für gemischtes Heizsystem gewählt.")
+
+    # ── Check 10: R32 Nachfüllmenge & F-Gase-Verordnung ───────────────
+    if nachfuell_gesamt_g > 0:
+        val_warn.append(
+            f"⚠ R32-Nachfüllmenge ≈ {nachfuell_gesamt_g} g – "
+            f"F-Gase-Verordnung: Nachfüllung nur durch zertifizierten Kältemitteltechniker (Sachkundenachweis Kat. I)!")
+    elif anzahl_ig > 0:
+        val_ok.append("✓ Keine R32-Nachfüllung erforderlich (Leitungslänge innerhalb Standardladung 7,5 m).")
 
     # ── AMPEL-ANZEIGE ─────────────────────────────────────────────────
     col_ok, col_warn, col_err = st.columns(3)
