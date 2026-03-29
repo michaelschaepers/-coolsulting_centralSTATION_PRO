@@ -138,7 +138,8 @@ def main():
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
         "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
-        "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py"
+        "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py",
+        "°coolPOOL (Pool-Temperierungs-Simulation)": "coolPOOL.py"
     }
 
     tool_wahl = st.selectbox("Anwendung auswählen und starten:", list(menu_options.keys()))
