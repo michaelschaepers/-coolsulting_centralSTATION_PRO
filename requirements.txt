@@ -44,3 +44,4 @@ matplotlib
 openpyxl==3.1.2
 libsql-experimental
 python-docx==1.1.2
+google-generativeai>=0.8.0
