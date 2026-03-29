@@ -1,7 +1,7 @@
 # ============================================================================
 # DATEI: centralSTATION_PRO.py
-# VERSION: 4.8.0
-# STAND: 13.03.2026
+# VERSION: 4.9.0
+# STAND: 29.03.2026
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: °central_STATION_PRO - Optimierte Menüstruktur & Reihung
 # ============================================================================
@@ -20,7 +20,7 @@ st.set_page_config(
     page_title="°central_STATION_PRO | coolsulting", 
     page_icon=icon_image,
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="auto"
 )
 
 def get_font_as_base64(font_path):
@@ -57,7 +57,7 @@ def main():
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
 
-    VERSION = "4.8.0"
+    VERSION = "4.9.0"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     # --- VERLAUF INITIALISIEREN ---
@@ -126,7 +126,7 @@ def main():
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
-    # --- NAVIGATION (AKTUALISIERTE REIHFOLGE) ---
+    # --- NAVIGATION ---
     menu_options = {
         "°Übersicht": None,
         "°Heizlast WP (Modul 1)": "Waermepumpen_Auslegung.py",
@@ -135,14 +135,29 @@ def main():
         "°coolQUINT (Samsung Quint Auslegung)": "Samsung_Quint.py",
         "°coolMATH (AC Simulation)": "coolMATH.py",
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
-        "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py", # Unter coolTEC verschoben
+        "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py",
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
         "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py",
         "°coolPOOL (Pool-Temperierungs-Simulation)": "coolPOOL.py"
     }
 
+    # Module die eine Sidebar verwenden
+    SIDEBAR_APPS = {
+        "°coolPOOL (Pool-Temperierungs-Simulation)",
+        "°coolTEC (Kühllast Kühlräume)",
+        "°coolINDUTEC (Industrieelle Kühllastberechnung)",
+        "°coolFLOW (Hydraulik)",
+        "°Heizlast WP (Modul 1)",
+        "°WP Quick-Kalkulator (Quickie)",
+    }
+
     tool_wahl = st.selectbox("Anwendung auswählen und starten:", list(menu_options.keys()))
+
+    # Sidebar automatisch öffnen wenn Modul eine Sidebar hat
+    if tool_wahl in SIDEBAR_APPS:
+        st.sidebar.markdown("### ⚙️ Eingaben")
+
     st.markdown("---")
 
     # --- INHALT LADEN ---
