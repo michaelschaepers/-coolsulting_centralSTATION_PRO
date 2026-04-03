@@ -239,14 +239,16 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.header("🔥 3. Geräte-Engineering")
     wp_sel = st.sidebar.selectbox("Wärmepumpen-Modell", list(HP_MODELS.keys()), index=0)
+    wp_anz = st.sidebar.number_input("Anzahl Geräte", min_value=1, max_value=10, value=1, step=1,
+                                      help="Mehrere Geräte multiplizieren die Gesamtleistung")
     if wp_sel == "Manuelle Leistungseingabe":
-        man_p     = st.sidebar.number_input("Heizleistung (kW)", value=21.0, min_value=0.1)
+        man_p     = st.sidebar.number_input("Heizleistung pro Gerät (kW)", value=21.0, min_value=0.1)
         tech_data = {**HP_MODELS["Manuelle Leistungseingabe"], "power": man_p}
     else:
         tech_data = HP_MODELS[wp_sel]
 
-    # ⚠️  KRITISCHE VARIABLE – muss VOR der Physik-Engine gesetzt sein
-    wp_p    = tech_data["power"]
+    # ⚠️  KRITISCHE VARIABLE – Gesamtleistung = Einzelleistung × Anzahl
+    wp_p    = tech_data["power"] * wp_anz
     delta_t = st.sidebar.number_input("Hydraulik ΔT (K)", value=2.0,
                                        help="Spreizung Vor-/Rücklauf")
 
@@ -368,9 +370,9 @@ def main():
     if wp_p == 0:
         st.warning("⚠️ Bitte Wärmepumpen-Modell auswählen.")
     elif wp_p < rec_p:
-        st.error(f"❌ **{wp_sel}** ({wp_p} kW) reicht NICHT aus! Mindestens **{rec_p:.1f} kW** erforderlich.")
+        st.error(f"❌ **{wp_anz}× {wp_sel}** ({wp_p:.1f} kW gesamt) reicht NICHT aus! Mindestens **{rec_p:.1f} kW** erforderlich.")
     else:
-        st.success(f"✅ **{wp_sel}** ({wp_p} kW) kann den Pool bei Worst-Case ({worst_at:.1f}°C) halten.")
+        st.success(f"✅ **{wp_anz}× {wp_sel}** ({wp_p:.1f} kW gesamt) kann den Pool bei Worst-Case ({worst_at:.1f}°C) halten.")
 
     # Aufheizzeit-Analyse
     if wp_p > 0:
@@ -455,7 +457,7 @@ def main():
 
     st.markdown(
         f'<div class="report-container">'
-        f'<b>Anlage:</b> {wp_sel}<br>'
+        f'<b>Anlage:</b> {wp_anz}× {wp_sel}  |  <b>Gesamtleistung: {wp_p:.1f} kW</b><br>'
         f'Elektro: {tech_data["cable"]}  |  Absicherung: {tech_data["fuse"]}<br>'
         f'Anschluss: {tech_data["pipe"]}  |  Volumenstrom: {v_f:.2f} m³/h<br>'
         f'Schall (1 m): {tech_data["sound"]} dB(A)  |  Max. COP: {tech_data["cop_max"]}<br>'
