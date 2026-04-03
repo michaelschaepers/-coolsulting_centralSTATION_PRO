@@ -57,7 +57,7 @@ def main():
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
 
-    VERSION = "4.9.0"
+    VERSION = "5.0.0"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     # --- VERLAUF INITIALISIEREN ---
@@ -139,12 +139,14 @@ def main():
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
         "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py",
-        "°coolPOOL (Pool-Temperierungs-Simulation)": "coolPOOL.py"
+        "°coolPOOL (Pool-Temperierungs-Simulation)": "coolPOOL.py",
+        "°coolNEIGHBOR (Schallimmissions-Prognose)": "coolNEIGHBOR.py"
     }
 
     # Module die eine Sidebar verwenden
     SIDEBAR_APPS = {
         "°coolPOOL (Pool-Temperierungs-Simulation)",
+        "°coolNEIGHBOR (Schallimmissions-Prognose)",
         "°coolTEC (Kühllast Kühlräume)",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)",
         "°coolFLOW (Hydraulik)",
