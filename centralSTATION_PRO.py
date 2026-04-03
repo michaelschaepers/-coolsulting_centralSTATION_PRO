@@ -57,7 +57,7 @@ def main():
     FONT_FILE = "POE Vetica UI.ttf"
     LOGO_PATH = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
 
-    VERSION = "5.0.0"
+    VERSION = "5.1.0"
     ZEIT = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     # --- VERLAUF INITIALISIEREN ---
@@ -134,6 +134,7 @@ def main():
         "°coolMATCH (Samsung Kalkulator)": "coolMATCH_v7.py",
         "°coolQUINT (Samsung Quint Auslegung)": "Samsung_Quint.py",
         "°coolMATH (AC Simulation)": "coolMATH.py",
+        "°coolMATH PRO (6-Methoden Kühllast-Simulation)": "coolMATH_PRO.py",
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py",
         "°coolFLOW (Hydraulik)": "coolFLOW.py",
