@@ -1,7 +1,7 @@
 # ============================================================================
 # DATEI: Samsung_Quint.py
-# VERSION: 2.0.0
-# STAND: 12.03.2026
+# VERSION: 2.1.1
+# STAND: 13.03.2026 - 14:30 Uhr
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: Samsung Quint – Discovery → Auslegung → Stückliste
 # ============================================================================
@@ -19,12 +19,9 @@ import pandas as pd
 try:
     from PIL import Image
     icon_image = Image.open("Coolsulting_Logo_ohneHG_weiß_grau.png")
-    st.set_page_config(page_title="coolQUINT | Samsung Quint Auslegung",
-                       page_icon=icon_image, layout="wide",
-                       initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="coolQUINT | Samsung Quint Auslegung", page_icon=icon_image, layout="wide", initial_sidebar_state="collapsed")
 except Exception:
-    st.set_page_config(page_title="coolQUINT | Samsung Quint Auslegung",
-                       layout="wide", initial_sidebar_state="collapsed")
+    st.set_page_config(page_title="coolQUINT | Samsung Quint Auslegung", layout="wide", initial_sidebar_state="collapsed")
 
 # ============================================================
 # PRODUKTDATEN
