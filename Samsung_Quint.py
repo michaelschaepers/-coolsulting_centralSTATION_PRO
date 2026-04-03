@@ -1,7 +1,7 @@
 # ============================================================================
 # DATEI: Samsung_Quint.py
-# VERSION: 2.1.1
-# STAND: 13.03.2026 - 14:30 Uhr
+# VERSION: 2.1.2
+# STAND: 03.04.2026 - 12:00 Uhr
 # AUTOR: Michael Schäpers, coolsulting
 # BESCHREIBUNG: Samsung Quint – Discovery → Auslegung → Stückliste
 # ============================================================================
@@ -68,15 +68,15 @@ HYDRO_UNITS = {
         "spannung": "230V / 400V", "mca_a": 18.7,
         "beschreibung": "Standgerät mit integriertem 200L Speicher – 2 Heizkreise",
     },
-    "Wandgerät – 1 Zone": {
-        "artikelnr": "AE160DNYMPK/EU", "zonen": 1, "typ": "Wandgerät",
+    "Hydro Unit – 1 Zone": {
+        "artikelnr": "AE160DNYMPK/EU", "zonen": 1, "typ": "Hydro Unit",
         "speicher_l": 0, "schall_db": 28, "schallleistung_db": 42,
         "abmessungen": "530 × 840 × 350", "gewicht_kg": 43,
         "spannung": "230V / 400V", "mca_a": 18.3,
         "beschreibung": "Kompakte Wandmontage, externer Speicher nötig – 1 Heizkreis",
     },
-    "Wandgerät – 2 Zonen": {
-        "artikelnr": "AE160DNZMPK/EU", "zonen": 2, "typ": "Wandgerät",
+    "Hydro Unit – 2 Zonen": {
+        "artikelnr": "AE160DNZMPK/EU", "zonen": 2, "typ": "Hydro Unit",
         "speicher_l": 0, "schall_db": 30, "schallleistung_db": 44,
         "abmessungen": "530 × 840 × 350", "gewicht_kg": 54,
         "spannung": "230V / 400V", "mca_a": 18.7,
@@ -85,12 +85,12 @@ HYDRO_UNITS = {
 }
 
 INNENGERAETE = {
-    "RAC Wandgerät 1.5 kW":  {"artikelnr": "AE015HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
-    "RAC Wandgerät 2.2 kW":  {"artikelnr": "AE022HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
-    "RAC Wandgerät 2.8 kW":  {"artikelnr": "AE028HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
-    "RAC Wandgerät 3.6 kW":  {"artikelnr": "AE036HEADKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
-    "RAC Wandgerät 5.6 kW":  {"artikelnr": "AM056DNVDKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
-    "RAC Wandgerät 7.1 kW":  {"artikelnr": "AM071DNVDKG/EU",  "kategorie": "RAC Wandgerät",  "kuehl_kw": 6.8, "heiz_kw": 7.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
+    "DVM Wandgerät 1.5 kW":  {"artikelnr": "AE015HEADKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 1.5, "heiz_kw": 1.7, "schall_db": "31/30/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.16},
+    "DVM Wandgerät 2.2 kW":  {"artikelnr": "AE022HEADKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "33/31/29", "abmessungen": "682×299×215",  "gewicht_kg": 7.8,  "mca_a": 0.20},
+    "DVM Wandgerät 2.8 kW":  {"artikelnr": "AE028HEADKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "34/33/31", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.25},
+    "DVM Wandgerät 3.6 kW":  {"artikelnr": "AE036HEADKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 3.6, "heiz_kw": 4.0, "schall_db": "39/36/33", "abmessungen": "820×299×215",  "gewicht_kg": 9.2,  "mca_a": 0.31},
+    "DVM Wandgerät 5.6 kW":  {"artikelnr": "AM056DNVDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 5.6, "heiz_kw": 6.3, "schall_db": "40/37/34", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.44},
+    "DVM Wandgerät 7.1 kW":  {"artikelnr": "AM071DNVDKG/EU",  "kategorie": "DVM Wandgerät",  "kuehl_kw": 6.8, "heiz_kw": 7.0, "schall_db": "43/40/37", "abmessungen": "1055×299×215", "gewicht_kg": 12.0, "mca_a": 0.50},
     "1-Weg Kassette 1.7 kW": {"artikelnr": "AM017DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 1.7, "heiz_kw": 1.9, "schall_db": "28/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.2 kW": {"artikelnr": "AM022DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.2, "heiz_kw": 2.5, "schall_db": "29/26/24", "abmessungen": "740×135×360",  "gewicht_kg": 8.0,  "mca_a": 0.18},
     "1-Weg Kassette 2.8 kW": {"artikelnr": "AM028DN1DKG/EU",  "kategorie": "1-Weg Kassette", "kuehl_kw": 2.8, "heiz_kw": 3.2, "schall_db": "32/28/24", "abmessungen": "970×135×410",  "gewicht_kg": 10.0, "mca_a": 0.29},
@@ -196,15 +196,12 @@ def heizlast_aus_verbrauch(verbrauch_kwh: float, wirkungsgrad: float,
     heizstunden = 2400 if hat_ww else 2000
     return round(heiz_e / heizstunden, 2), heiz_e, ww_anteil
 
-def heizlast_aus_flaeche(flaeche_m2: str_or_float, faktor: float) -> float:
+def heizlast_aus_flaeche(flaeche_m2, faktor: float) -> float:
     """Vereinfachte spezifische Heizlast aus Fläche × Faktor."""
     try:
         return round(float(flaeche_m2) * faktor / 1000, 2)
     except Exception:
         return 0.0
-
-# workaround for type hint
-str_or_float = float
 
 def auto_projekt_id() -> str:
     heute = datetime.now().strftime("%Y%m%d")
@@ -218,7 +215,7 @@ def main():
     BG    = "#36A9E1"
     TEXT  = "#3C3C3B"
     LOGO  = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
-    VER   = "2.0.0"
+    VER   = "2.1.2"
     ZEIT  = datetime.now().strftime("%d.%m.%Y | %H:%M Uhr")
 
     render_css(BG, TEXT)
@@ -466,7 +463,7 @@ def main():
         hu_wahl = st.selectbox("Hydro Unit wählen", list(HYDRO_UNITS.keys()))
         hu      = HYDRO_UNITS[hu_wahl]
 
-        if hu["typ"] == "Wandgerät" and hat_ww_speicher and ww_speicher_l > 0:
+        if hu["typ"] in ("Wandgerät", "Hydro Unit") and hat_ww_speicher and ww_speicher_l > 0:
             info_box(f"ℹ Wandgerät gewählt → externer Warmwasserspeicher {ww_speicher_l}L erforderlich ✓")
         elif hu["typ"] == "ClimateHub":
             info_box(f"ℹ ClimateHub: Integrierter {hu['speicher_l']}L Speicher – kein externer WW-Speicher nötig.")
@@ -489,7 +486,7 @@ def main():
     # ════════════════════════════════════════════════════════
     # BLOCK 6 – KÄLTESEITE: INNENGERÄTE
     # ════════════════════════════════════════════════════════
-    st.markdown('<div class="sec-header">⑥ Kälteseite: Innengeräte (A2A / RAC)</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-header">⑥ Kälteseite: DVM Innengeräte (A2A / Direktverdampfung)</div>', unsafe_allow_html=True)
 
     kat_liste    = sorted(set(v["kategorie"] for v in INNENGERAETE.values()))
     ig_c1, ig_c2, ig_c3, ig_c4, ig_c5 = st.columns([2, 2, 1, 1, 1])
@@ -757,7 +754,7 @@ def main():
             val_ok.append(f"✓ Spez. Verbrauch {kwh_m2:.0f} kWh/m²a plausibel für gewählten Dämmstandard.")
 
     # ── Check 2: WW-Speicher Registerfläche vs. ODU-Leistung ──────────
-    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Wandgerät":
+    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] in ("Wandgerät", "Hydro Unit"):
         # Formel: Registerfläche [m²] >= ODU_heiz_kW / 4
         min_wt = odu["heiz_kw"] / 4.0
         if ww_wt_flaeche < min_wt:
@@ -968,7 +965,7 @@ def main():
     if hat_puffer and puffer_l > 0:
         add(1, "Hydraulik", f"Pufferspeicher {puffer_l}L ({puffer_einbindung})", "– nach Wahl –")
 
-    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] == "Wandgerät":
+    if hat_ww_speicher and ww_speicher_l > 0 and hu["typ"] in ("Wandgerät", "Hydro Unit"):
         add(1, "Hydraulik", f"Warmwasserspeicher {ww_speicher_l}L", "– nach Wahl –")
 
     if bivalenz_aktiv:
