@@ -343,7 +343,8 @@ def main():
 
     # Aufheizzeit mit gewähltem Gerät unter Worst-Case Bedingungen
     net_heiz_power = (wp_p * 0.9) - worst_losses  # Netto-Heizleistung nach Verlustabzug
-    e_aufheiz = volumen * 1.162 * (t_soll - t_fill_default := 11.0)
+    t_fill_default = 11.0
+    e_aufheiz = volumen * 1.162 * (t_soll - t_fill_default)
     if net_heiz_power > 0 and wp_p > 0:
         aufheiz_stunden = e_aufheiz / net_heiz_power
     else:
