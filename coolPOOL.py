@@ -254,10 +254,36 @@ def main():
     st.sidebar.header("🎯 4. Sollwerte & Betrieb")
     t_soll   = st.sidebar.number_input("Soll Tag (°C)",   value=26.0)
     t_soll_n = st.sidebar.number_input("Soll Nacht (°C)", value=26.0)
-    r_t      = st.sidebar.slider("Heizzeit Tag (h)",   0, 24, (6, 22))
-    nacht_on = st.sidebar.toggle("Nachtheizung aktivieren", value=True)
-    r_n      = st.sidebar.slider("Heizzeit Nacht (h)", 0, 24, (22, 24),
-                                  help="Betriebsfenster für Nacht (z. B. 22–06 Uhr)")
+
+    # --- TAG-ZEITEN ---
+    st.sidebar.markdown("**☀️ Tagheizung**")
+    col_t1, col_t2 = st.sidebar.columns(2)
+    with col_t1:
+        tag_von = col_t1.number_input("Von (h)", min_value=0, max_value=23, value=6,  step=1, key="tag_von")
+    with col_t2:
+        tag_bis = col_t2.number_input("Bis (h)", min_value=1, max_value=24, value=22, step=1, key="tag_bis")
+    runtime_tag = max(0, tag_bis - tag_von)
+
+    # --- NACHT-ZEITEN ---
+    nacht_on = st.sidebar.toggle("🌙 Nachtheizung aktivieren", value=True)
+    if nacht_on:
+        st.sidebar.markdown("**🌙 Nachtheizung** (Abends → Morgens)")
+        col_n1, col_n2 = st.sidebar.columns(2)
+        with col_n1:
+            nacht_von = col_n1.number_input("Von (h)", min_value=0, max_value=23, value=22, step=1, key="nacht_von")
+        with col_n2:
+            nacht_bis = col_n2.number_input("Bis (h)", min_value=0, max_value=12,  value=6,  step=1, key="nacht_bis")
+        # Über Mitternacht: z.B. 22→6 = (24-22)+6 = 8h
+        runtime_nacht = (24 - nacht_von) + nacht_bis if nacht_von > nacht_bis else max(0, nacht_bis - nacht_von)
+    else:
+        nacht_von, nacht_bis = 22, 6
+        runtime_nacht = 0
+
+    # --- GESAMTSTUNDEN ANZEIGE ---
+    runtime_gesamt = runtime_tag + runtime_nacht
+    st.sidebar.markdown(
+        f"**⏱️ Laufzeit:** ☀️ {runtime_tag}h Tag  +  🌙 {runtime_nacht}h Nacht  =  **{runtime_gesamt}h gesamt**"
+    )
 
     # ============================================================
     # PHYSIK-ENGINE
@@ -285,15 +311,21 @@ def main():
 
     ls_t_s, ls_t_h = calc_losses(adj_tag[idx_s],   t_soll)
     ls_n_s, ls_n_h = calc_losses(adj_nacht[idx_s],  t_soll_n)
-    rec_p = sum(calc_losses(worst_at, t_soll)) * 1.2
+
+    # Leistungsempfehlung laufzeitabhängig:
+    # Tagesverlust (kWh) geteilt durch verfügbare Heizstunden → benötigte kW
+    # Wenn weniger Stunden → mehr kW nötig
+    tages_verlust_kwh = (ls_t_s + ls_t_h) * runtime_tag + (ls_n_s + ls_n_h) * runtime_nacht
+    runtime_off = max(1, 24 - runtime_gesamt)
+    verlust_off  = sum(calc_losses(worst_at, t_soll)) * runtime_off
+    total_energie = tages_verlust_kwh + verlust_off
+    rec_p = (total_energie / max(1, runtime_gesamt)) * 1.2
 
     at_avg  = (adj_tag[idx_s] + adj_nacht[idx_s]) / 2
     cop_sim = (
         max(2.0, min(tech_data["cop_max"], tech_data["cop_nom"] + (at_avg - 15) * 0.25))
         if tech_data["cop_max"] > 0 else 0.0
     )
-    runtime_tag   = r_t[1] - r_t[0]
-    runtime_nacht = (r_n[1] - r_n[0]) if nacht_on else 0
 
     # ============================================================
     # PHASE 1 – KLIMAPROFIL
@@ -323,7 +355,7 @@ def main():
     with m3:
         st.metric("Bedarf Nacht (kW)", f"{(ls_n_s + ls_n_h):.2f}")
         st.caption(f"Oberfläche: {ls_n_s:.2f}  |  Hülle: {ls_n_h:.2f}")
-    st.write(f"**Gesamtlaufzeit pro Tag: {runtime_tag + runtime_nacht} Stunden**")
+    st.info(f"⏱️ **Laufzeit:** ☀️ {runtime_tag}h Tag  +  🌙 {runtime_nacht}h Nacht  =  **{runtime_gesamt}h gesamt**  |  Empf. Leistung basiert auf {runtime_gesamt}h Heizzeit")
 
     # ============================================================
     # PHASE 3 – 24h SIMULATION
@@ -334,13 +366,13 @@ def main():
     hours      = list(range(24))
 
     for hr in hours:
-        is_tag   = r_t[0] <= hr < r_t[1]
-        # Nacht: Bereich kann über Mitternacht gehen (z. B. 22–6)
-        if r_n[0] > r_n[1]:
-            is_nacht = hr >= r_n[0] or hr < r_n[1]
+        is_tag = tag_von <= hr < tag_bis
+        # Nacht: über Mitternacht (z.B. 22→6)
+        if nacht_von > nacht_bis:
+            is_nacht = hr >= nacht_von or hr < nacht_bis
         else:
-            is_nacht = r_n[0] <= hr < r_n[1]
-        is_heiz  = is_tag or (nacht_on and is_nacht)
+            is_nacht = nacht_von <= hr < nacht_bis
+        is_heiz = is_tag or (nacht_on and is_nacht)
 
         t_now  = t_soll   if (6 <= hr < 18) else t_soll_n
         at_now = adj_tag[idx_s] if (6 <= hr < 18) else adj_nacht[idx_s]
