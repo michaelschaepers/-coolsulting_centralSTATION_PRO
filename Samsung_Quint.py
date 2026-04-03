@@ -976,7 +976,8 @@ def main():
             if line.strip():
                 add(1, "Sonstiges", line.strip(), "–")
 
-    df = pd.DataFrame(pos)
+    df = pd.DataFrame(pos).astype(str)
+    df = df.replace("nan", "–")
     st.dataframe(df, use_container_width=True, hide_index=True)
 
     # --- EXPORT ---
