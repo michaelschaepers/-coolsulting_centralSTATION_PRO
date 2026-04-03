@@ -2279,20 +2279,9 @@ def main():
     # if not auth_ok:
     #     return
     auth_role     = "admin"
-    auth_username = "demo"
+    auth_username = "coolsulting"
     partner_firma = "°coolsulting"  # Wird später aus Input überschrieben
 
-
-    # --- HEADER (Bug-freier Aufbau) ---
-    # Logout in Sidebar
-    with st.sidebar:
-        st.markdown(f"**👤 {auth_username}**")
-        st.markdown(f"*{partner_firma}*")
-        if st.button("🚪 Logout"):
-            st.session_state.auth_ok = False
-            st.rerun()
-        st.markdown("---")
-        st.caption(f"© 2026 °coolsulting")
     col_hdr, col_logo = st.columns([4, 1])
     with col_hdr:
         st.markdown(
@@ -3425,7 +3414,7 @@ def main():
             
             # DataFrame mit View-Controls
             proj_df = pd.DataFrame(projekte,
-                columns=["ID","Firma","Projekt","Kunde","Bearbeiter","Datum"])
+                columns=["ID","Firma","Projekt","Kunde","Bearbeiter","Datum"]).astype(str)
             st.dataframe(proj_df, use_container_width=True, hide_index=True)
             
             st.divider()
