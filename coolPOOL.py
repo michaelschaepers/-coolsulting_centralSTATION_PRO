@@ -312,14 +312,9 @@ def main():
     ls_t_s, ls_t_h = calc_losses(adj_tag[idx_s],   t_soll)
     ls_n_s, ls_n_h = calc_losses(adj_nacht[idx_s],  t_soll_n)
 
-    # Leistungsempfehlung laufzeitabhängig:
-    # Tagesverlust (kWh) geteilt durch verfügbare Heizstunden → benötigte kW
-    # Wenn weniger Stunden → mehr kW nötig
-    tages_verlust_kwh = (ls_t_s + ls_t_h) * runtime_tag + (ls_n_s + ls_n_h) * runtime_nacht
-    runtime_off = max(1, 24 - runtime_gesamt)
-    verlust_off  = sum(calc_losses(worst_at, t_soll)) * runtime_off
-    total_energie = tages_verlust_kwh + verlust_off
-    rec_p = (total_energie / max(1, runtime_gesamt)) * 1.2
+    # Erhaltungsleistung: Worst-Case Verluste × 1.2 Sicherheit
+    worst_losses = sum(calc_losses(worst_at, t_soll))
+    rec_p = worst_losses * 1.2
 
     at_avg  = (adj_tag[idx_s] + adj_nacht[idx_s]) / 2
     cop_sim = (
@@ -345,17 +340,52 @@ def main():
     # PHASE 2 – LEISTUNGSANALYSE
     # ============================================================
     st.header("Phase 2: Physikalische Leistungs-Analyse")
+
+    # Aufheizzeit mit gewähltem Gerät unter Worst-Case Bedingungen
+    net_heiz_power = (wp_p * 0.9) - worst_losses  # Netto-Heizleistung nach Verlustabzug
+    e_aufheiz = volumen * 1.162 * (t_soll - t_fill_default := 11.0)
+    if net_heiz_power > 0 and wp_p > 0:
+        aufheiz_stunden = e_aufheiz / net_heiz_power
+    else:
+        aufheiz_stunden = None  # Gerät zu schwach
+
     m1, m2, m3 = st.columns(3)
     with m1:
-        st.metric("Bedarf Tag (kW)",   f"{(ls_t_s + ls_t_h):.2f}")
+        st.metric("Verlust Tag (kW)",  f"{(ls_t_s + ls_t_h):.2f}")
         st.caption(f"Oberfläche: {ls_t_s:.2f}  |  Hülle: {ls_t_h:.2f}")
     with m2:
-        st.metric("Empf. Leistung",    f"{rec_p:.1f} kW")
-        st.metric("COP simuliert",     f"{cop_sim:.1f}")
+        st.metric("Min. Erhaltungsleistung", f"{rec_p:.1f} kW")
+        st.caption(f"Worst-Case {worst_at:.1f}°C + 20% Reserve")
+        st.metric("COP simuliert", f"{cop_sim:.1f}")
     with m3:
-        st.metric("Bedarf Nacht (kW)", f"{(ls_n_s + ls_n_h):.2f}")
+        st.metric("Verlust Nacht (kW)", f"{(ls_n_s + ls_n_h):.2f}")
         st.caption(f"Oberfläche: {ls_n_s:.2f}  |  Hülle: {ls_n_h:.2f}")
-    st.info(f"⏱️ **Laufzeit:** ☀️ {runtime_tag}h Tag  +  🌙 {runtime_nacht}h Nacht  =  **{runtime_gesamt}h gesamt**  |  Empf. Leistung basiert auf {runtime_gesamt}h Heizzeit")
+
+    st.info(f"⏱️ **Laufzeit:** ☀️ {runtime_tag}h Tag  +  🌙 {runtime_nacht}h Nacht  =  **{runtime_gesamt}h gesamt**")
+
+    # Gerätebewertung
+    if wp_p == 0:
+        st.warning("⚠️ Bitte Wärmepumpen-Modell auswählen.")
+    elif wp_p < rec_p:
+        st.error(f"❌ **{wp_sel}** ({wp_p} kW) reicht NICHT aus! Mindestens **{rec_p:.1f} kW** erforderlich.")
+    else:
+        st.success(f"✅ **{wp_sel}** ({wp_p} kW) kann den Pool bei Worst-Case ({worst_at:.1f}°C) halten.")
+
+    # Aufheizzeit-Analyse
+    if wp_p > 0:
+        st.markdown("#### 🌡️ Erstaufheizung mit gewähltem Gerät (Worst-Case)")
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            st.metric("Netto-Heizleistung", f"{max(0, net_heiz_power):.1f} kW",
+                      help="Geräte-Heizleistung minus Wärmeverluste bei Worst-Case")
+        with c2:
+            if aufheiz_stunden:
+                st.metric("Aufheizzeit (11→26°C)", f"{aufheiz_stunden:.0f} h",
+                          delta=f"≈ {aufheiz_stunden/24:.1f} Tage")
+            else:
+                st.metric("Aufheizzeit", "∞", delta="Gerät zu schwach!")
+        with c3:
+            st.metric("Aufheizenergie", f"{e_aufheiz:.0f} kWh")
 
     # ============================================================
     # PHASE 3 – 24h SIMULATION
