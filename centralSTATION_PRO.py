@@ -133,7 +133,6 @@ def main():
         "°WP Quick-Kalkulator (Quickie)": "WP_Quick_Kalkulator.py",
         "°coolMATCH (Samsung Kalkulator)": "coolMATCH_v7.py",
         "°coolQUINT (Samsung Quint Auslegung)": "Samsung_Quint.py",
-        "°coolMATH (AC Simulation)": "coolMATH.py",
         "°coolMATH PRO (6-Methoden Kühllast-Simulation)": "coolMATH_PRO.py",
         "°coolTEC (Kühllast Kühlräume)": "coolTEC.py",
         "°coolINDUTEC (Industrieelle Kühllastberechnung)": "coolINDUTEC.py",
