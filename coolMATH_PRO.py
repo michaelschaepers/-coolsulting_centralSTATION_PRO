@@ -2370,25 +2370,37 @@ def main():
     
     for i, tab in enumerate(tabs):
         with tab:
-            st.markdown('<div class="card">', unsafe_allow_html=True)
-            
+            zone_aktiv = st.checkbox("Zone aktiv", value=(i == 0), key=f"za{i}")
+
+            if not zone_aktiv:
+                individual_profiles.append({
+                    "name": f"Raum {i+1}", "reck": np.zeros(24), "vdi_a": np.zeros(24),
+                    "vdi_n": np.zeros(24), "prak": np.zeros(24), "klts": np.zeros(24), "ki": np.zeros(24),
+                })
+                room_results.append({
+                    "ZONE": f"Raum {i+1}", "VDI NEU": 0, "VDI ALT": 0,
+                    "RECKNAGEL": 0, "PRAKTIKER": 0, "KALTLUFTSEE": 0, "KI HYBRID": 0,
+                })
+                room_inputs_list.append({"name": f"Raum {i+1}", "flaeche": 0, "hoehe": raumhoehe,
+                    "personen": 0, "fenster": 0, "orientierung": "SUED", "nutzung": "Einfach", "u_wert": 0})
+                samsung_recs.append({"zone": f"Raum {i+1}", "primary": None, "alt": None, "peak_w": 0})
+                continue
+
             rc1, rc2, rc3, rc4 = st.columns(4)
             r_name  = rc1.text_input("Bezeichnung", f"Raum {i+1}", key=f"rn{i}")
-            area    = rc2.number_input("Flaeche [m²]", 5.0, 500.0, 50.0 if i==0 else 20.0, key=f"ar{i}")
+            area    = rc2.number_input("Flaeche [m²]", 0.0, 500.0, 50.0 if i==0 else 20.0, key=f"ar{i}")
             win     = rc3.number_input("Fenster [m²]", 0.0, 150.0, 2.4, key=f"wi{i}")
             orient  = rc4.selectbox("Ausrichtung", list(SOLAR_DB.keys()),
                                      index=list(SOLAR_DB.keys()).index(def_ori[i]), key=f"or{i}")
-            
+
             rc5, rc6, rc7, rc8 = st.columns(4)
-            glass   = rc5.selectbox("Glas", ["Einfach", "Doppel", "Dreifach", "Sonnenschutz"], 
+            glass   = rc5.selectbox("Glas", ["Einfach", "Doppel", "Dreifach", "Sonnenschutz"],
                                      index=0, key=f"gl{i}")
-            shade   = rc6.selectbox("Sonnenschutz", 
-                                     ["Keine", "Vorhang (Innen)", "Raffstore (Aussen)", "Rollladen"], 
+            shade   = rc6.selectbox("Sonnenschutz",
+                                     ["Keine", "Vorhang (Innen)", "Raffstore (Aussen)", "Rollladen"],
                                      index=1, key=f"sh{i}")
             pers    = rc7.slider("Personen", 0, 15, 2, key=f"pe{i}")
             tech    = rc8.number_input("Technik [W]", 0.0, 10000.0, 200.0, key=f"te{i}")
-            
-            st.markdown('</div>', unsafe_allow_html=True)
             
             # ---- BERECHNUNGEN ----
             u, g, fc = get_phys_constants(bau_std, glass, shade)
@@ -2837,8 +2849,9 @@ def main():
             vdi_peak  = method_peaks[i]["VDI NEU"]
             z_serie   = zone_serien[i]
 
-            # Default IG: Praktiker-Empfehlung in Zonen-Serie
-            prak_kw, _, _, _ = device_label(prak_peak, safety=1.10, serie=z_serie)
+            # Default IG: VDI 2078 ALT-Empfehlung in Zonen-Serie
+            vdi_a_peak = method_peaks[i]["VDI ALT"]
+            prak_kw, _, _, _ = device_label(vdi_a_peak, safety=1.10, serie=z_serie)
             def_ig_idx = 0
             for ig_idx, (kw, sname, _) in enumerate(IG_OPTIONS):
                 if sname == z_serie and kw == prak_kw:
@@ -2858,8 +2871,8 @@ def main():
                 f"text-transform:uppercase;'>{r_name}</div>"
                 f"<div style='font-size:9px;color:rgba(255,255,255,0.75);margin-top:4px;line-height:1.4;'>"
                 f"VDI Neu: {vdi_kw:.1f} kW &nbsp;|&nbsp; "
-                f"VDI Alt: {reck_kw:.1f} kW<br/>"
-                f"Recknagel: {vdi_a_kw:.1f} kW &nbsp;|&nbsp; "
+                f"VDI Alt: {vdi_a_kw:.1f} kW<br/>"
+                f"Recknagel: {reck_kw:.1f} kW &nbsp;|&nbsp; "
                 f"Praktiker ★: {prak_kw:.1f} kW<br/>"
                 f"Kaltluftsee: {klts_kw:.1f} kW &nbsp;|&nbsp; "
                 f"KI-Hybrid: {ki_kw:.1f} kW"
@@ -3085,6 +3098,11 @@ def main():
                     📋 {ig_serie_final}<br>
                     🌡️ AG ({ag_typ}): {ag_artnr}<br>
                     💶 {ig_preis_final:.0f} EUR LP (IG)
+                </div>
+                <div style="font-size:8px;opacity:0.75;line-height:1.6;margin-top:6px;border-top:1px solid rgba(255,255,255,0.3);padding-top:4px;">
+                    VDI Neu: {method_peaks[i]["VDI NEU"]/1000:.1f} kW &nbsp;|&nbsp; VDI Alt: {method_peaks[i]["VDI ALT"]/1000:.1f} kW<br>
+                    Recknagel: {method_peaks[i]["RECKNAGEL"]/1000:.1f} kW &nbsp;|&nbsp; Praktiker: {method_peaks[i]["PRAKTIKER"]/1000:.1f} kW<br>
+                    Kaltluftsee: {method_peaks[i]["KALTLUFTSEE"]/1000:.1f} kW &nbsp;|&nbsp; KI-Hybrid: {method_peaks[i]["KI HYBRID"]/1000:.1f} kW
                 </div>
             </div>""", unsafe_allow_html=True)
 
