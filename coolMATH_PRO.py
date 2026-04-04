@@ -2388,19 +2388,19 @@ def main():
 
             rc1, rc2, rc3, rc4 = st.columns(4)
             r_name  = rc1.text_input("Bezeichnung", f"Raum {i+1}", key=f"rn{i}")
-            area    = rc2.number_input("Flaeche [m²]", 0.0, 500.0, 50.0 if i==0 else 20.0, key=f"ar{i}")
+            area    = rc2.number_input("Flaeche [m²]", 0.0, 500.0, 0.0, key=f"ar{i}")
             win     = rc3.number_input("Fenster [m²]", 0.0, 150.0, 2.4, key=f"wi{i}")
             orient  = rc4.selectbox("Ausrichtung", list(SOLAR_DB.keys()),
                                      index=list(SOLAR_DB.keys()).index(def_ori[i]), key=f"or{i}")
 
             rc5, rc6, rc7, rc8 = st.columns(4)
             glass   = rc5.selectbox("Glas", ["Einfach", "Doppel", "Dreifach", "Sonnenschutz"],
-                                     index=0, key=f"gl{i}")
+                                     index=1, key=f"gl{i}")
             shade   = rc6.selectbox("Sonnenschutz",
                                      ["Keine", "Vorhang (Innen)", "Raffstore (Aussen)", "Rollladen"],
                                      index=1, key=f"sh{i}")
-            pers    = rc7.slider("Personen", 0, 15, 2, key=f"pe{i}")
-            tech    = rc8.number_input("Technik [W]", 0.0, 10000.0, 200.0, key=f"te{i}")
+            pers    = rc7.slider("Personen", 0, 15, 0, key=f"pe{i}")
+            tech    = rc8.number_input("Technik [W]", 0.0, 10000.0, 0.0, key=f"te{i}")
             
             # ---- BERECHNUNGEN ----
             u, g, fc = get_phys_constants(bau_std, glass, shade)
