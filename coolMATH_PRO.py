@@ -2696,8 +2696,6 @@ def main():
                 unsafe_allow_html=True
             )
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
     # --- VDI 2078 ALT EMPFEHLUNG (automatisch, Wind-Free Standard) ---
     st.markdown("""
     <div style="margin-top:24px; margin-bottom:8px;">
@@ -3428,13 +3426,32 @@ def main():
             else:
                 st.caption(f"🔒 Nur Projekte von: {partner_firma}")
             
-            # DataFrame mit View-Controls
-            proj_df = pd.DataFrame(
-                [list(map(str, row)) for row in projekte],
-                columns=["ID","Firma","Projekt","Kunde","Bearbeiter","Datum"])
-            st.dataframe(proj_df, use_container_width=True, hide_index=True)
-            
-            st.divider()
+            # Tabelle ohne Arrow/PyArrow (HTML-Fallback)
+            _col_headers = ["ID", "Firma", "Projekt", "Kunde", "Bearbeiter", "Datum"]
+            _th = "".join(
+                "<th style=\"padding:6px 10px;font-size:11px;text-align:left;"
+                "font-weight:700;color:white;\">" + c + "</th>"
+                for c in _col_headers
+            )
+            _tbl_rows = []
+            for idx, row in enumerate(projekte):
+                bg = "rgba(255,255,255,0.08)" if idx % 2 == 0 else "rgba(0,0,0,0.1)"
+                cells = "".join(
+                    "<td style=\"padding:5px 10px;font-size:11px;border:none;\">"
+                    + (str(v) if v else "—") + "</td>"
+                    for v in row
+                )
+                _tbl_rows.append("<tr style=\"background:" + bg + ";\">" + cells + "</tr>")
+            _tbl_html = (
+                "<table style=\"width:100%;border-collapse:collapse;font-family:sans-serif;\">"
+                "<thead><tr style=\"background:rgba(255,255,255,0.15);\">" + _th + "</tr></thead>"
+                "<tbody style=\"color:rgba(255,255,255,0.85);\">"
+                + "".join(_tbl_rows)
+                + "</tbody></table>"
+            )
+            st.markdown(_tbl_html, unsafe_allow_html=True)
+
+            st.markdown("---")
             
             # Projekt auswählen + Laden
             col1, col2 = st.columns([4, 1])
