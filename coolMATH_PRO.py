@@ -2307,7 +2307,7 @@ def main():
                 st.image(logo, width=200)
                 break
     
-    st.write("---")
+    st.markdown("---")
     
     # --- PROJEKT KONFIGURATION ---
     # Geladene Projektdaten auslesen
@@ -3429,8 +3429,9 @@ def main():
                 st.caption(f"🔒 Nur Projekte von: {partner_firma}")
             
             # DataFrame mit View-Controls
-            proj_df = pd.DataFrame(projekte,
-                columns=["ID","Firma","Projekt","Kunde","Bearbeiter","Datum"]).astype(str)
+            proj_df = pd.DataFrame(
+                [list(map(str, row)) for row in projekte],
+                columns=["ID","Firma","Projekt","Kunde","Bearbeiter","Datum"])
             st.dataframe(proj_df, use_container_width=True, hide_index=True)
             
             st.divider()
@@ -3481,7 +3482,7 @@ def main():
             st.info("Noch keine gespeicherten Projekte.")
 
     # --- Footer ---
-    st.write("---")
+    st.markdown("---")
     st.markdown(f"""
     <div style="text-align:center; color:rgba(255,255,255,0.5); font-size:11px; padding:10px">
         © {datetime.now().year} °coolsulting — Michael Schäpers | coolMATH Pro {APP_VERSION}<br>
