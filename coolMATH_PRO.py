@@ -2459,8 +2459,7 @@ def main():
     # ==========================================
     # ERGEBNIS-MATRIX
     # ==========================================
-    st.markdown('<div class="matrix-wrapper">', unsafe_allow_html=True)
-    st.markdown('<div class="matrix-title">📊 Ergebnis-Matrix [Watt] — 6 Methoden</div>', 
+    st.markdown('<div class="matrix-title">📊 Ergebnis-Matrix [Watt] — 6 Methoden</div>',
                 unsafe_allow_html=True)
     
     df_res = pd.DataFrame(room_results)
@@ -2502,7 +2501,6 @@ def main():
     tbl += "</tbody></table>"
     
     st.markdown(tbl, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
     
     # ==========================================
     # SAMSUNG WIND-FREE EMPFEHLUNGEN
