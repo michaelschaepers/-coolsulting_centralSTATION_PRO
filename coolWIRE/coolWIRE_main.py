@@ -323,18 +323,24 @@ with t1:
                         placeholder="Dach...")
 
             if len(ms_list) > 1:
-                if st.button(f"🗑️ Anlage {ms_i+1} entfernen", key=f"ms_del_{ms_i}"):
-                    ms_list.pop(ms_i)
-                    # Widget-Keys für ALLE Anlagen löschen damit Streamlit sie neu rendert
-                    for _ki in range(len(ms_list) + 2):
-                        for _suffix in ["typ","desc","wrg","sma","ema","vgt","svf","evf","del"]:
-                            _wk = f"ms_{_suffix}_{_ki}"
-                            if _wk in st.session_state:
-                                del st.session_state[_wk]
-                    st.session_state.maschinenstandorte = ms_list
-                    st.rerun()
+                if st.button(f"Anlage {ms_i+1} entfernen", key=f"ms_del_{ms_i}"):
+                    st.session_state["_ms_delete_idx"] = ms_i
 
         ms_list[ms_i] = ms
+
+    # Löschen NACH der Schleife ausführen (verhindert Index-Konflikte)
+    if st.session_state.get("_ms_delete_idx") is not None:
+        del_idx = st.session_state.pop("_ms_delete_idx")
+        if del_idx < len(ms_list):
+            ms_list.pop(del_idx)
+            # Widget-Keys für ALLE Anlagen löschen
+            for _ki in range(len(ms_list) + 5):
+                for _suffix in ["typ","desc","wrg","sma","ema","vgt","svf","evf","del"]:
+                    _wk = f"ms_{_suffix}_{_ki}"
+                    if _wk in st.session_state:
+                        del st.session_state[_wk]
+            st.session_state.maschinenstandorte = ms_list
+            st.rerun()
 
     if st.button("➕ Weitere Kälteanlage / Aggregat hinzufügen"):
         ms_list.append({"id": f"ms{len(ms_list)+1}",
