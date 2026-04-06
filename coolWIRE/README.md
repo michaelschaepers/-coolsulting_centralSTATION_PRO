@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # °coolWIRE v2.0
 
 Kälteplanungstool von coolsulting e.U.
@@ -20,3 +21,7 @@ python -m streamlit run coolWIRE_main.py --server.port 8580
 ```
 pip install -r requirements.txt
 ```
+=======
+# coolWIRE
+°coolWIRE – Elektro-Verdrahtungstool von coolsulting
+>>>>>>> 394b6d2033ba023237adc291b6aa0fe9911e2cde
