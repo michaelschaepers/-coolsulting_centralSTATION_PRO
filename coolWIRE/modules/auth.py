@@ -117,6 +117,7 @@ def logout():
 def zeige_login():
     """Zeigt das Login-Formular. Gibt True zurück wenn erfolgreich."""
 
+    # Zentriertes Layout
     col_l, col_m, col_r = st.columns([1, 1.2, 1])
     with col_m:
         st.markdown("""
@@ -189,6 +190,9 @@ def zeige_nutzerverwaltung():
 
     alle_nutzer = get_alle_nutzer()
 
+    # -----------------------------------------------------------------------
+    # Nutzerübersicht
+    # -----------------------------------------------------------------------
     st.markdown("**Aktuelle Nutzer**")
 
     if alle_nutzer:
@@ -204,6 +208,7 @@ def zeige_nutzerverwaltung():
                 "Angelegt von": data.get("angelegt_von", "–"),
             })
 
+        import pandas as pd
         df = pd.DataFrame(rows)
         st.dataframe(df, use_container_width=True, hide_index=True,
                      column_config={
@@ -215,6 +220,9 @@ def zeige_nutzerverwaltung():
 
     st.markdown("---")
 
+    # -----------------------------------------------------------------------
+    # Neuen Nutzer anlegen
+    # -----------------------------------------------------------------------
     st.markdown("**Neuen Nutzer anlegen**")
     st.caption("Hinweis: Dynamisch angelegte Nutzer bleiben bis zum App-Neustart aktiv. "
                "Für dauerhafte Zugänge → secrets.toml aktualisieren.")
@@ -245,6 +253,9 @@ def zeige_nutzerverwaltung():
 
     st.markdown("---")
 
+    # -----------------------------------------------------------------------
+    # Dynamischen Nutzer löschen
+    # -----------------------------------------------------------------------
     dynamic_users = _lade_nutzer_dynamisch()
     if dynamic_users:
         st.markdown("**Dynamischen Nutzer entfernen**")
@@ -262,6 +273,9 @@ def zeige_nutzerverwaltung():
 
     st.markdown("---")
 
+    # -----------------------------------------------------------------------
+    # Anleitung für dauerhafte Nutzer
+    # -----------------------------------------------------------------------
     with st.expander("📋 Dauerhafte Nutzer in secrets.toml eintragen"):
         st.code("""
 # .streamlit/secrets.toml
@@ -269,13 +283,34 @@ def zeige_nutzerverwaltung():
 [users]
 michael  = "dein_passwort"
 niklas   = "passwort2"
+polar    = "polar_pw"
+weichselbaumer = "wb_pw"
+venturi  = "venturi_pw"
+hörtenhuber = "hoe_pw"
+kristandl = "kri_pw"
+lexx     = "lexx_pw"
+arktis   = "arktis_pw"
 
 [roles]
 michael  = "admin"
 niklas   = "admin"
+polar    = "partner"
+weichselbaumer = "partner"
+venturi  = "partner"
+hörtenhuber = "partner"
+kristandl = "partner"
+lexx     = "partner"
+arktis   = "partner"
 
 [display_names]
 michael  = "Michael Schäpers"
 niklas   = "Niklas Reisner"
+polar    = "Polar Energy"
+weichselbaumer = "Weichselbaumer GmbH"
+venturi  = "Venturi Kälte OHG"
+hörtenhuber = "Hörtenhuber"
+kristandl = "Kristandl"
+lexx     = "LEXX"
+arktis   = "Arktis"
 """, language="toml")
         st.caption("Diese Datei liegt NUR auf dem Server / in Streamlit Cloud Secrets – niemals im Repo!")
