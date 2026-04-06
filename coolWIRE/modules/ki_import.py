@@ -27,10 +27,22 @@ except ImportError:
     EXCEL_OK = False
 
 def get_api_key():
+    # Mehrere Pfade versuchen (direkt, CentralStation exec(), Umgebungsvariable)
     try:
         return st.secrets["anthropic"]["api_key"]
     except Exception:
-        return None
+        pass
+    try:
+        return st.secrets.get("anthropic", {}).get("api_key")
+    except Exception:
+        pass
+    try:
+        # Flacher Key (falls nicht als [anthropic] Section)
+        return st.secrets.get("ANTHROPIC_API_KEY")
+    except Exception:
+        pass
+    import os
+    return os.environ.get("ANTHROPIC_API_KEY")
 
 def api_verfuegbar():
     return ANTHROPIC_OK and bool(get_api_key())
