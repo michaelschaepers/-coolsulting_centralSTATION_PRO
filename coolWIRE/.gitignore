@@ -1,0 +1,29 @@
+# °coolWIRE – .gitignore
+# ⚠️ secrets.toml NIEMALS committen!
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Projektdaten (lokal)
+projekte/
+*.json
+!beispiel_projekt.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit Cache
+.streamlit/cache/
+
+Neuer Ordner/
+Controller/
+auth.py
+datenbank.py
+Anleitung*

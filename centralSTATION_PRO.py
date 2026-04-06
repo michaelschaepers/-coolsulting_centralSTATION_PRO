@@ -32,21 +32,37 @@ def get_font_as_base64(font_path):
 
 def run_app(file_path):
     """
-    Liest eine externe .py Datei ein, entfernt Seitenkonfigurationen 
+    Liest eine externe .py Datei ein, entfernt Seitenkonfigurationen
     und führt den Code im aktuellen Kontext aus.
+    Unterstützt auch Apps in Unterverzeichnissen (z.B. coolWIRE/coolWIRE_main.py).
     """
+    import sys
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             code_content = f.read()
-        
+
         # Unterdrückung der Page-Config in Unter-Apps
         modified_code = code_content.replace("st.set_page_config", "pass #")
-        
+
+        # Bei Apps in Unterverzeichnissen: Verzeichnis zu sys.path hinzufügen
+        app_dir = os.path.dirname(os.path.abspath(file_path))
+        original_dir = os.getcwd()
+        path_added = False
+        if app_dir != original_dir and app_dir not in sys.path:
+            sys.path.insert(0, app_dir)
+            path_added = True
+
         try:
+            # Arbeitsverzeichnis temporär wechseln für relative Pfade
+            os.chdir(app_dir)
             # Ausführung im globalen Namensraum
             exec(modified_code, globals())
         except Exception as e:
             st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(e)}")
+        finally:
+            os.chdir(original_dir)
+            if path_added:
+                sys.path.remove(app_dir)
     else:
         st.error(f"❌ Datei '{file_path}' wurde nicht gefunden.")
 
@@ -140,7 +156,8 @@ def main():
         "°coolRohr (Kältemittel-Rohrdimensionierung)": "coolRohr.py",
         "°Kältemittel-Füllmengenrechner": "Kältemittel_Füllmenge.py",
         "°coolPOOL (Pool-Temperierungs-Simulation)": "coolPOOL.py",
-        "°coolNEIGHBOR (Schallimmissions-Prognose)": "coolNEIGHBOR.py"
+        "°coolNEIGHBOR (Schallimmissions-Prognose)": "coolNEIGHBOR.py",
+        "°coolWIRE (Kabelplanungstool)": "coolWIRE/coolWIRE_main.py"
     }
 
     # Module die eine Sidebar verwenden
@@ -152,6 +169,7 @@ def main():
         "°coolFLOW (Hydraulik)",
         "°Heizlast WP (Modul 1)",
         "°WP Quick-Kalkulator (Quickie)",
+        "°coolWIRE (Kabelplanungstool)",
     }
 
     tool_wahl = st.selectbox("Anwendung auswählen und starten:", list(menu_options.keys()))
