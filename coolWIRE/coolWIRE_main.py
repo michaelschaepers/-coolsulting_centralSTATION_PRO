@@ -349,6 +349,7 @@ with t1:
                         "standort_verfluessiger": "", "etage_verfluessiger": "",
                         "verfluessiger_getrennt": False, "waermerueckgewinnung": False,
                         "beschreibung": "", "kreise": []})
+        st.session_state.maschinenstandorte = ms_list
         st.rerun()
     st.session_state.maschinenstandorte = ms_list
 
