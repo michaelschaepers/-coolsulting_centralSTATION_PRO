@@ -58,24 +58,27 @@ def run_app(file_path):
             sys.path.insert(0, app_dir)
             path_added = True
 
+        # Arbeitsverzeichnis temporär wechseln für relative Pfade
+        os.chdir(app_dir)
+        _exec_error = None
         try:
-            # Arbeitsverzeichnis temporär wechseln für relative Pfade
-            os.chdir(app_dir)
-            # Ausführung im globalen Namensraum
             exec(modified_code, globals())
-        except (SystemExit, KeyboardInterrupt):
-            raise
-        except BaseException as e:
-            # st.rerun() und st.stop() werfen spezielle Exceptions
-            # die NICHT abgefangen werden dürfen
-            err_name = type(e).__name__
-            if "Rerun" in err_name or "Stop" in err_name or "Halt" in err_name:
+        except Exception as e:
+            # Streamlit-interne Exceptions (Rerun, Stop) MÜSSEN durchgelassen werden
+            _ename = type(e).__name__
+            if "Rerun" in _ename or "Stop" in _ename or "Halt" in _ename or "Script" in _ename:
+                # Aufräumen VOR dem Raise
+                os.chdir(original_dir)
+                if path_added and app_dir in sys.path:
+                    sys.path.remove(app_dir)
                 raise
-            st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(e)}")
-        finally:
-            os.chdir(original_dir)
-            if path_added:
-                sys.path.remove(app_dir)
+            _exec_error = e
+        # Aufräumen
+        os.chdir(original_dir)
+        if path_added and app_dir in sys.path:
+            sys.path.remove(app_dir)
+        if _exec_error:
+            st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(_exec_error)}")
     else:
         st.error(f"❌ Datei '{file_path}' wurde nicht gefunden.")
 
