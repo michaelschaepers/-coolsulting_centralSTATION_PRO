@@ -80,6 +80,14 @@ html,body,[class*="css"]{{font-family:'{_fnt}',sans-serif;font-size:{_fsz};color
 .stDownloadButton>button{{background:var(--cb) !important;color:white !important;border:none !important;border-radius:8px !important;font-weight:600 !important;}}
 .stButton>button{{border-radius:8px !important;font-weight:600 !important;}}
 .footer{{margin-top:2rem;padding:0.6rem 1rem;background:var(--cl);border-top:2px solid var(--cborder);font-size:0.72rem;color:#aaa;text-align:center;border-radius:0 0 10px 10px;}}
+/* Verstecke Arrow-Platzhalter in Expandern */
+[data-testid="stExpander"] summary span[data-testid="stMarkdownContainer"] p::before {{content: none !important;}}
+[data-testid="stExpander"] summary::before {{display: none !important;}}
+details summary span.css-1ixbkrg {{display: none !important;}}
+[data-testid="stExpander"] [data-testid="stIcon"] {{display: none !important;}}
+p:has(> .arrow) {{display: none !important;}}
+span:has(> .arrow) {{display: none !important;}}
+.arrow_down, .arrowDown {{display: none !important;}}
 </style>
 """, unsafe_allow_html=True)
 
