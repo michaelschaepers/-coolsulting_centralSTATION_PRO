@@ -9,21 +9,63 @@ import numpy as np
 # ─────────────────────────────────────────────────────────────────────────────
 # CU-ROHR TABELLE
 # ─────────────────────────────────────────────────────────────────────────────
-CU_PIPES = [
-    {"od": 10.0,  "wall": 1.0, "id": 8.0,   "label": "10 × 1,0"},
-    {"od": 12.0,  "wall": 1.0, "id": 10.0,  "label": "12 × 1,0"},
-    {"od": 15.0,  "wall": 1.0, "id": 13.0,  "label": "15 × 1,0"},
-    {"od": 18.0,  "wall": 1.0, "id": 16.0,  "label": "18 × 1,0"},
-    {"od": 22.0,  "wall": 1.0, "id": 20.0,  "label": "22 × 1,0"},
-    {"od": 28.0,  "wall": 1.5, "id": 25.0,  "label": "28 × 1,5"},
-    {"od": 35.0,  "wall": 1.5, "id": 32.0,  "label": "35 × 1,5"},
-    {"od": 42.0,  "wall": 1.5, "id": 39.0,  "label": "42 × 1,5"},
-    {"od": 54.0,  "wall": 2.0, "id": 50.0,  "label": "54 × 2,0"},
-    {"od": 64.0,  "wall": 2.0, "id": 60.0,  "label": "64 × 2,0"},
-    {"od": 76.1,  "wall": 2.0, "id": 72.1,  "label": "76,1 × 2,0"},
-    {"od": 88.9,  "wall": 2.5, "id": 83.9,  "label": "88,9 × 2,5"},
-    {"od": 108.0, "wall": 2.5, "id": 103.0, "label": "108 × 2,5"},
+# Metrische Cu-Rohre (EN 12735-1)
+CU_PIPES_METRIC = [
+    {"od": 6.0,   "wall": 1.0, "id": 4.0,   "label": "6 × 1,0",    "system": "metrisch"},
+    {"od": 10.0,  "wall": 1.0, "id": 8.0,   "label": "10 × 1,0",   "system": "metrisch"},
+    {"od": 12.0,  "wall": 1.0, "id": 10.0,  "label": "12 × 1,0",   "system": "metrisch"},
+    {"od": 15.0,  "wall": 1.0, "id": 13.0,  "label": "15 × 1,0",   "system": "metrisch"},
+    {"od": 18.0,  "wall": 1.0, "id": 16.0,  "label": "18 × 1,0",   "system": "metrisch"},
+    {"od": 22.0,  "wall": 1.0, "id": 20.0,  "label": "22 × 1,0",   "system": "metrisch"},
+    {"od": 28.0,  "wall": 1.5, "id": 25.0,  "label": "28 × 1,5",   "system": "metrisch"},
+    {"od": 35.0,  "wall": 1.5, "id": 32.0,  "label": "35 × 1,5",   "system": "metrisch"},
+    {"od": 42.0,  "wall": 1.5, "id": 39.0,  "label": "42 × 1,5",   "system": "metrisch"},
+    {"od": 54.0,  "wall": 2.0, "id": 50.0,  "label": "54 × 2,0",   "system": "metrisch"},
+    {"od": 64.0,  "wall": 2.0, "id": 60.0,  "label": "64 × 2,0",   "system": "metrisch"},
+    {"od": 76.1,  "wall": 2.0, "id": 72.1,  "label": "76,1 × 2,0", "system": "metrisch"},
+    {"od": 88.9,  "wall": 2.5, "id": 83.9,  "label": "88,9 × 2,5", "system": "metrisch"},
+    {"od": 108.0, "wall": 2.5, "id": 103.0, "label": "108 × 2,5",  "system": "metrisch"},
 ]
+
+# Zöllige Cu-Rohre (ASTM B280 / EN 12735-2) – USA/internationale Kältetechnik
+CU_PIPES_INCH = [
+    {"od": 6.35,  "wall": 0.76, "id": 4.83,  "label": "1/4\"  (6,35)",   "system": "zöllig", "inch": "1/4\""},
+    {"od": 9.52,  "wall": 0.81, "id": 7.90,  "label": "3/8\"  (9,52)",   "system": "zöllig", "inch": "3/8\""},
+    {"od": 12.70, "wall": 0.81, "id": 11.08, "label": "1/2\"  (12,70)",  "system": "zöllig", "inch": "1/2\""},
+    {"od": 15.88, "wall": 0.89, "id": 14.10, "label": "5/8\"  (15,88)",  "system": "zöllig", "inch": "5/8\""},
+    {"od": 19.05, "wall": 0.89, "id": 17.27, "label": "3/4\"  (19,05)",  "system": "zöllig", "inch": "3/4\""},
+    {"od": 22.22, "wall": 1.14, "id": 19.94, "label": "7/8\"  (22,22)",  "system": "zöllig", "inch": "7/8\""},
+    {"od": 28.58, "wall": 1.27, "id": 26.04, "label": "1-1/8\" (28,58)", "system": "zöllig", "inch": "1-1/8\""},
+    {"od": 34.92, "wall": 1.40, "id": 32.12, "label": "1-3/8\" (34,92)", "system": "zöllig", "inch": "1-3/8\""},
+    {"od": 41.28, "wall": 1.52, "id": 38.24, "label": "1-5/8\" (41,28)", "system": "zöllig", "inch": "1-5/8\""},
+    {"od": 53.98, "wall": 1.78, "id": 50.42, "label": "2-1/8\" (53,98)", "system": "zöllig", "inch": "2-1/8\""},
+    {"od": 66.68, "wall": 2.03, "id": 62.62, "label": "2-5/8\" (66,68)", "system": "zöllig", "inch": "2-5/8\""},
+    {"od": 79.38, "wall": 2.29, "id": 74.80, "label": "3-1/8\" (79,38)", "system": "zöllig", "inch": "3-1/8\""},
+    {"od": 104.78,"wall": 2.79, "id": 99.20, "label": "4-1/8\" (104,78)","system": "zöllig", "inch": "4-1/8\""},
+]
+
+# K65 Hochdruck Cu-Rohre für CO2 (R744) – EN 12735-1, 65 bar Betriebsdruck
+CU_PIPES_K65 = [
+    {"od": 6.0,   "wall": 1.0, "id": 4.0,   "label": "K65 6 × 1,0",    "system": "K65", "p_max_bar": 90},
+    {"od": 10.0,  "wall": 1.0, "id": 8.0,   "label": "K65 10 × 1,0",   "system": "K65", "p_max_bar": 90},
+    {"od": 12.0,  "wall": 1.0, "id": 10.0,  "label": "K65 12 × 1,0",   "system": "K65", "p_max_bar": 75},
+    {"od": 15.0,  "wall": 1.0, "id": 13.0,  "label": "K65 15 × 1,0",   "system": "K65", "p_max_bar": 65},
+    {"od": 18.0,  "wall": 1.0, "id": 16.0,  "label": "K65 18 × 1,0",   "system": "K65", "p_max_bar": 65},
+    {"od": 22.0,  "wall": 1.5, "id": 19.0,  "label": "K65 22 × 1,5",   "system": "K65", "p_max_bar": 65},
+    {"od": 28.0,  "wall": 1.5, "id": 25.0,  "label": "K65 28 × 1,5",   "system": "K65", "p_max_bar": 65},
+    {"od": 35.0,  "wall": 1.5, "id": 32.0,  "label": "K65 35 × 1,5",   "system": "K65", "p_max_bar": 65},
+    {"od": 42.0,  "wall": 2.0, "id": 38.0,  "label": "K65 42 × 2,0",   "system": "K65", "p_max_bar": 65},
+    {"od": 54.0,  "wall": 2.5, "id": 49.0,  "label": "K65 54 × 2,5",   "system": "K65", "p_max_bar": 65},
+]
+
+# Standard-Auswahl: metrisch (wird in select_pipe verwendet)
+CU_PIPES = CU_PIPES_METRIC
+
+def get_pipes_for_ref(ref_key):
+    """Gibt die passende Rohrtabelle für ein Kältemittel zurück."""
+    if REFRIGERANTS.get(ref_key, {}).get("co2"):
+        return CU_PIPES_K65
+    return CU_PIPES_METRIC
 
 # ─────────────────────────────────────────────────────────────────────────────
 # KÄLTEMITTEL-DATENTABELLEN
@@ -154,10 +196,13 @@ def calc_pipe(pipe, m_dot_kg_s, rho_kg_m3, mu_Pa_s, L_eq_m, T_sat_C, h_fg_kJ, rh
     return {"v": v, "Re": Re, "dp_Pa": dp_Pa, "dp_bar": dp_bar, "dp_K": dp_K}
 
 def select_pipe(m_dot_kg_s, rho_kg_m3, mu_Pa_s, L_eq_m,
-                v_min, v_max, dp_K_max, T_sat_C, h_fg_kJ, rho_v_kg_m3):
-    best = {"prio": 99, "idx": len(CU_PIPES)-1,
+                v_min, v_max, dp_K_max, T_sat_C, h_fg_kJ, rho_v_kg_m3,
+                pipe_list=None):
+    if pipe_list is None:
+        pipe_list = CU_PIPES
+    best = {"prio": 99, "idx": len(pipe_list)-1,
             "warns": ["⚠️ Kein ideales Rohr gefunden – größtes Rohr gewählt"]}
-    for i, pipe in enumerate(CU_PIPES):
+    for i, pipe in enumerate(pipe_list):
         r = calc_pipe(pipe, m_dot_kg_s, rho_kg_m3, mu_Pa_s, L_eq_m, T_sat_C, h_fg_kJ, rho_v_kg_m3)
         v_ok  = v_min <= r["v"] <= v_max
         dp_ok = r["dp_K"] <= dp_K_max
@@ -259,12 +304,14 @@ def berechne_leitung(ref_key, t0_C, tc_C, Q_kW, L_h_m, L_v_m,
     dp_hydro_SL = hydrostatic_dp(rho_v0, h_SL_m)
     dp_hydro_FL = hydrostatic_dp(rho_l, h_FL_m)
 
-    auto_SL, warns_SL = select_pipe(m_dot, rho_v0, mu_v0, L_SL_eq, vmin_sl, vmax_sl, dp_max_SL, t0_C, h_fg0, rho_v0)
-    auto_DL, warns_DL = select_pipe(m_dot, rho_vc, mu_vc, L_DL_eq, vmin_dl, vmax_dl, dp_max_DL, tc_C, propsc["h_fg"], rho_vc)
-    auto_FL, warns_FL = select_pipe(m_dot, rho_l, mu_vc, L_FL_eq, 0.5, 1.5, dp_max_FL, tc_C, propsc["h_fg"], rho_vc)
+    pipes = get_pipes_for_ref(ref_key)
+
+    auto_SL, warns_SL = select_pipe(m_dot, rho_v0, mu_v0, L_SL_eq, vmin_sl, vmax_sl, dp_max_SL, t0_C, h_fg0, rho_v0, pipes)
+    auto_DL, warns_DL = select_pipe(m_dot, rho_vc, mu_vc, L_DL_eq, vmin_dl, vmax_dl, dp_max_DL, tc_C, propsc["h_fg"], rho_vc, pipes)
+    auto_FL, warns_FL = select_pipe(m_dot, rho_l, mu_vc, L_FL_eq, 0.5, 1.5, dp_max_FL, tc_C, propsc["h_fg"], rho_vc, pipes)
 
     def get_result(pipe_idx, m, rho, mu, L_eq, T_sat, h_fg_val, rho_v_val, dp_hydro=0):
-        pipe = CU_PIPES[pipe_idx]
+        pipe = pipes[pipe_idx]
         r = calc_pipe(pipe, m, rho, mu, L_eq, T_sat, h_fg_val, rho_v_val)
         dp_total_Pa = r["dp_Pa"] + dp_hydro
         T_K = T_sat + 273.15
