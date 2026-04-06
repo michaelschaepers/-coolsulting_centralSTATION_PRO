@@ -12,6 +12,10 @@ import base64
 from datetime import datetime
 from PIL import Image
 
+# Arbeitsverzeichnis IMMER auf Script-Verzeichnis setzen (Schutz gegen chdir-Probleme)
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+os.chdir(_SCRIPT_DIR)
+
 # ============================================================
 # 1. SEITE KONFIGURIEREN
 # ============================================================
@@ -60,25 +64,18 @@ def run_app(file_path):
 
         # Arbeitsverzeichnis temporär wechseln für relative Pfade
         os.chdir(app_dir)
-        _exec_error = None
         try:
             exec(modified_code, globals())
         except Exception as e:
-            # Streamlit-interne Exceptions (Rerun, Stop) MÜSSEN durchgelassen werden
             _ename = type(e).__name__
             if "Rerun" in _ename or "Stop" in _ename or "Halt" in _ename or "Script" in _ename:
-                # Aufräumen VOR dem Raise
-                os.chdir(original_dir)
-                if path_added and app_dir in sys.path:
-                    sys.path.remove(app_dir)
-                raise
-            _exec_error = e
-        # Aufräumen
-        os.chdir(original_dir)
-        if path_added and app_dir in sys.path:
-            sys.path.remove(app_dir)
-        if _exec_error:
-            st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(_exec_error)}")
+                raise  # Streamlit-Exceptions durchlassen
+            st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(e)}")
+        finally:
+            # IMMER zurücksetzen – auch nach Rerun/Stop
+            os.chdir(original_dir)
+            if path_added and app_dir in sys.path:
+                sys.path.remove(app_dir)
     else:
         st.error(f"❌ Datei '{file_path}' wurde nicht gefunden.")
 
