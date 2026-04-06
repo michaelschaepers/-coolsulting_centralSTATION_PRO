@@ -122,9 +122,23 @@ def main():
         border-radius: 10px !important; 
         border: 2px solid {TEXT_GRAY} !important; 
     }}
-    div[data-baseweb="select"] div {{ 
-        color: {BG_COLOR} !important; 
-        font-weight: bold !important; 
+    div[data-baseweb="select"] div {{
+        color: {BG_COLOR} !important;
+        font-weight: bold !important;
+    }}
+
+    /* === GLOBALER FIX: Arrow-Platzhalter in allen Expandern verstecken === */
+    [data-testid="stExpander"] summary::before {{display: none !important;}}
+    [data-testid="stExpander"] summary span[data-testid="stMarkdownContainer"] p::before {{content: none !important;}}
+    [data-testid="stExpander"] [data-testid="stIcon"] {{display: none !important;}}
+    details summary span.css-1ixbkrg {{display: none !important;}}
+    .arrow_down, .arrowDown, [class*="arrow"] {{display: none !important;}}
+    /* Expander-Text der mit .arrow beginnt – Punkt+Text entfernen */
+    [data-testid="stExpander"] summary > span:first-child {{
+        font-size: 0 !important;
+    }}
+    [data-testid="stExpander"] summary > span:first-child > * {{
+        font-size: 1rem !important;
     }}
     </style>
     """, unsafe_allow_html=True)
