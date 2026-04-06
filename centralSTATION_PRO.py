@@ -41,8 +41,14 @@ def run_app(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             code_content = f.read()
 
-        # Unterdrückung der Page-Config in Unter-Apps
-        modified_code = code_content.replace("st.set_page_config", "pass #")
+        # Unterdrückung der Page-Config in Unter-Apps (mehrzeilige Aufrufe)
+        import re
+        modified_code = re.sub(
+            r'st\.set_page_config\s*\(.*?\)',
+            'pass',
+            code_content,
+            flags=re.DOTALL
+        )
 
         # Bei Apps in Unterverzeichnissen: Verzeichnis zu sys.path hinzufügen
         app_dir = os.path.dirname(os.path.abspath(file_path))
