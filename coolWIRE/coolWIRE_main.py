@@ -325,6 +325,12 @@ with t1:
             if len(ms_list) > 1:
                 if st.button(f"🗑️ Anlage {ms_i+1} entfernen", key=f"ms_del_{ms_i}"):
                     ms_list.pop(ms_i)
+                    # Widget-Keys für ALLE Anlagen löschen damit Streamlit sie neu rendert
+                    for _ki in range(len(ms_list) + 2):
+                        for _suffix in ["typ","desc","wrg","sma","ema","vgt","svf","evf","del"]:
+                            _wk = f"ms_{_suffix}_{_ki}"
+                            if _wk in st.session_state:
+                                del st.session_state[_wk]
                     st.session_state.maschinenstandorte = ms_list
                     st.rerun()
 
