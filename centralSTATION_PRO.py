@@ -63,6 +63,28 @@ def run_app(file_path):
             os.chdir(app_dir)
             # Ausführung im globalen Namensraum
             exec(modified_code, globals())
+            # Arrow-Platzhalter nach App-Laden entfernen (JS-Injection)
+            import streamlit.components.v1 as components
+            components.html("""
+            <script>
+            const fix = () => {
+                document.querySelectorAll('[data-testid="stExpander"] summary').forEach(s => {
+                    const spans = s.querySelectorAll('span');
+                    spans.forEach(sp => {
+                        if(sp.textContent && sp.textContent.match(/\.?arrow/i)) sp.style.display='none';
+                    });
+                    // Text-Nodes mit .arrow bereinigen
+                    s.childNodes.forEach(n => {
+                        if(n.nodeType === 3 && n.textContent.match(/\.?arrow/i)) n.textContent = '';
+                    });
+                });
+            };
+            fix();
+            const obs = new MutationObserver(fix);
+            obs.observe(document.body, {childList: true, subtree: true});
+            setTimeout(() => obs.disconnect(), 10000);
+            </script>
+            """, height=0)
         except Exception as e:
             st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(e)}")
         finally:
