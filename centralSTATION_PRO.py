@@ -41,6 +41,7 @@ def run_app(file_path):
     Unterstützt auch Apps in Unterverzeichnissen (z.B. coolWIRE/coolWIRE_main.py).
     """
     import sys
+    import traceback
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             code_content = f.read()
@@ -70,7 +71,9 @@ def run_app(file_path):
             _ename = type(e).__name__
             if "Rerun" in _ename or "Stop" in _ename or "Halt" in _ename or "Script" in _ename:
                 raise  # Streamlit-Exceptions durchlassen
+            tb = traceback.format_exc()
             st.error(f"⚠️ Fehler beim Laden von {file_path}: {str(e)}")
+            st.code(tb, language="python")
         finally:
             # IMMER zurücksetzen – auch nach Rerun/Stop
             os.chdir(original_dir)
