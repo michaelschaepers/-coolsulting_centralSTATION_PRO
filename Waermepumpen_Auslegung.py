@@ -321,7 +321,7 @@ def main():
     with col2:
         logo = "Coolsulting_Logo_ohneHG_outlines_weiß.png"
         if os.path.exists(logo):
-            st.image(logo, width="stretch")
+            st.image(logo, use_container_width=True)
         st.markdown('<div class="modul-title">Auslegung</div>', unsafe_allow_html=True)
 
     st.write("---")
@@ -448,7 +448,7 @@ def main():
             fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.5, sort=False)])
             fig.update_traces(marker=dict(colors=colors, line=dict(color='#FFFFFF', width=2)))
             fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(t=10, b=10, l=10, r=10))
-            st.plotly_chart(fig, width="stretch")
+            st.plotly_chart(fig, use_container_width=True)
 
         st.write("---")
         st.markdown("### 📊 Heizlast-Verlauf & Teilleistung")
@@ -479,7 +479,7 @@ def main():
             plot_bgcolor='rgba(255,255,255,0.9)',
             height=400
         )
-        st.plotly_chart(fig_biv, width="stretch")
+        st.plotly_chart(fig_biv, use_container_width=True)
         
         last_uebergang = (load_building_real * (heizgrenze - 7) / (heizgrenze - norm_temp)) + load_ww_base if 7 < heizgrenze else load_ww_base
 
