@@ -278,6 +278,15 @@ def create_pdf_report(projekt, bearbeiter, firma, flaeche, bauweise, wm2, total_
 # 2. MAIN APP
 # ==========================================
 def main():
+    # Session-State Typensicherheit: exec() kann Werte als Strings hinterlassen
+    _int_keys = ["m1_area", "m1_wm2_manual", "m1_sperr", "m1_normtemp", "m1_vl", "m1_pers", "m1_biv_mono", "m1_biv_bi"]
+    for _k in _int_keys:
+        if _k in st.session_state and isinstance(st.session_state[_k], str):
+            try:
+                st.session_state[_k] = int(st.session_state[_k])
+            except (ValueError, TypeError):
+                del st.session_state[_k]
+
     BG_COLOR = "#36A9E1"
     TEXT_MAIN = "#3C3C3B"
     INPUT_BG = "#FFFFFF"
