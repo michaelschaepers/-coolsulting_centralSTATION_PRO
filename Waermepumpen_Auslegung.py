@@ -344,14 +344,14 @@ def main():
     c1, c2 = st.columns(2)
     with c1:
         st.markdown("### 🏠 1. Gebäude & Betrieb")
-        flaeche = st.number_input("Beheizte Fläche (m²)", 50, 2000, 160, step=10, key="m1_area")
-        
+        flaeche = int(st.number_input("Beheizte Fläche (m²)", 50, 2000, 160, step=10, key="m1_area"))
+
         bauweise_select = st.selectbox("Bauzustand / Dämmung", list(standards_dict.keys()), index=2, key="m1_std_sel", on_change=update_wm2)
         standard_wm2 = standards_dict[bauweise_select]
-        wm2_wert = st.number_input("Spezifische Heizlast (W/m²)", 10, 300, standard_wm2, step=5, key="m1_wm2_manual")
-        
+        wm2_wert = int(st.number_input("Spezifische Heizlast (W/m²)", 10, 300, standard_wm2, step=5, key="m1_wm2_manual"))
+
         st.markdown("<br>", unsafe_allow_html=True)
-        sperrzeit = st.slider("EVU Sperrzeit/Ruhezeit-Nachtbetrieb (Std./Tag)", 0, 12, 6, key="m1_sperr")
+        sperrzeit = int(st.slider("EVU Sperrzeit/Ruhezeit-Nachtbetrieb (Std./Tag)", 0, 12, 6, key="m1_sperr"))
         laufzeit = 24 - sperrzeit
         st.markdown(f"<span style='font-size:13px; color:white;'>Verfügbare Laufzeit: <b>{laufzeit} Stunden/Tag</b></span>", unsafe_allow_html=True)
 
@@ -364,7 +364,7 @@ def main():
         st.markdown("---")
         hat_ww = st.checkbox("Warmwasser über diese WP?", value=False, key="m1_ww")
         if hat_ww:
-            personen = st.slider("Personen / Nutzer", 1, 20, 3, key="m1_pers")
+            personen = int(st.slider("Personen / Nutzer", 1, 20, 3, key="m1_pers"))
             ww_faktor = (1.45 * 2.0 * 365) / 2400
         else:
             st.markdown(f"<span style='font-size:12px; color:white; opacity:0.7;'>Deaktiviert (z.B. externer Boiler)</span>", unsafe_allow_html=True)
@@ -378,10 +378,10 @@ def main():
         betriebsart = st.radio("Betriebsweise", ["Monoenergetisch (WP + Heizstab)", "Bivalent (WP + Öl/Gas-Kessel)"], key="m1_betrieb")
     with col_biv2:
         if "Monoenergetisch" in betriebsart:
-            bivalenz_punkt = st.slider("Bivalenzpunkt (Heizstab ein) °C", -20, 0, -15, key="m1_biv_mono")
+            bivalenz_punkt = int(st.slider("Bivalenzpunkt (Heizstab ein) °C", -20, 0, -15, key="m1_biv_mono"))
             backup_source = "Heizstab"
         else:
-            bivalenz_punkt = st.slider("Bivalenzpunkt (Kessel hilft) °C", -10, 10, 0, key="m1_biv_bi")
+            bivalenz_punkt = int(st.slider("Bivalenzpunkt (Kessel hilft) °C", -10, 10, 0, key="m1_biv_bi"))
             backup_source = "Kessel (Bestand)"
 
     st.write("---")
