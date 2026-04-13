@@ -357,8 +357,8 @@ def main():
 
     with c2:
         st.markdown("### 🌡️ 2. System-Parameter")
-        norm_temp = st.slider("Norm-Außentemperatur (°C)", -25, 0, -14, key="m1_normtemp")
-        vl_temp = st.slider("Max. Vorlauftemperatur (°C)", 30, 80, 55, key="m1_vl")
+        norm_temp = int(st.slider("Norm-Außentemperatur (°C)", -25, 0, -14, key="m1_normtemp"))
+        vl_temp = int(st.slider("Max. Vorlauftemperatur (°C)", 30, 80, 55, key="m1_vl"))
         heizsystem = st.selectbox("Wärmeverteilung", ["Fussbodenheizung", "Radiatoren (Heizkörper)", "Mix (FBH + HK)", "Luftheizung/Lüftung"], index=1, key="m1_system")
         
         st.markdown("---")
