@@ -327,6 +327,7 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
     <span class="titel" id="kopfTitel"><span class="akzent">°cool</span>COCKPIT · Finanzen</span>
     <div class="rechts">
       <span id="stand"></span>
+      <div class="chips" id="personChips" style="display:inline-flex;gap:4px;vertical-align:middle;margin-right:8px"><button class="chip" type="button" data-person="michael" aria-pressed="true">Michael</button><button class="chip" type="button" data-person="niklas" aria-pressed="false">Niklas</button><button class="chip" type="button" data-person="alle" aria-pressed="false">Alle</button></div>
       <button class="btn-ghost" id="neuLaden">Aktualisieren</button>
       <label style="display:flex;gap:6px;align-items:center" class="nur-finanzen"><input type="checkbox" id="pdfMitPlan"> mit Planrechnung</label>
       <button class="btn nur-finanzen" id="pdfKopf">Bankbericht PDF</button>
@@ -340,7 +341,7 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
     <button type="button" data-bereich="finanzen" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Finanzen</button>
     <button type="button" data-bereich="projekte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Projekte<span class="zahl" id="projZahl" hidden></span></button>
     <button type="button" data-bereich="apps" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Apps<span class="zahl" id="appsZahl" hidden></span></button>
-    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
+    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
     <button type="button" data-bereich="monitor" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monitor<span class="zahl" id="monZahl" hidden></span></button>
   </aside>
   <div class="inhalt">
@@ -3523,16 +3524,32 @@ function mailKeySpeichern() {
 $('#mailKeyOk').addEventListener('click', mailKeySpeichern);
 $('#mailKeyFeld').addEventListener('keydown', e => { if (e.key === 'Enter') mailKeySpeichern(); });
 
+/* ───── Personen-Umschalter (Michael / Niklas / Alle) ───── */
+let aktivePerson = 'michael';
+try { aktivePerson = localStorage.getItem('coolsulting_person') || 'michael'; } catch (e) {}
+function wechslePerson(p) {
+  aktivePerson = p;
+  try { localStorage.setItem('coolsulting_person', p); } catch (e) {}
+  document.querySelectorAll('#personChips .chip').forEach(b => b.setAttribute('aria-pressed', b.dataset.person === p));
+  const zeigtMail = (p === 'niklas' || p === 'alle');
+  $('#mailNav').hidden = !zeigtMail;
+  if (!zeigtMail && bereich === 'mail') zeigeBereich('finanzen');
+  if (zeigtMail && !state.mail && !mailLaedt) ladeMail(true);
+  if (typeof zeichneProjekte === 'function' && state.projekte) zeichneProjekte();
+}
+document.querySelectorAll('#personChips .chip').forEach(b => b.addEventListener('click', () => wechslePerson(b.dataset.person)));
+
 /* ───── Start ───── */
 function start() {
   $('#login').hidden = true; $('#app').hidden = false;
   let r = 'ueberblick'; try { r = localStorage.getItem('coolfinanz_reiter') || r; } catch (e) {}
   zeigeReiter(r);
+  wechslePerson(aktivePerson);
   let b = 'finanzen'; try { b = localStorage.getItem('coolsulting_bereich') || b; } catch (e) {}
+  if (b === 'mail' && aktivePerson === 'michael') b = 'finanzen';
   zeigeBereich(['projekte', 'mail'].includes(b) ? b : 'finanzen');
   ladeAlles();
-  if (b !== 'mail') ladeMail(true);
-  clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000);
+  if (aktivePerson !== 'michael') { ladeMail(true); clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000); }
 }
 let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!state.finanzen) return; if (!document.querySelector('[data-panel="ueberblick"]').hidden) zeichneUeberblick(); if (!document.querySelector('[data-panel="plan"]').hidden && plan) rechnePlan(); if (!document.querySelector('[data-panel="bezahlt"]').hidden) zeichneBezahlt(); }, 200); });
 if (token) start(); else zeigeLogin();
