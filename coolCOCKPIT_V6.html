@@ -340,7 +340,7 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
     <button type="button" data-bereich="finanzen" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Finanzen</button>
     <button type="button" data-bereich="projekte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Projekte<span class="zahl" id="projZahl" hidden></span></button>
     <button type="button" data-bereich="apps" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Apps<span class="zahl" id="appsZahl" hidden></span></button>
-    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
+    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
     <button type="button" data-bereich="monitor" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monitor<span class="zahl" id="monZahl" hidden></span></button>
   </aside>
   <div class="inhalt">
@@ -3531,14 +3531,8 @@ function start() {
   let b = 'finanzen'; try { b = localStorage.getItem('coolsulting_bereich') || b; } catch (e) {}
   zeigeBereich(['projekte', 'mail'].includes(b) ? b : 'finanzen');
   ladeAlles();
-  // Mail-Button nur für Niklas anzeigen (nach Stammdaten-Laden)
-  api('stammdaten').then(r => {
-    const name = (r.data && r.data.verantwortliche || []).find(v => v.id === r.data.ich);
-    const istNiklas = name && /niklas/i.test(name.name);
-    $('#mailNav').hidden = !istNiklas;
-    if (istNiklas && b !== 'mail') ladeMail(true);
-    if (istNiklas) { clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000); }
-  }).catch(() => {});
+  if (b !== 'mail') ladeMail(true);
+  clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000);
 }
 let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!state.finanzen) return; if (!document.querySelector('[data-panel="ueberblick"]').hidden) zeichneUeberblick(); if (!document.querySelector('[data-panel="plan"]').hidden && plan) rechnePlan(); if (!document.querySelector('[data-panel="bezahlt"]').hidden) zeichneBezahlt(); }, 200); });
 if (token) start(); else zeigeLogin();
