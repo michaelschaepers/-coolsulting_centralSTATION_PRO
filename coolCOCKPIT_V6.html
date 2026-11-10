@@ -3527,6 +3527,7 @@ $('#mailKeyFeld').addEventListener('keydown', e => { if (e.key === 'Enter') mail
 /* ───── Personen-Umschalter (Michael / Niklas / Alle) ───── */
 let aktivePerson = 'michael';
 try { aktivePerson = localStorage.getItem('coolsulting_person') || 'michael'; } catch (e) {}
+function personZuMon(p) { if (p === 'michael') return 'Michael'; if (p === 'niklas') return 'Niklas'; return 'alle'; }
 function wechslePerson(p) {
   aktivePerson = p;
   try { localStorage.setItem('coolsulting_person', p); } catch (e) {}
@@ -3536,6 +3537,8 @@ function wechslePerson(p) {
   if (!zeigtMail && bereich === 'mail') zeigeBereich('finanzen');
   if (zeigtMail && !state.mail && !mailLaedt) ladeMail(true);
   if (typeof zeichneProjekte === 'function' && state.projekte) zeichneProjekte();
+  // Monitor-Personenfilter synchronisieren
+  if (typeof monState !== 'undefined') { monState.person = personZuMon(p); monState.tagOffen = ''; try { localStorage.setItem('coolsulting_mon_person', monState.person); } catch (e) {} if (monState.liste && bereich === 'monitor') zeichneMonitor(); }
 }
 document.querySelectorAll('#personChips .chip').forEach(b => b.addEventListener('click', () => wechslePerson(b.dataset.person)));
 
