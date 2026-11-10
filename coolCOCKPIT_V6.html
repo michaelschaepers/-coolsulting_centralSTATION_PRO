@@ -1410,7 +1410,7 @@ async function ladeAlles() {
   if (state.op) { zeichneOp(); if (state.finanzen) zeichneUeberblick(); }
   if (state.stamm) fuelleAuswahl();
 }
-$('#neuLaden').addEventListener('click', () => { if (bereich === 'projekte') { state.projekte = null; ladeProjekte(); } else ladeAlles(); });
+$('#neuLaden').addEventListener('click', () => { if (bereich === 'projekte') { state.projekte = null; ladeProjekte(); } else if (bereich === 'mail') ladeMail(); else ladeAlles(); });
 
 /* ───── Überblick ───── */
 function kpi(ziel, lbl, wert, sub, cls = '', hervor = false) {
