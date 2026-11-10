@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>°coolCOCKPIT</title>
+<title>°coolCOCKPIT V6</title>
 <style>
 :root{
   --cs-blau:#36A9E1; --cs-blau-hover:#2b97cc; --cs-blau-hell:#e8f5fc;
@@ -176,6 +176,19 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
 .pill.blau{border-color:var(--cs-blau);color:#1b78a8} .pill.gruen{border-color:var(--gut);color:var(--gut)} .pill.gelb{border-color:#e0a800;color:#8a6200} .pill.rot{border-color:var(--schlecht);color:var(--schlecht)}
 .leer{color:var(--cs-grau-light);font-size:13.5px;padding:16px 0}
 [hidden]{display:none!important}
+/* °coolMAIL Archiv */
+.mail-liste{display:flex;flex-direction:column;gap:8px}
+.mail-z{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:start;border:1px solid var(--linie);border-radius:10px;background:#fff;padding:12px 16px}
+.mail-z .mk{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:baseline;font-size:13px}
+.mail-z .mn{font-weight:600;color:var(--cs-schwarz)}
+.mail-z .ma,.mail-z .mt{color:var(--cs-grau-light);font-size:12.5px}
+.mail-z .mt{margin-left:auto;white-space:nowrap}
+.mail-z .mb{font-size:14px;color:var(--cs-schwarz);margin:2px 0;overflow-wrap:anywhere}
+.mail-z .mv{font-size:13px;color:var(--cs-grau-light);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mail-z .mp{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.mail-z .mp a{color:var(--cs-blau);text-decoration:none}
+.mail-z .mr{display:flex;align-items:center}
+@media (max-width:600px){.mail-z{grid-template-columns:1fr}.mail-z .mt{margin-left:0}}
 @media (max-width:900px){.schale{grid-template-columns:1fr}.bereiche{position:static;flex-direction:row;padding:12px 16px 0;overflow-x:auto}}
 @media (max-width:600px){main{padding:16px}.kopf{padding:12px 16px}nav{padding:0 16px}.kopf .titel{display:none}.balken .zeile{grid-template-columns:1fr auto}.balken .spur{grid-column:1/-1;order:3}}
 /* ───── °coolAPPS (gemeinsam für Cockpit und Einzel-Apps) ───── */
@@ -327,6 +340,7 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
     <button type="button" data-bereich="finanzen" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Finanzen</button>
     <button type="button" data-bereich="projekte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Projekte<span class="zahl" id="projZahl" hidden></span></button>
     <button type="button" data-bereich="apps" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Apps<span class="zahl" id="appsZahl" hidden></span></button>
+    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
     <button type="button" data-bereich="monitor" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monitor<span class="zahl" id="monZahl" hidden></span></button>
   </aside>
   <div class="inhalt">
@@ -656,6 +670,18 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
 </main>
 <main id="monMain" hidden>
   <div id="monInhalt" class="abschnitt"></div>
+</main>
+<main id="mailMain" hidden>
+  <div class="karte">
+    <h3>Automatisch archivierte Mails</h3>
+    <p class="notiz">Was der Posteingang-Sortierer stündlich (5–19 Uhr) ins Outlook-Archiv verschoben hat: Info, Automatisch, Spam-Werbung und Mails, auf die du schon geantwortet hast. Hol zurück, was du brauchst, und bestätige den Rest – dann verschwindet er hier, bleibt aber im Archiv.</p>
+    <div class="zeile-knoepfe" style="margin-bottom:10px"><input type="search" id="mailSuche" placeholder="Absender, Betreff …" style="max-width:280px"><button class="btn" id="mailAlleOk" type="button" disabled>Alle bestätigen</button><span id="mailMsg" style="font-size:13px"></span></div>
+    <div id="mailSchluessel" class="hinweis" hidden>
+      <div style="margin-bottom:8px">Für das Mail-Archiv braucht dieser Browser einmalig den °coolMAIL-Schlüssel.</div>
+      <div class="zeile-knoepfe"><input type="password" id="mailKeyFeld" autocomplete="off" placeholder="coolmail-…" style="max-width:320px"><button class="btn" id="mailKeyOk" type="button">Speichern</button></div>
+    </div>
+    <div id="mailListe" class="mail-liste"></div>
+  </div>
 </main>
 <main id="projMain" hidden>
   <div class="chips" id="projAnsicht" style="margin-bottom:14px"><button class="chip" type="button" data-pa="meine" aria-pressed="true">Meine Projekte</button><button class="chip" type="button" data-pa="coolsulting" aria-pressed="false">Übersicht °coolsulting</button><button class="chip" type="button" data-pa="gesamt" aria-pressed="false">Übersicht gesamt</button></div>
@@ -1326,7 +1352,7 @@ const el = (tag, props = {}, ...kids) => { const e = document.createElement(tag)
 
 let token = '';
 try { token = localStorage.getItem(SPEICHER) || ''; } catch (e) {}
-const state = { finanzen: null, op: null, stamm: null, beleg: null, mandant: 'coolsulting e.U.', verantwortlich: null };
+const state = { finanzen: null, op: null, stamm: null, beleg: null, mandant: 'coolsulting e.U.', verantwortlich: null, mail: null, mailStand: null };
 
 async function api(action, extra = {}) {
   const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token, action, ...extra }) });
@@ -3224,12 +3250,14 @@ document.querySelectorAll('.bereiche button').forEach(b => b.addEventListener('c
 function zeigeBereich(name) {
   bereich = name;
   document.querySelectorAll('.bereiche button').forEach(b => b.setAttribute('aria-pressed', b.dataset.bereich === name));
-  const fin = name === 'finanzen';
-  $('#finanzNav').hidden = !fin; $('#finanzMain').hidden = !fin; $('#projMain').hidden = fin;
+  const fin = name === 'finanzen', proj = name === 'projekte', mail = name === 'mail';
+  $('#finanzNav').hidden = !fin; $('#finanzMain').hidden = !fin; $('#projMain').hidden = !proj; $('#mailMain').hidden = !mail;
   document.querySelectorAll('.nur-finanzen').forEach(x => x.hidden = !fin);
-  $('#kopfTitel').innerHTML = '<span class="akzent">°cool</span>COCKPIT · ' + (fin ? 'Finanzen' : 'Projekte');
+  const titel = fin ? 'Finanzen' : proj ? 'Projekte' : mail ? 'Mail-Archiv' : name;
+  $('#kopfTitel').innerHTML = '<span class="akzent">°cool</span>COCKPIT · ' + titel;
   try { localStorage.setItem('coolsulting_bereich', name); } catch (e) {}
-  if (!fin && !state.projekte && !projLaedt) ladeProjekte(); else if (!fin) zeichneProjekte();
+  if (proj && !state.projekte && !projLaedt) ladeProjekte(); else if (proj) zeichneProjekte();
+  if (mail) { if (!state.mail && !mailLaedt) ladeMail(); else zeichneMail(); }
 }
 
 /* ───── Projekte (monday „Leads …“-Boards) ───── */
@@ -3418,14 +3446,99 @@ $('#projSuche').addEventListener('input', () => zeichneProjekte());
 $('#projBoard').addEventListener('change', e => { projBoard = e.target.value; zeichneProjekte(); });
 $('#projGruppierung').addEventListener('change', e => { projGruppierung = e.target.value; try { localStorage.setItem('coolsulting_proj_gruppierung', projGruppierung); } catch (x) {} zeichneProjekte(); });
 
+/* ───── °coolMAIL Archiv (nur Niklas) ───── */
+const MAIL_API = 'https://coolsulting.app.n8n.cloud/webhook/coolmail-archiv';
+const MAIL_KEY = 'coolmail_key';
+let mailKey = ''; try { mailKey = localStorage.getItem(MAIL_KEY) || ''; } catch (e) {}
+let mailLaedt = false, mailTakt = null;
+async function mailApi(aktion, extra = {}) {
+  const res = await fetch(MAIL_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: mailKey, aktion, ...extra }) });
+  let d = null; try { d = await res.json(); } catch (e) {}
+  if (!res.ok || !d) throw new Error('Mail-Archiv nicht erreichbar (Fehler ' + res.status + ')');
+  if (d.ok === false && d.fehler) throw new Error(d.fehler);
+  return d;
+}
+function mailZahl() { const n = state.mail ? state.mail.length : 0; const z = $('#mailZahl'); z.hidden = !n; z.textContent = n; z.title = n + ' archivierte Mails warten auf Bestätigung'; }
+function mailMeldung(text, ok = true) { const m = $('#mailMsg'); m.textContent = text; m.style.color = ok ? 'var(--gut)' : 'var(--schlecht)'; }
+async function ladeMail(still = false) {
+  if (!mailKey) { $('#mailSchluessel').hidden = false; $('#mailListe').textContent = ''; return; }
+  $('#mailSchluessel').hidden = true; mailLaedt = true;
+  if (!still) $('#mailListe').innerHTML = '<div class="leer"><span class="lade"></span>Archivierte Mails werden geladen …</div>';
+  try { const d = await mailApi('liste'); state.mail = d.mails || []; state.mailStand = d.stand; }
+  catch (e) {
+    if (/key/i.test(e.message)) { mailKey = ''; try { localStorage.removeItem(MAIL_KEY); } catch (x) {} $('#mailSchluessel').hidden = false; }
+    if (!still) { $('#mailListe').textContent = ''; $('#mailListe').append(el('div', { className: 'hinweis fehler', textContent: 'Mail-Archiv konnte nicht geladen werden: ' + e.message })); }
+    mailLaedt = false; return;
+  }
+  mailLaedt = false; mailZahl(); if (bereich === 'mail') zeichneMail();
+}
+function zeitKurz(iso) { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleString('de-AT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+function sichtbareMails() {
+  const q = $('#mailSuche').value.trim().toLowerCase();
+  return (state.mail || []).filter(m => !q || [m.name, m.absender, m.betreff, m.vorschau, m.grund, m.kategorie].join(' ').toLowerCase().includes(q));
+}
+function zeichneMail() {
+  if (!state.mail) return;
+  const L = $('#mailListe'); L.textContent = '';
+  const R = sichtbareMails();
+  $('#mailAlleOk').disabled = !R.length;
+  $('#mailAlleOk').textContent = R.length === state.mail.length ? 'Alle ' + R.length + ' bestätigen' : R.length + ' angezeigte bestätigen';
+  if (!state.mail.length) { L.append(el('div', { className: 'leer', textContent: 'Nichts offen – alle archivierten Mails sind bestätigt.' })); return; }
+  if (!R.length) { L.append(el('div', { className: 'leer', textContent: 'Keine Mail passt zur Suche.' })); return; }
+  R.forEach(m => {
+    const kopf = el('div', { className: 'mk' }, el('span', { className: 'mn', textContent: m.name || m.absender }), el('span', { className: 'ma', textContent: m.absender || '' }), el('span', { className: 'mt', textContent: zeitKurz(m.empfangen) }));
+    const pills = el('div', { className: 'mp' });
+    if (m.kategorie) pills.append(el('span', { className: 'pill', textContent: m.kategorie }));
+    if (m.grund) pills.append(el('span', { className: 'pill' + (m.grund === 'Beantwortet' ? ' gruen' : ''), textContent: m.grund }));
+    if (m.link) pills.append(el('a', { className: 'pill', href: m.link, target: '_blank', rel: 'noopener', textContent: 'in Outlook öffnen' }));
+    const knopf = el('button', { className: 'btn-ghost', type: 'button', textContent: '↩ Zurück in den Posteingang' });
+    knopf.addEventListener('click', async () => {
+      knopf.disabled = true; knopf.textContent = 'wird zurückgeholt …';
+      try {
+        const d = await mailApi('zurueck', { ids: [m.id] });
+        if (!d.zurueck) throw new Error('Outlook hat das Verschieben abgelehnt');
+        state.mail = state.mail.filter(x => x.id !== m.id); mailZahl(); zeichneMail();
+        mailMeldung('„' + (m.betreff || 'Mail') + '" ist zurück im Posteingang. Der Absender wird künftig nicht mehr automatisch archiviert.');
+      } catch (e) { knopf.disabled = false; knopf.textContent = '↩ Zurück in den Posteingang'; mailMeldung(e.message, false); }
+    });
+    L.append(el('div', { className: 'mail-z' }, el('div', {}, kopf, el('div', { className: 'mb', textContent: m.betreff || '(ohne Betreff)' }), el('div', { className: 'mv', textContent: m.vorschau || '' }), pills), el('div', { className: 'mr' }, knopf)));
+  });
+}
+$('#mailSuche').addEventListener('input', () => zeichneMail());
+$('#mailAlleOk').addEventListener('click', async () => {
+  const R = sichtbareMails(); if (!R.length) return;
+  if (!confirm(R.length + ' Mails bestätigen? Sie bleiben im Outlook-Archiv und verschwinden aus dieser Liste.')) return;
+  $('#mailAlleOk').disabled = true;
+  try {
+    const d = await mailApi('bestaetigen', { ids: R.map(m => m.id) });
+    const weg = new Set(R.map(m => m.id)); state.mail = state.mail.filter(m => !weg.has(m.id)); mailZahl(); zeichneMail();
+    mailMeldung((d.bestaetigt || R.length) + ' bestätigt.');
+  } catch (e) { $('#mailAlleOk').disabled = false; mailMeldung(e.message, false); }
+});
+function mailKeySpeichern() {
+  const k = $('#mailKeyFeld').value.trim(); if (!k) return;
+  mailKey = k; try { localStorage.setItem(MAIL_KEY, k); } catch (e) {}
+  $('#mailKeyFeld').value = ''; ladeMail();
+}
+$('#mailKeyOk').addEventListener('click', mailKeySpeichern);
+$('#mailKeyFeld').addEventListener('keydown', e => { if (e.key === 'Enter') mailKeySpeichern(); });
+
 /* ───── Start ───── */
 function start() {
   $('#login').hidden = true; $('#app').hidden = false;
   let r = 'ueberblick'; try { r = localStorage.getItem('coolfinanz_reiter') || r; } catch (e) {}
   zeigeReiter(r);
   let b = 'finanzen'; try { b = localStorage.getItem('coolsulting_bereich') || b; } catch (e) {}
-  zeigeBereich(b === 'projekte' ? 'projekte' : 'finanzen');
+  zeigeBereich(['projekte', 'mail'].includes(b) ? b : 'finanzen');
   ladeAlles();
+  // Mail-Button nur für Niklas anzeigen (nach Stammdaten-Laden)
+  api('stammdaten').then(r => {
+    const name = (r.data && r.data.verantwortliche || []).find(v => v.id === r.data.ich);
+    const istNiklas = name && /niklas/i.test(name.name);
+    $('#mailNav').hidden = !istNiklas;
+    if (istNiklas && b !== 'mail') ladeMail(true);
+    if (istNiklas) { clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000); }
+  }).catch(() => {});
 }
 let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!state.finanzen) return; if (!document.querySelector('[data-panel="ueberblick"]').hidden) zeichneUeberblick(); if (!document.querySelector('[data-panel="plan"]').hidden && plan) rechnePlan(); if (!document.querySelector('[data-panel="bezahlt"]').hidden) zeichneBezahlt(); }, 200); });
 if (token) start(); else zeigeLogin();
