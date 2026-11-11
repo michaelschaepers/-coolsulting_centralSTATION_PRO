@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>°coolNEIGHBOR – Schallimmissions-Prognose</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Helvetica,Arial,sans-serif;background:#36A9E1;min-height:100vh;padding:16px;color:#3C3C3B;font-size:14px}
+h1{font-size:32px;font-weight:bold;color:#3C3C3B}
+.subtitle{color:rgba(255,255,255,.85);font-size:15px;margin-bottom:4px}
+.header-area{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.header-left{flex:2}.header-right{flex:1;text-align:right;font-size:44px;font-weight:bold;color:#fff;opacity:.85;min-width:140px}
+.card{background:#fff;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,.12);padding:20px;margin-bottom:16px}
+.card h2{color:#3C3C3B;font-size:16px;margin-bottom:12px;border-bottom:2px solid #36A9E1;padding-bottom:6px}
+label{display:block;font-size:12px;color:#3C3C3B;margin-bottom:3px;font-weight:600}
+input[type=number],input[type=text],select{width:100%;padding:7px 10px;border:2px solid #d0d0d0;border-radius:7px;font-size:14px;font-weight:bold;color:#36A9E1;outline:none;background:#fff}
+input:focus,select:focus{border-color:#36A9E1}
+input[type=checkbox]{width:16px;height:16px;accent-color:#36A9E1;vertical-align:middle;margin-right:4px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.fg{margin-bottom:10px}
+.btn{background:#3C3C3B;color:#fff;border:none;border-radius:10px;padding:14px;font-size:17px;font-weight:bold;cursor:pointer;width:100%;margin-top:14px;letter-spacing:.5px}
+.btn:hover{background:#555}
+.btn-pdf{background:#36A9E1}.btn-pdf:hover{background:#2b97cc}
+.divider{border:none;border-top:2px solid rgba(255,255,255,.25);margin:16px 0}
+.result-area{display:none}.result-area.visible{display:block}
+.result-box{background:rgba(255,255,255,.97);border-radius:12px;padding:20px;border-left:10px solid #3C3C3B;box-shadow:0 4px 12px rgba(0,0,0,.1);margin-bottom:16px}
+.result-box.ok{border-left-color:#27ae60}.result-box.fail{border-left-color:#e74c3c}
+.big-num{font-size:38px;font-weight:bold}.big-num.ok{color:#27ae60}.big-num.fail{color:#e74c3c}
+.badge{display:inline-block;padding:4px 14px;border-radius:20px;font-weight:bold;font-size:13px;color:#fff}
+.badge.ok{background:#27ae60}.badge.fail{background:#e74c3c}
+details{margin-top:10px}details summary{cursor:pointer;font-weight:600;color:#36A9E1;font-size:13px}
+.rechenweg{font-family:'Courier New',monospace;font-size:12px;background:#f4f6f8;padding:12px;border-radius:8px;margin-top:8px;line-height:1.7;white-space:pre-wrap}
+.avd-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.avd-table th,.avd-table td{border:1px solid #ddd;padding:6px 10px;text-align:center}
+.avd-table th{background:#36A9E1;color:#fff;font-size:12px}
+.hint{background:rgba(255,255,255,.15);border-radius:8px;padding:10px;color:#fff;font-size:12px;margin-top:10px;line-height:1.5}
+.footer{text-align:center;color:rgba(255,255,255,.5);font-size:11px;margin-top:24px}
+@media(max-width:800px){.grid-2,.grid-3{grid-template-columns:1fr}.header-right{font-size:28px}h1{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div class="header-area">
+  <div class="header-left">
+    <h1>&deg;coolNEIGHBOR</h1>
+    <div class="subtitle">Schallimmissions-Prognose &middot; ISO 9613-2 &middot; coolsulting</div>
+  </div>
+  <div class="header-right">Schall</div>
+</div>
+<hr class="divider">
+
+<!-- 1. GERÄT -->
+<div class="card">
+  <h2>1. Ger&auml;t &amp; Aufstellung</h2>
+  <div class="grid-2">
+    <div class="fg"><label>Projekt / Kunde</label><input type="text" id="projekt" value="Musterkunde"></div>
+    <div class="fg"><label>Ersteller</label><input type="text" id="ersteller" value="M. Sch&auml;pers"></div>
+  </div>
+  <div class="grid-2">
+    <div class="fg"><label>Produktserie</label><select id="serie"></select></div>
+    <div class="fg"><label>Modell</label><select id="modell"></select></div>
+  </div>
+  <div id="geraetInfo" style="font-size:12px;color:#888;margin-bottom:10px"></div>
+  <div class="grid-3">
+    <div class="fg"><label>Anzahl Ger&auml;te</label><input type="number" id="anzahl" value="1" min="1" max="10"></div>
+    <div class="fg"><label>Richtwirkung Q</label><select id="qFaktor"><option value="1">1 (Freistehend)</option><option value="2" selected>2 (Wand)</option><option value="4">4 (Wandecke)</option><option value="8">8 (Raumecke)</option></select></div>
+    <div class="fg"><label>Geh&auml;used&auml;mpfung (dB)</label><input type="number" id="dGeh" value="0" min="0" max="15" step="0.5"></div>
+  </div>
+  <div class="grid-3">
+    <div class="fg"><label>K&ouml;rperschalld&auml;mpfung (dB)</label><input type="number" id="dKoerper" value="0" min="0" max="10" step="0.5"></div>
+    <div class="fg"><label>Luftkanal-Querschnitt (m&sup2;)</label><input type="number" id="qs" value="0" min="0" max="2" step="0.01"></div>
+    <div></div>
+  </div>
+</div>
+
+<!-- 2. AUSBREITUNG -->
+<div class="card">
+  <h2>2. Schallausbreitung</h2>
+  <div class="grid-3">
+    <div class="fg"><label>Schallweg d_total (m)</label><input type="number" id="dTotal" value="8" min="1" max="200" step="0.5"></div>
+    <div class="fg"><label>Direkter Abstand (m)</label><input type="number" id="dDirekt" value="8" min="1" max="200" step="0.5"></div>
+    <div class="fg"><label>Wandabstand IO (m)</label><input type="number" id="wDist" value="2" min="0" max="5" step="0.1"></div>
+  </div>
+  <div class="grid-3">
+    <div class="fg"><label>Topologie</label><select id="topologie"><option>Direkt (freie Sicht)</option><option>L-f&ouml;rmig (1 Kante)</option><option>U-f&ouml;rmig (2 Kanten)</option></select></div>
+    <div class="fg"><label>Barriere 1 Material</label><select id="b1Mat"><option>Massiv &amp; Luftdicht</option><option>Leichtbauweise dicht</option><option>Teiloffen / Lamellen</option><option selected>Luftdurchl&auml;ssig (Gitter)</option></select></div>
+    <div class="fg"><label style="font-weight:normal"><input type="checkbox" id="b1Lenkt"> Barriere 1 Umlenkung</label></div>
+  </div>
+  <div class="grid-3" id="b2Row" style="display:none">
+    <div></div>
+    <div class="fg"><label>Barriere 2 Material</label><select id="b2Mat"><option>Massiv &amp; Luftdicht</option><option>Leichtbauweise dicht</option><option>Teiloffen / Lamellen</option><option selected>Luftdurchl&auml;ssig (Gitter)</option></select></div>
+    <div class="fg"><label style="font-weight:normal"><input type="checkbox" id="b2Lenkt"> Barriere 2 Umlenkung</label></div>
+  </div>
+  <div class="grid-2">
+    <div class="fg"><label>Temperatur (&deg;C)</label><input type="number" id="temp" value="20" min="-10" max="40"></div>
+    <div class="fg"><label>Luftfeuchtigkeit (%)</label><input type="number" id="hum" value="65" min="30" max="90"></div>
+  </div>
+</div>
+
+<!-- 3. BEURTEILUNG -->
+<div class="card">
+  <h2>3. Beurteilung</h2>
+  <div class="grid-3">
+    <div class="fg"><label>Land / Norm</label><select id="land"><option>&Ouml;sterreich (&Ouml;AL 3)</option><option>Deutschland (TA L&auml;rm)</option><option>Kroatien (HRN ISO 1996)</option></select></div>
+    <div class="fg"><label>Tageszeit</label><select id="tageszeit"><option>Tag (06-22h)</option><option>Nacht (22-06h)</option></select></div>
+    <div class="fg"><label>Gebiet</label><select id="gebiet"></select></div>
+  </div>
+  <div class="grid-3">
+    <div class="fg"><label>K_T Tonhaltigkeit (dB)</label><input type="number" id="kT" value="0" min="0" max="6" step="1"></div>
+    <div class="fg"><label>K_I Impulszuschlag (dB)</label><input type="number" id="kI" value="0" min="0" max="6" step="1"></div>
+    <div class="fg"><label>Raumzuschlag (dB)</label><input type="number" id="raumz" value="0" min="0" max="3" step="0.5"></div>
+  </div>
+</div>
+
+<button class="btn" onclick="berechne()">PROGNOSE BERECHNEN</button>
+
+<!-- ERGEBNISSE -->
+<div id="resultArea" class="result-area">
+  <hr class="divider">
+  <div class="grid-2" style="align-items:start">
+    <div>
+      <div class="result-box" id="resBox">
+        <div style="font-size:15px;margin-bottom:4px">Beurteilungspegel L<sub>r</sub>:</div>
+        <div class="big-num" id="resLr">–</div>
+        <div style="margin:10px 0" id="resGrenz"></div>
+        <div id="resBadge"></div>
+      </div>
+      <details>
+        <summary>Rechenweg anzeigen</summary>
+        <div class="rechenweg" id="resRechenweg"></div>
+      </details>
+      <div style="margin-top:12px">
+        <button class="btn btn-pdf" onclick="exportPDF()">PDF-Bericht herunterladen</button>
+      </div>
+    </div>
+    <div>
+      <div id="nrChart" style="width:100%;height:360px;border-radius:12px;overflow:hidden"></div>
+    </div>
+  </div>
+  <!-- Abstandsverdopplung -->
+  <div class="card" style="margin-top:16px">
+    <h2>Abstandsverdopplung</h2>
+    <table class="avd-table" id="avdTable"><thead><tr><th>Abstand</th><th>1 m</th><th>2 m</th><th>4 m</th><th>8 m</th><th>16 m</th><th>32 m</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="hint" id="disclaimer"></div>
+</div>
+
+<div class="footer">&copy; coolsulting e.U. &middot; &deg;coolNEIGHBOR v6.0 &middot; HTML-Standalone</div>
+
+<script>
+// === SAMSUNG DB ===
+const SAMSUNG_DB={"Samsung RAC Elite (AR9500T)":{"AR70F09CAAWXEU (2.5 kW)":{Lw:59,Lp_1m:45,Luft:1800,Lp_oktav:[46,44,40,36,32,27,20,12]},"AR70F12CAAWXEU (3.5 kW)":{Lw:62,Lp_1m:46,Luft:1800,Lp_oktav:[48,46,42,38,34,29,22,14]}},"Samsung RAC Avant (AR7500T)":{"AR70F07C1AWXEU (2.0 kW)":{Lw:59,Lp_1m:45,Luft:1740,Lp_oktav:[46,44,40,36,32,27,20,12]},"AR70F09C1AWXEU (2.5 kW)":{Lw:59,Lp_1m:45,Luft:1740,Lp_oktav:[46,44,40,36,32,27,20,12]},"AR70F12C1AWXEU (3.5 kW)":{Lw:62,Lp_1m:46,Luft:1740,Lp_oktav:[48,46,42,38,34,29,22,14]},"AR70F15C1AWXEU (4.2 kW)":{Lw:65,Lp_1m:48,Luft:2820,Lp_oktav:[51,49,45,41,37,32,25,17]},"AR70F18C1AWXEU (5.0 kW)":{Lw:65,Lp_1m:51,Luft:2820,Lp_oktav:[53,51,47,43,39,34,27,19]},"AR70F24C1AWXEU (6.8 kW)":{Lw:68,Lp_1m:54,Luft:3420,Lp_oktav:[56,54,50,46,42,37,30,22]}},"Samsung RAC Comfort (AR6000T)":{"AR60F09C1AWXEU (2.5 kW)":{Lw:63,Lp_1m:45,Luft:2400,Lp_oktav:[46,44,40,37,33,28,21,13]},"AR60F12C1AWXEU (3.5 kW)":{Lw:63,Lp_1m:46,Luft:2400,Lp_oktav:[48,46,42,38,34,29,22,14]},"AR60F18C1AWXEU (5.0 kW)":{Lw:65,Lp_1m:51,Luft:3000,Lp_oktav:[53,51,47,43,39,34,27,19]},"AR60F24C1AWXEU (6.8 kW)":{Lw:68,Lp_1m:54,Luft:3600,Lp_oktav:[56,54,50,46,42,37,30,22]}},"Samsung RAC Standard (AR5000T)":{"AR50F07C1AHXEU (2.0 kW)":{Lw:60,Lp_1m:45,Luft:1800,Lp_oktav:[46,44,40,37,33,28,21,13]},"AR50F09C1AHXEU (2.5 kW)":{Lw:63,Lp_1m:45,Luft:1800,Lp_oktav:[46,44,40,37,33,28,21,13]},"AR50F12C1AHXEU (3.5 kW)":{Lw:63,Lp_1m:46,Luft:1800,Lp_oktav:[48,46,42,38,34,29,22,14]},"AR50F15C1AHXEU (4.2 kW)":{Lw:65,Lp_1m:48,Luft:2400,Lp_oktav:[51,49,45,41,37,32,25,17]},"AR50F18C1AHXEU (5.0 kW)":{Lw:65,Lp_1m:51,Luft:2400,Lp_oktav:[53,51,47,43,39,34,27,19]},"AR50F24C1AHXEU (6.8 kW)":{Lw:68,Lp_1m:54,Luft:3000,Lp_oktav:[56,54,50,46,42,37,30,22]}},"Samsung FJM Multi-Split (AJ)":{"AJ040TXJ2KG/EU (4.0 kW/2)":{Lw:61,Lp_1m:45,Luft:1860,Lp_oktav:[48,46,42,38,34,29,22,14]},"AJ050TXJ2KG/EU (5.0 kW/2)":{Lw:61,Lp_1m:45,Luft:2100,Lp_oktav:[48,46,42,38,34,29,22,14]},"AJ052TXJ3KG/EU (5.2 kW/3)":{Lw:61,Lp_1m:45,Luft:2100,Lp_oktav:[48,46,42,38,34,29,22,14]},"AJ068TXJ3KG/EU (6.8 kW/3)":{Lw:64,Lp_1m:48,Luft:2520,Lp_oktav:[51,49,45,41,37,32,25,17]},"AJ080TXJ4KG/EU (8.0 kW/4)":{Lw:66,Lp_1m:50,Luft:3480,Lp_oktav:[53,51,47,43,39,34,27,19]},"AJ100TXJ5KG/EU (10.0 kW/5)":{Lw:70,Lp_1m:54,Luft:4020,Lp_oktav:[57,55,51,47,43,38,31,23]}},"Fremdgerät / Freie Eingabe":{"Manuelle Eingabe":{Lw:65,Lp_1m:50,Luft:2800,Lp_oktav:[52,50,46,42,38,33,26,18]}}};
+
+const NR_KURVEN={15:[51.8,35.5,22.1,12.5,5.4,0.1,-3.5,-6.2],20:[55.4,39.4,26.5,17.1,10.1,4.9,1.4,-1.2],25:[59.1,43.4,30.9,21.7,14.9,9.7,6.3,3.8],30:[62.7,47.3,35.3,26.3,19.7,14.5,11.2,8.8],35:[66.4,51.2,39.7,30.9,24.5,19.3,16.2,13.8],40:[70.0,55.1,44.1,35.5,29.3,24.1,21.1,18.8],45:[73.7,59.1,48.5,40.1,34.1,28.9,26.0,23.8],50:[77.3,63.0,52.9,44.7,38.9,33.7,31.0,28.8],55:[81.0,66.9,57.3,49.3,43.7,38.5,36.0,33.8],60:[84.6,70.9,61.7,53.9,48.5,43.3,41.0,38.8],65:[88.2,74.8,66.1,58.5,53.3,48.1,46.0,43.8]};
+const OKTAV_BANDS=[63,125,250,500,1000,2000,4000,8000];
+
+const GRENZWERTE={
+  "AT_Tag":{"Ländlich":40,"Wohngebiet":45,"Mischgebiet":50,"Gewerbe":55,"Industrie":60},
+  "AT_Nacht":{"Ländlich":30,"Wohngebiet":35,"Mischgebiet":40,"Gewerbe":45,"Industrie":50},
+  "DE_Tag":{"Ländlich":50,"Wohngebiet":50,"Mischgebiet":60,"Gewerbe":65,"Industrie":70},
+  "DE_Nacht":{"Ländlich":35,"Wohngebiet":35,"Mischgebiet":45,"Gewerbe":50,"Industrie":70},
+};
+GRENZWERTE["HR_Tag"]=GRENZWERTE["AT_Tag"];
+GRENZWERTE["HR_Nacht"]=GRENZWERTE["AT_Nacht"];
+
+const DISCLAIMER="WICHTIGER HINWEIS: Kein Sachverständigengutachten!\n\nBei diesem Dokument handelt es sich ausschließlich um eine planungstechnische Schallimmissions-Prognoseberechnung.\n\n1. Die vorliegende Berechnung ist eine planungstechnische Prognose auf Basis der Berechnungsverfahren nach ISO 9613-1/2, TA Lärm, ÖAL 3, HRN ISO 1996 sowie den Herstellerangaben (Samsung TDB RAC R32 NASA, Ver. 1.0, Dezember 2024).\n\n2. Der Ersteller übernimmt keine Haftung für: Abweichungen zwischen Prognose und Messung; Veränderungen nach Berichtserstellung; Entscheidungen behördlicher Stellen; Ansprüche Dritter.\n\n3. Für eine behördlich anerkannte Schallmessung ist ein akkreditiertes Akustikinstitut oder gerichtlich beeideter Sachverständiger zu beauftragen.";
+
+// === DROPDOWNS INIT ===
+const $=id=>document.getElementById(id);
+function fillSerie(){const s=$('serie');s.innerHTML='';Object.keys(SAMSUNG_DB).forEach(k=>{const o=document.createElement('option');o.textContent=k;s.appendChild(o)});fillModell();}
+function fillModell(){const serie=$('serie').value;const m=$('modell');m.innerHTML='';Object.keys(SAMSUNG_DB[serie]||{}).forEach(k=>{const o=document.createElement('option');o.textContent=k;m.appendChild(o)});showInfo();}
+function showInfo(){const d=getDevice();if(!d)return;$('geraetInfo').textContent='Lw: '+d.Lw+' dB(A) | Lp@1m: '+d.Lp_1m+' dB(A) | Luft: '+d.Luft+' m³/h';}
+function getDevice(){const serie=$('serie').value,mod=$('modell').value;return SAMSUNG_DB[serie]&&SAMSUNG_DB[serie][mod]?SAMSUNG_DB[serie][mod]:null;}
+$('serie').addEventListener('change',fillModell);
+$('modell').addEventListener('change',showInfo);
+
+function getLandKey(){const l=$('land').value;if(l.indexOf('sterreich')>=0)return'AT';if(l.indexOf('Deutschland')>=0)return'DE';return'HR';}
+function fillGebiet(){const k=getLandKey()+'_'+($('tageszeit').value.indexOf('Tag')>=0?'Tag':'Nacht');const g=$('gebiet');g.innerHTML='';const gw=GRENZWERTE[k]||{};Object.keys(gw).forEach(n=>{const o=document.createElement('option');o.textContent=n+' ('+gw[n]+' dB)';o.value=gw[n];g.appendChild(o)});}
+$('land').addEventListener('change',fillGebiet);
+$('tageszeit').addEventListener('change',fillGebiet);
+$('topologie').addEventListener('change',function(){$('b2Row').style.display=this.value.indexOf('U')>=0?'grid':'none';});
+
+fillSerie();fillGebiet();
+
+// === PHYSIK-ENGINE ===
+function kaskadenZuschlag(n){return n<=1?0:Math.round(10*Math.log10(n)*10)/10;}
+function atmDaempfung(d,t,h){var a=Math.max(1.9*(1+(10-t)*.02)*(1+(70-h)*.01),.5);return Math.round(a*d/1000*1000)/1000;}
+function beugungsDaempfung(u,typ,f){if(u<=0)return 0;f=f||500;var n=2*u/(340/f);if(n<=0)return 0;var dz=10*Math.log10(3+20*n);var lim={"Massiv & Luftdicht":25,"Leichtbauweise dicht":15,"Teiloffen / Lamellen":5,"Luftdurchlässig (Gitter)":0}[typ];if(lim==null)lim=25;return Math.round(Math.min(dz,lim)*10)/10;}
+function aeroZuschlag(l,qs){if(qs<=0)return{v:0,zs:0};var v=l/(3600*qs);var zs=v<=3?0:Math.round(((v-3)/.03)*.25*10)/10;return{v:Math.round(v*100)/100,zs:zs};}
+
+function berechneGesamt(lw,anz,luft,qs,dG,dK,kT,kI,dT,topo,b1m,b2m,b1l,b2l,q,wD,temp,hum,rz,dD){
+  var dKas=kaskadenZuschlag(anz),aero=aeroZuschlag(luft,qs);
+  var lwE=lw+dKas+aero.zs-dG-dK;
+  var qDb={1:0,2:3,4:6,8:9}[q]||3;
+  var wP=wD<.5?3:(wD<1?1.5:0);
+  var aA=atmDaempfung(dT,temp,hum);
+  var aDiv=10*Math.log10(4*Math.PI*Math.max(dT,.001)**2);
+  var lpF=lwE+qDb-aDiv+wP-aA+rz;
+  var dDS=Math.min(dD,dT),umweg=Math.max(dT-dDS,0);
+  var dz1=0,dz2=0,dU=0;
+  if(umweg>0&&topo.indexOf('Direkt')<0){
+    if(topo.indexOf('U')>=0){dz1=beugungsDaempfung(umweg*.6,b1m);dz2=beugungsDaempfung(umweg*.4,b2m);}
+    else{dz1=beugungsDaempfung(umweg,b1m);}
+  }
+  if(b1l&&topo.indexOf('Direkt')<0)dU+=2;
+  if(b2l&&topo.indexOf('U')>=0)dU+=1.5;
+  var lp=Math.round((lpF-dz1-dz2-dU)*10)/10;
+  var lr=Math.round((lp+kT+kI)*10)/10;
+  return{lwEff:Math.round(lwE*10)/10,dKas,dAero:aero.zs,vLuft:aero.v,qDb,wPlus:wP,aAtm:aA,aDiv:Math.round(aDiv*10)/10,lpFrei:Math.round(lpF*10)/10,dz1,dz2,dUml:dU,umweg:Math.round(umweg*100)/100,lp,lr};
+}
+
+function oktavAmIO(oktSrc,dT,q,dG,anz){
+  var qDb={1:0,2:3,4:6,8:9}[q]||3;
+  var aDiv=10*Math.log10(4*Math.PI*Math.max(dT,.001)**2);
+  var dKas=kaskadenZuschlag(anz);
+  return oktSrc.map(function(lp){return Math.round((lp+qDb-aDiv+dKas-dG)*10)/10;});
+}
+
+function nrKlasse(lpIO){
+  var nrs=Object.keys(NR_KURVEN).map(Number).sort(function(a,b){return a-b;});
+  for(var i=0;i<nrs.length;i++){var nr=nrs[i],ok=true;
+    for(var j=0;j<8;j++){if(lpIO[j]>NR_KURVEN[nr][j]){ok=false;break;}}
+    if(ok)return nr;}
+  return null;
+}
+
+var lastResult=null,lastGrenz=null,lastDevice=null,lastOktav=null,lastNR=null;
+
+function berechne(){
+  var dev=getDevice();if(!dev){alert('Kein Gerät gewählt');return;}
+  var r=berechneGesamt(
+    dev.Lw,parseInt($('anzahl').value),dev.Luft,parseFloat($('qs').value),
+    parseFloat($('dGeh').value),parseFloat($('dKoerper').value),
+    parseFloat($('kT').value),parseFloat($('kI').value),
+    parseFloat($('dTotal').value),$('topologie').value,
+    $('b1Mat').value,$('b2Mat').value,$('b1Lenkt').checked,$('b2Lenkt').checked,
+    parseInt($('qFaktor').value),parseFloat($('wDist').value),
+    parseFloat($('temp').value),parseFloat($('hum').value),
+    parseFloat($('raumz').value),parseFloat($('dDirekt').value)
+  );
+  var grenz=parseInt($('gebiet').value);
+  var ok=r.lr<=grenz;
+  lastResult=r;lastGrenz=grenz;lastDevice=dev;
+
+  $('resLr').textContent=r.lr.toFixed(1)+' dB(A)';
+  $('resLr').className='big-num '+(ok?'ok':'fail');
+  $('resBox').className='result-box '+(ok?'ok':'fail');
+  $('resGrenz').innerHTML='Grenzwert: <b>'+grenz+' dB(A)</b> &middot; Differenz: <b>'+(r.lr<=grenz?'-':'+')+Math.abs(r.lr-grenz).toFixed(1)+' dB</b>';
+  $('resBadge').innerHTML='<span class="badge '+(ok?'ok':'fail')+'">'+(ok?'Grenzwert eingehalten':'Grenzwert überschritten')+'</span>';
+
+  var rw='Lw_eff = '+dev.Lw+' + '+r.dKas+' (Kaskade) + '+r.dAero+' (Aero) - '+$('dGeh').value+' (Geh.) - '+$('dKoerper').value+' (Körp.) = '+r.lwEff+' dB(A)\n';
+  rw+='Q = '+r.qDb+' dB (Richtwirkung '+$('qFaktor').value+')\n';
+  rw+='A_div = 10·log(4π·'+$('dTotal').value+'²) = '+r.aDiv+' dB\n';
+  rw+='A_atm = '+r.aAtm.toFixed(3)+' dB\n';
+  rw+='W_plus = '+r.wPlus+' dB (Wandabstand '+$('wDist').value+' m)\n';
+  rw+='Lp_frei = '+r.lwEff+' + '+r.qDb+' - '+r.aDiv+' + '+r.wPlus+' - '+r.aAtm.toFixed(3)+' + '+$('raumz').value+' = '+r.lpFrei+' dB(A)\n';
+  if(r.umweg>0)rw+='Umweg = '+r.umweg+' m | Beugung: dz1='+r.dz1+', dz2='+r.dz2+', Umlenkung='+r.dUml+' dB\n';
+  rw+='Lp = '+r.lpFrei+' - '+(r.dz1+r.dz2+r.dUml).toFixed(1)+' = '+r.lp+' dB(A)\n';
+  rw+='Lr = '+r.lp+' + '+$('kT').value+' (K_T) + '+$('kI').value+' (K_I) = '+r.lr+' dB(A)';
+  $('resRechenweg').textContent=rw;
+
+  // NR-Kurven
+  var q=parseInt($('qFaktor').value);
+  var lpIO=oktavAmIO(dev.Lp_oktav,parseFloat($('dTotal').value),q,parseFloat($('dGeh').value),parseInt($('anzahl').value));
+  lastOktav=lpIO;lastNR=nrKlasse(lpIO);
+  var traces=[];
+  [20,25,30,35,40,45,50,55].forEach(function(nr){
+    traces.push({x:OKTAV_BANDS,y:NR_KURVEN[nr],mode:'lines',line:{color:'#444466',width:1,dash:'dot'},name:'NR '+nr,showlegend:false,hovertemplate:'NR '+nr+': %{y:.1f} dB<extra></extra>'});
+  });
+  traces.push({x:OKTAV_BANDS,y:lpIO,mode:'lines+markers',name:'Prognose (IO)',line:{color:'#36A9E1',width:3},marker:{size:9,color:'#36A9E1',line:{color:'white',width:1.5}},hovertemplate:'%{x} Hz: <b>%{y:.1f} dB</b><extra></extra>'});
+  var annot=[];
+  [20,25,30,35,40,45,50,55].forEach(function(nr){annot.push({x:8000,y:NR_KURVEN[nr][7],text:'NR '+nr,showarrow:false,font:{size:9,color:'#8888AA'},xanchor:'left'});});
+  Plotly.newPlot('nrChart',traces,{
+    title:{text:'NR-Kurven am Immissionsort'+(lastNR!=null?' – NR '+lastNR:''),font:{color:'#36A9E1',size:13}},
+    xaxis:{type:'log',tickvals:OKTAV_BANDS,ticktext:['63','125','250','500','1k','2k','4k','8k'],title:'Oktavband [Hz]',gridcolor:'#2A2A3A'},
+    yaxis:{title:'dB',gridcolor:'#2A2A3A',range:[0,75]},
+    plot_bgcolor:'#111122',paper_bgcolor:'#111122',font:{color:'#DDD'},height:360,margin:{l:50,r:80,t:45,b:45},annotations:annot
+  },{responsive:true,displayModeBar:false});
+
+  // Abstandsverdopplung
+  var tb=$('avdTable').querySelector('tbody');tb.innerHTML='';
+  var tr=document.createElement('tr');
+  [1,2,4,8,16,32].forEach(function(d){var td=document.createElement('td');
+    var lp=dev.Lp_1m-20*Math.log10(Math.max(d,1))+({1:0,2:3,4:6,8:9}[q]||3);
+    td.textContent=Math.round(lp*10)/10+' dB(A)';tr.appendChild(td);});
+  tb.appendChild(tr);
+
+  $('disclaimer').textContent=DISCLAIMER;
+  $('resultArea').classList.add('visible');
+  $('resultArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// === PDF ===
+function exportPDF(){
+  if(!lastResult)return;
+  var r=lastResult,g=lastGrenz,d=lastDevice,ok=r.lr<=g;
+  var doc=new jspdf.jsPDF();var W=210,M=15,y=0;
+  doc.setFillColor(54,169,225);doc.rect(0,0,W,28,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(18);doc.setFont('helvetica','bold');
+  doc.text('°coolNEIGHBOR Schallimmissions-Prognose',M,14);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('v6.0 | '+new Date().toLocaleDateString('de-AT'),M,22);
+  y=36;doc.setTextColor(60,60,59);doc.setFontSize(11);doc.setFont('helvetica','bold');
+  doc.text('Projekt: '+$('projekt').value+' | Ersteller: '+$('ersteller').value,M,y);y+=7;
+  doc.setFont('helvetica','normal');doc.setFontSize(10);
+  doc.text('Gerät: '+$('serie').value+' / '+$('modell').value+' | Anzahl: '+$('anzahl').value,M,y);y+=6;
+  doc.text('Abstand: '+$('dTotal').value+' m | Topologie: '+$('topologie').value+' | Land: '+$('land').value,M,y);y+=10;
+  doc.setFillColor(240,240,240);doc.rect(M,y-2,W-2*M,22,'F');
+  doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Beurteilungspegel Lr:',M+4,y+5);
+  doc.setFontSize(22);doc.setTextColor(ok?39:231,ok?174:76,ok?96:60);
+  doc.text(r.lr.toFixed(1)+' dB(A)',M+4,y+16);
+  doc.setFontSize(11);doc.setTextColor(60,60,59);doc.text('Grenzwert: '+g+' dB(A) | '+(ok?'EINGEHALTEN':'UEBERSCHRITTEN')+' ('+((r.lr<=g)?'-':'+')+Math.abs(r.lr-g).toFixed(1)+' dB)',W/2,y+16);
+  y+=28;doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Rechenweg:',M,y);y+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(8);
+  var rw=$('resRechenweg').textContent.split('\n');
+  rw.forEach(function(line){doc.text(line,M,y);y+=4;});
+  y+=6;
+  if(lastNR!=null){doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('NR-Klasse am Immissionsort: NR '+lastNR,M,y);y+=8;}
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.text('Abstandsverdopplung:',M,y);y+=5;
+  doc.setFontSize(8);doc.setFont('helvetica','normal');
+  var q=parseInt($('qFaktor').value),qDb={1:0,2:3,4:6,8:9}[q]||3;
+  [1,2,4,8,16,32].forEach(function(dd){var lp=d.Lp_1m-20*Math.log10(Math.max(dd,1))+qDb;doc.text(dd+' m: '+(Math.round(lp*10)/10)+' dB(A)',M,y);y+=4;});
+  y+=6;doc.setFontSize(7);doc.setTextColor(150,150,150);
+  var lines=doc.splitTextToSize(DISCLAIMER,W-2*M);
+  if(y+lines.length*3>280){doc.addPage();y=20;}
+  doc.text(lines,M,y);
+  doc.save('coolNEIGHBOR_'+$('projekt').value.replace(/\s/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+</script>
+</body>
+</html>
