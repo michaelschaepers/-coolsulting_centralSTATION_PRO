@@ -343,7 +343,7 @@ tr.z-gruen td{background:#eaf8f0} tr.z-grau td{background:#f2f4f5;color:#6b7378}
     <button type="button" data-bereich="finanzen" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Finanzen</button>
     <button type="button" data-bereich="projekte" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Projekte<span class="zahl" id="projZahl" hidden></span></button>
     <button type="button" data-bereich="apps" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Apps<span class="zahl" id="appsZahl" hidden></span></button>
-    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
+    <button type="button" data-bereich="mail" aria-pressed="false" id="mailNav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>Mail<span class="zahl" id="mailZahl" hidden></span></button>
     <button type="button" data-bereich="monitor" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Monitor<span class="zahl" id="monZahl" hidden></span></button>
     <button type="button" data-bereich="cooltech" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>coolTECH</button>
   </aside>
@@ -3079,7 +3079,7 @@ function monTimeline() {
 
 /* V8: Bereich Mail je Person. Michael: eigene projektbezogene Ein-/Ausgaenge aus coolmonitor_eingang (Backend liefert jeder Person nur die eigenen Zeilen). Niklas: Archiv wie bisher. */
 const monMailFilter = { q: '', art: 'alle' };
-function mailAnsichtUmschalten() { const m = aktivePerson === 'michael' || aktivePerson === 'alle', a = aktivePerson === 'niklas' || aktivePerson === 'alle'; const M = $('#mailMichael'), K = $('#mailArchivKarte'); if (M) M.hidden = !m; if (K) K.hidden = !a; }
+function mailAnsichtUmschalten() { const M = $('#mailMichael'), K = $('#mailArchivKarte'); if (M) M.hidden = aktivePerson === 'niklas'; if (K) K.hidden = false; }
 function mailMichaelZeichnen() { const M = $('#mailMichael'); if (!M) return; M.textContent = ''; if (monIch() !== 'Michael') { M.append(el('div', { className: 'leer', textContent: 'Die Mail-Ansicht Michael ist nur mit Michaels Zugang sichtbar.' })); return; } M.append(monMails()); }
 async function mailMichaelLaden() { const M = $('#mailMichael'); if (!M) return; if (!monState.liste) { M.textContent = ''; M.append(el('div', { className: 'leer', textContent: 'Mails werden geladen …' })); try { monState.liste = await monApi('liste'); } catch (e) { M.textContent = ''; M.append(el('div', { className: 'hinweis fehler', textContent: 'Mails nicht geladen: ' + e.message })); return; } } mailMichaelZeichnen(); }
 function monMailRichtung(m) { if (String(m.betreff || '').toLowerCase().startsWith('[entwurf]')) return 'entwurf'; return /michael\.schaepers@coolsulting|michael sch/i.test(String(m.von || '')) ? 'aus' : 'ein'; }
@@ -3351,7 +3351,7 @@ function zeigeBereich(name) {
   $('#kopfTitel').innerHTML = '<span class="akzent">°cool</span>COCKPIT · ' + titel;
   try { localStorage.setItem('coolsulting_bereich', name); } catch (e) {}
   if (proj && !state.projekte && !projLaedt) ladeProjekte(); else if (proj) zeichneProjekte();
-  if (mail) { mailAnsichtUmschalten(); if (aktivePerson === 'niklas' || aktivePerson === 'alle') { if (!state.mail && !mailLaedt) ladeMail(); else zeichneMail(); } if (aktivePerson === 'michael' || aktivePerson === 'alle') mailMichaelLaden(); }
+  if (mail) { mailAnsichtUmschalten(); if (!state.mail && !mailLaedt) ladeMail(); else zeichneMail(); if (aktivePerson !== 'niklas') mailMichaelLaden(); }
 }
 
 /* ───── Projekte (monday „Leads …“-Boards) ───── */
@@ -3724,7 +3724,7 @@ function start() {
   // V8: Mail-Bereich gilt fuer alle Personen
   zeigeBereich(['projekte', 'mail'].includes(b) ? b : 'finanzen');
   ladeAlles();
-  if (aktivePerson !== 'michael') { ladeMail(true); clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000); }
+  ladeMail(true); clearInterval(mailTakt); mailTakt = setInterval(() => ladeMail(bereich !== 'mail'), 60 * 60 * 1000);
 }
 let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!state.finanzen) return; if (!document.querySelector('[data-panel="ueberblick"]').hidden) zeichneUeberblick(); if (!document.querySelector('[data-panel="plan"]').hidden && plan) rechnePlan(); if (!document.querySelector('[data-panel="bezahlt"]').hidden) zeichneBezahlt(); }, 200); });
 if (token) start(); else zeigeLogin();
