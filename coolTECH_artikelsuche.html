@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>°coolTECH Artikelsuche – REISS + Beijer Preisvergleich</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Helvetica,Arial,sans-serif;background:#f4f6f8;min-height:100vh;color:#3C3C3B;font-size:14px}
+.header{background:#3C3C3B;padding:14px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.header h1{color:#fff;font-size:22px;font-weight:bold}
+.header h1 span{color:#36A9E1}
+.header .info{color:rgba(255,255,255,.6);font-size:12px}
+.container{max-width:1400px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);padding:20px;margin-bottom:16px}
+.card h2{font-size:16px;margin-bottom:12px;color:#3C3C3B;border-bottom:2px solid #36A9E1;padding-bottom:6px}
+.such-zeile{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.such-zeile input[type=text]{flex:1;min-width:250px;padding:10px 14px;border:2px solid #d0d0d0;border-radius:8px;font-size:15px;font-weight:bold;color:#36A9E1;outline:none}
+.such-zeile input:focus{border-color:#36A9E1}
+.such-zeile button{background:#36A9E1;color:#fff;border:none;border-radius:8px;padding:10px 28px;font-weight:bold;cursor:pointer;font-size:15px;white-space:nowrap}
+.such-zeile button:hover{background:#2b97cc}
+.such-zeile .btn-nr{background:#3C3C3B}
+.such-zeile .btn-nr:hover{background:#555}
+.status{font-size:13px;margin-top:8px;min-height:18px}
+.status.ok{color:#27ae60}.status.err{color:#e74c3c}.status.loading{color:#36A9E1}
+.stats{display:flex;gap:20px;flex-wrap:wrap;margin-top:10px;font-size:13px;color:#888}
+.stats b{color:#3C3C3B}
+.treffer-box{overflow-x:auto;margin-top:12px;border:1px solid #e8e8e8;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap}
+thead{position:sticky;top:0;z-index:1}
+th{background:#3C3C3B;color:#fff;padding:8px 10px;text-align:left;font-size:11px;font-weight:600}
+th.num{text-align:right}
+td{padding:6px 10px;border-bottom:1px solid #f0f0f0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:#f0f8ff}
+.g-b{color:#36A9E1;font-weight:700}
+.g-r{color:#e74c3c;font-weight:700}
+.g-g{color:#aaa}
+.matchcode{color:#888;font-size:11px}
+.hinweis-cell{color:#888;font-size:11px;max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.empty{padding:24px;text-align:center;color:#aaa;font-size:14px}
+.beispiele{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.beispiele button{background:#f0f0f0;border:1px solid #ddd;border-radius:6px;padding:4px 12px;font-size:12px;cursor:pointer;color:#3C3C3B}
+.beispiele button:hover{background:#e0e8f0;border-color:#36A9E1}
+.footer{text-align:center;color:#aaa;font-size:11px;padding:20px}
+@media(max-width:700px){.such-zeile{flex-direction:column}.such-zeile input,.such-zeile button{width:100%}th,td{padding:4px 6px;font-size:11px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span>&deg;cool</span>TECH Artikelsuche</h1>
+  <div class="info">23.235 Artikel &middot; REISS + Beijer Ref &middot; Preisvergleich &middot; n8n-API</div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>Artikelsuche</h2>
+    <div class="such-zeile">
+      <input type="text" id="suchText" placeholder="Bezeichnung, Hersteller, Matchcode ..." autofocus>
+      <button onclick="suche()">Suchen</button>
+      <button class="btn-nr" onclick="sucheNr()">Art.-Nr. suchen</button>
+    </div>
+    <div class="beispiele">
+      <span style="font-size:12px;color:#888">Beispiele:</span>
+      <button onclick="schnellsuche('Danfoss Filtertrockner')">Danfoss Filtertrockner</button>
+      <button onclick="schnellsuche('Bitzer Verdichter')">Bitzer Verdichter</button>
+      <button onclick="schnellsuche('Castel Magnetventil')">Castel Magnetventil</button>
+      <button onclick="schnellsuche('Armaflex')">Armaflex</button>
+      <button onclick="schnellsuche('Dixell XR')">Dixell XR</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="stats" id="stats"></div>
+  </div>
+
+  <div id="ergebnis"></div>
+</div>
+
+<div class="footer">&copy; coolsulting e.U. &middot; &deg;coolTECH Artikelsuche v1.0 &middot; n8n-API Backend</div>
+
+<script>
+const API = 'https://coolsulting.app.n8n.cloud/webhook/cooltech-artikel';
+const $=id=>document.getElementById(id);
+
+function schnellsuche(text) { $('suchText').value = text; suche(); }
+
+$('suchText').addEventListener('keydown', e => { if (e.key === 'Enter') suche(); });
+
+async function apiCall(body) {
+  $('status').textContent = 'Suche läuft ...';
+  $('status').className = 'status loading';
+  $('ergebnis').innerHTML = '';
+  $('stats').innerHTML = '';
+  try {
+    const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const data = await res.json();
+    if (!data.ok) { $('status').textContent = data.error || 'Fehler'; $('status').className = 'status err'; return null; }
+    return data;
+  } catch (e) {
+    $('status').textContent = 'API nicht erreichbar: ' + e.message;
+    $('status').className = 'status err';
+    return null;
+  }
+}
+
+async function suche() {
+  const text = $('suchText').value.trim();
+  if (!text) return;
+  const data = await apiCall({ action: 'suche', text, limit: 50 });
+  if (!data) return;
+  $('status').textContent = data.anzahl + ' Treffer gefunden';
+  $('status').className = 'status ok';
+  $('stats').innerHTML = 'Gesucht: <b>"' + esc(data.gesucht) + '"</b> &middot; ' + data.anzahl + ' von ' + (data.gesamt||'') + ' Artikeln &middot; Limit: ' + data.limit;
+  zeigeTreffer(data.treffer || []);
+}
+
+async function sucheNr() {
+  const text = $('suchText').value.trim();
+  if (!text) return;
+  const data = await apiCall({ action: 'artikel', nr: text });
+  if (!data) return;
+  $('status').textContent = data.anzahl + ' Artikel gefunden';
+  $('status').className = 'status ok';
+  $('stats').innerHTML = 'Artikelnummer: <b>' + esc(text) + '</b>';
+  zeigeTreffer(data.treffer || []);
+}
+
+function zeigeTreffer(treffer) {
+  if (!treffer.length) { $('ergebnis').innerHTML = '<div class="card"><div class="empty">Keine Artikel gefunden.</div></div>'; return; }
+
+  let html = '<div class="card"><h2>Ergebnis (' + treffer.length + ' Artikel)</h2><div class="treffer-box" style="max-height:600px;overflow:auto"><table>';
+  html += '<thead><tr><th>Art.-Nr.</th><th>Bezeichnung</th><th>Hersteller</th><th>ME</th><th class="num">BLP</th><th class="num">EK REISS</th><th class="num">Rab.</th><th class="num">EK Beijer</th><th class="num">Rab.</th><th class="num">VK</th><th>Günstiger</th><th>Matchcode</th></tr></thead>';
+  html += '<tbody>';
+  treffer.forEach(a => {
+    const cls = a.guenstiger === 'Beijer' ? 'g-b' : a.guenstiger === 'REISS' ? 'g-r' : 'g-g';
+    html += '<tr>';
+    html += '<td><b>' + esc(a.nr) + '</b></td>';
+    html += '<td title="' + esc(a.hinweis || '') + '">' + esc(a.bezeichnung) + '</td>';
+    html += '<td>' + esc(a.hersteller) + '</td>';
+    html += '<td>' + esc(a.me) + '</td>';
+    html += '<td class="num">' + fmt(a.blp) + '</td>';
+    html += '<td class="num">' + fmt(a.ek_reiss) + '</td>';
+    html += '<td class="num">' + (a.rabatt_reiss ? a.rabatt_reiss + '%' : '-') + '</td>';
+    html += '<td class="num">' + fmt(a.ek_beijer) + '</td>';
+    html += '<td class="num">' + (a.rabatt_beijer ? a.rabatt_beijer + '%' : '-') + '</td>';
+    html += '<td class="num"><b>' + fmt(a.vk) + '</b></td>';
+    html += '<td class="' + cls + '">' + (a.guenstiger || '-') + '</td>';
+    html += '<td class="matchcode">' + esc(a.matchcode) + '</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+  $('ergebnis').innerHTML = html;
+}
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(v) { if (!v || v==='0' || v==='') return '-'; const n = parseFloat(v); return isNaN(n) ? '-' : n.toLocaleString('de-AT',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// Beim Laden: Info-Request um Artikelanzahl zu zeigen
+(async function() {
+  try {
+    const res = await fetch(API, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({action:'info'}) });
+    const data = await res.json();
+    if (data.ok) {
+      $('status').textContent = 'Verbunden · ' + data.anzahl + ' Artikel · ' + (data.hersteller||[]).length + ' Hersteller';
+      $('status').className = 'status ok';
+    }
+  } catch(e) { $('status').textContent = 'API-Verbindung wird beim ersten Suchen hergestellt'; $('status').className = 'status'; }
+})();
+</script>
+</body>
+</html>
